@@ -16,12 +16,12 @@
     <div class="overflow"></div>
 
     <!-- INICIO DE SESION -->
-    <div id="form-login" class="form__container login">
+    <div id="form-login" class="form__container">
         <div class="user-icon__container"><i class="bi bi-person-circle user-icon"></i></div>
         <div class="title__container"><h2>INICIO DE SESION</h2></div>
         <form action="/api/login" method="POST">
             <div class="form__input--container">
-                <label><i class="bi bi-person-fill"></i>
+                <label><i class="bi bi-person-fill "></i>
                     <input name="username" class="form__input" type="text" placeholder="Cedula">
                 </label>
             </div>
@@ -33,7 +33,7 @@
             <button class="form__btn">INICIAR SESION</button>
         </form>
         <div>
-            <a href="#">Olvide mi contraseña</a>
+            <a id="link-recuperar" href="#">Olvide mi contraseña</a>
         </div>
         <div class="link__registro--container">
             <p>No tienes cuenta?</p><a id="link-registro" href="#">Registrate</a>
@@ -41,20 +41,15 @@
     </div>
 
     <!-- REGISTRO -->
-    <div id="form-registro" class="form__container registro ocultar">
+    <div id="form-registro" class="form__container ocultar">
         <div class="title__container"><h2>REGISTRO</h2></div>
         <form action="" method="POST">
             <div class="name__lastname--container">
                 <div class="form__input--container">
-                    <label>
-                        <input name="name" class="form__input" type="text" placeholder="Nombre">
-                    </label>
+                    <input name="name" class="input-names" type="text" placeholder="Nombre">
                 </div>
                 <div class="form__input--container">
-                    <label>
-                        <input name="lastname" class="form__input" type="text" placeholder="Apellido">
-                        
-                    </label>
+                    <input name="lastname" class="input-names" type="text" placeholder="Apellido">
                 </div>
             </div>
             <div class="form__input--container">
@@ -72,8 +67,8 @@
                     <input name="password" class="form__input" type="password" placeholder="Contraseña">
                 </label>
             </div>
-            <div class="input-wrapper">
-                <label>Carrera
+            <div class="form__input--container">
+                <label><p class="parrafo-carrera">Carrera</p>
                     <select id="career-count">
                     <option value="">Arquitectura</option>
                     <option value="">Ing. Civil</option>
@@ -83,11 +78,29 @@
                     <option value="">Ing. Mtto Mecanico</option>
                     <option value="">Ing. Sistemas</option>
                     <option value="">Ing. Diseño Industrial</option>
-                </select>
+                    </select>
                 </label>
             </div>
             <button class="form__btn">REGISTRAR</button>
         </form>
+        <div>
+            <a id="link-login-registro" href="#">Volver al Login</a>
+        </div>
+    </div>
+
+    <div id="form-recuperar" class="form__container ocultar">
+        <div class="title__container"><h2>RECUPERAR CONTRASEÑA</h2></div>
+        <form action="">
+            <div class="form__input--container">
+                <label>
+                    <input name="email" class="form__input" type="email" placeholder="Correo">
+                </label>
+            </div>
+            <button class="form__btn">ENVIAR</button>
+        </form>
+        <div>
+            <a id="link-login-recuperar" href="#">Volver al Login</a>
+        </div>
     </div>
     
     <script src="../javascript/login.js"></script>

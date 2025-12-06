@@ -44,6 +44,12 @@ body{
     box-shadow: 0 0px 0px .2;
     box-sizing: border-box;
     text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.3s ease;
+}
+
+.form__container:hover{
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
 }
 
 .title__container{
@@ -57,15 +63,15 @@ h2{
 
 form{
     padding: 2rem;
-}
-
-.form__input--container{
-    margin: 50px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+    align-items: stretch;
+    width: 100%;
 }
 
 input{
     box-sizing: border-box;
-    width: 90%;
     margin-top: 8px;
     padding: 6px 12px;
     border: none;
@@ -88,7 +94,8 @@ input::placeholder{
     border-radius: 30px;
     font-weight: bold;
     color: #fff;
-    transition:  color, background-color 0.3s ease; 
+    transition:  color, background-color 0.3s ease;
+    align-self: center;
 }
 
 .form__btn:hover{
@@ -136,11 +143,29 @@ i{
     gap: 5px;
 }
 
-.ocultar{
-    display: none;
+.form__input--container label{
+    display: flex;
 }
 
 /* -------- REGISTRO -------- */
-.name__lastname--container{
+.name__lastname--container {
     display: flex;
+}
+
+.input-names{
+    width: 90%;
+}
+
+.form__input--container label{
+    display: flex;
+    flex-direction: column;
+    gap: 5.5px;
+}
+
+.parrafo-carrera{
+    align-self: flex-start;
+}
+
+.ocultar{
+    display: none;
 }
