@@ -16,7 +16,7 @@
     <div class="overflow"></div>
 
     <!-- INICIO DE SESION -->
-    <div class="form__container login">
+    <div id="form-login" class="form__container login">
         <div class="user-icon__container"><i class="bi bi-person-circle user-icon"></i></div>
         <div class="title__container"><h2>INICIO DE SESION</h2></div>
         <form action="/api/login" method="POST">
@@ -36,12 +36,12 @@
             <a href="#">Olvide mi contraseña</a>
         </div>
         <div class="link__registro--container">
-            <p>No tienes cuenta?</p><a href="#">Registrate</a>
+            <p>No tienes cuenta?</p><a id="link-registro" href="#">Registrate</a>
         </div>
     </div>
 
     <!-- REGISTRO -->
-    <div class="form__container registro">
+    <div id="form-registro" class="form__container registro ocultar">
         <div class="title__container"><h2>REGISTRO</h2></div>
         <form action="" method="POST">
             <div class="name__lastname--container">
@@ -90,6 +90,6 @@
         </form>
     </div>
     
-    <script src=""></script>
+    <script src="../javascript/login.js"></script>
 </body>
 </html>
