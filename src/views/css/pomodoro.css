@@ -1,0 +1,152 @@
+/* ================= MODE GLOBAL ================= */
+body {
+    font-family: 'Inter', sans-serif;
+    transition: background 0.5s ease, color 0.5s ease;
+    padding-top: 80px;
+    overflow-x: hidden;
+}
+
+.light-mode {
+    background: #f3f4f6;
+    color: #1e293b;
+}
+
+.dark-mode {
+    background: #0f172a;
+    color: white;
+}
+
+/* ================= NAVBAR ================= */
+.custom-navbar {
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(12px);
+    padding: 15px 0;
+    transition: background 0.5s ease;
+}
+
+.mode-toggle {
+    background: transparent;
+    border: none;
+    font-size: 22px;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+.mode-toggle:hover {
+    transform: rotate(15deg);
+}
+
+/* ================= BACKGROUND ANIMATION ================= */
+.circle {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.6;
+    animation: float 10s infinite ease-in-out;
+    transition: background 1s ease;
+}
+.circle1 { width: 400px; height: 400px; background: #2563eb; top: -80px; left: -60px; }
+.circle2 { width: 350px; height: 350px; background: #06b6d4; right: -70px; top: 120px; }
+.circle3 { width: 300px; height: 300px; background: #9333ea; left: 40%; bottom: -120px; }
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-40px); }
+    100% { transform: translateY(0px); }
+}
+
+/* ================= POMODORO SECTION ================= */
+.pomodoro-section {
+    padding: 60px 0;
+}
+
+.pomodoro-card,
+.sessions-card {
+    background: rgba(30, 41, 59, 0.55);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 40px;
+    margin-right: 40px;
+    transition: 0.5s ease;
+}
+
+/* ====== LIGHT MODE OVERRIDE ====== */
+body.light-mode .pomodoro-card,
+body.light-mode .sessions-card {
+    background: rgba(255, 255, 255, 0.7);
+}
+
+/* TIMER DISPLAY */
+.timer-display {
+    font-size: 5rem;
+    text-align: center;
+    font-weight: 800;
+    margin: 20px 0;
+    transition: transform 0.3s ease, color 0.5s ease;
+}
+
+/* Pulse animation for running */
+.pulse {
+    animation: pulse 1s infinite alternate;
+}
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.07); opacity: .7; }
+}
+
+/* Pause blinking */
+.paused {
+    animation: paused 1s infinite;
+}
+@keyframes paused {
+    0% { opacity: .8; }
+    50% { opacity: .3; }
+    100% { opacity: .8; }
+}
+
+/* TIME SELECTOR */
+.time-selector {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border: none;
+    outline: none;
+    transition: background 0.3s ease;
+}
+
+body.light-mode .time-selector {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+body.dark-mode .time-selector {
+    background: #1e293b;
+    color: white;
+}
+
+/* BUTTONS */
+.btn-start { background: #16a34a; }
+.btn-pause { background: #f59e0b; }
+.btn-reset { background: #dc2626; }
+
+.controls button {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 18px;
+}
+
+/* SESSIONS */
+.session-item {
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+    font-weight: 600;
+    background: rgba(255,255,255,0.15);
+    transition: transform 0.3s ease;
+}
+.session-item:hover {
+    transform: scale(1.03);
+}

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In</title>
+    <link rel="stylesheet" href="../css/login.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+</head>
+<body>
+    <div class="brand-header">
+        <i class="fas fa-layer-group"></i>
+        <span>LearnStudy <strong>Hub</strong></span>
+    </div>
+    <div class="overflow"></div>
+
+    <!-- INICIO DE SESION -->
+    <div class="form__container login">
+        <div class="user-icon__container"><i class="bi bi-person-circle user-icon"></i></div>
+        <div class="title__container"><h2>INICIO DE SESION</h2></div>
+        <form action="/api/login" method="POST">
+            <div class="form__input--container">
+                <label><i class="bi bi-person-fill"></i>
+                    <input name="username" class="form__input" type="text" placeholder="Cedula">
+                </label>
+            </div>
+            <div class="form__input--container">
+                <label><i class="bi bi-lock-fill"></i>
+                    <input name="password" class="form__input" type="password" placeholder="Contraseña">
+                </label>
+            </div>
+            <button class="form__btn">INICIAR SESION</button>
+        </form>
+        <div>
+            <a href="#">Olvide mi contraseña</a>
+        </div>
+        <div class="link__registro--container">
+            <p>No tienes cuenta?</p><a href="#">Registrate</a>
+        </div>
+    </div>
+
+    <!-- REGISTRO -->
+    <div class="form__container registro">
+        <div class="title__container"><h2>REGISTRO</h2></div>
+        <form action="" method="POST">
+            <div class="name__lastname--container">
+                <div class="form__input--container">
+                    <label>
+                        <input name="name" class="form__input" type="text" placeholder="Nombre">
+                    </label>
+                </div>
+                <div class="form__input--container">
+                    <label>
+                        <input name="lastname" class="form__input" type="text" placeholder="Apellido">
+                        
+                    </label>
+                </div>
+            </div>
+            <div class="form__input--container">
+                <label>
+                    <input name="cedula" class="form__input" type="text" placeholder="Cedula">
+                </label>
+            </div>
+            <div class="form__input--container">
+                <label>
+                    <input name="email" class="form__input" type="email" placeholder="Correo">
+                </label>
+            </div>
+            <div class="form__input--container">
+                <label>
+                    <input name="password" class="form__input" type="password" placeholder="Contraseña">
+                </label>
+            </div>
+            <div class="input-wrapper">
+                <label>Carrera
+                    <select id="career-count">
+                    <option value="">Arquitectura</option>
+                    <option value="">Ing. Civil</option>
+                    <option value="">Ing. Electrica</option>
+                    <option value="">Ing. Electronica</option>
+                    <option value="">Ing. Industrial</option>
+                    <option value="">Ing. Mtto Mecanico</option>
+                    <option value="">Ing. Sistemas</option>
+                    <option value="">Ing. Diseño Industrial</option>
+                </select>
+                </label>
+            </div>
+            <button class="form__btn">REGISTRAR</button>
+        </form>
+    </div>
+    
+    <script src=""></script>
+</body>
+</html>

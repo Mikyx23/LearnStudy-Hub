@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro | LearnStudy Hub</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="../css/pomodoro.css">
+</head>
+
+<body class="light-mode">
+
+    <!-- NAVBAR -->
+    <!-- <nav class="navbar navbar-expand-lg fixed-top custom-navbar">
+        <div class="container">
+
+            <a class="navbar-brand fw-bold text-white" href="inicio.html">
+                LearnStudy<span class="text-highlight">Hub</span>
+            </a>
+
+            <div class="ms-auto d-flex align-items-center">
+
+                
+                <button id="mode-toggle" class="mode-toggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+
+                <button class="navbar-toggler text-white ms-3" data-bs-toggle="collapse" data-bs-target="#menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <div class="collapse navbar-collapse" id="menu">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a href="inicio.html" class="nav-link">Inicio</a></li>
+                    <li class="nav-item"><a href="pomodoro.html" class="nav-link active">Pomodoro</a></li>
+                    <li class="nav-item"><a href="malla.html" class="nav-link">Malla Curricular</a></li>
+                    <li class="nav-item"><a href="estadisticas.html" class="nav-link">Estadísticas</a></li>
+                    <li class="nav-item"><a href="perfil.html" class="nav-link">Perfil</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </nav> -->
+
+    <!-- FONDO animado -->
+    <div class="background-animation">
+        <div class="circle circle1"></div>
+        <div class="circle circle2"></div>
+        <div class="circle circle3"></div>
+    </div>
+
+    <section class="pomodoro-section">
+        <div class="container d-flex justify-content-center">
+
+            <!-- TIMER -->
+            <div class="pomodoro-card">
+
+                <h1 class="text-center mb-4 fw-bold">Temporizador</h1>
+
+                <select id="time-selector" class="time-selector">
+                    <option value="25">Pomodoro (25 min)</option>
+                    <option value="5">Descanso Corto (5 min)</option>
+                    <option value="15">Descanso Largo (15 min)</option>
+                </select>
+
+                <div id="timer-display" class="timer-display pulse">25:00</div>
+
+                <div class="controls mt-4">
+                    <button id="start-btn" class="btn btn-start"><i class="fas fa-play"></i> Iniciar</button>
+                    <button id="pause-btn" class="btn btn-pause"><i class="fas fa-pause"></i> Pausar</button>
+                    <button id="reset-btn" class="btn btn-reset"><i class="fas fa-undo"></i> Reiniciar</button>
+                </div>
+            </div>
+
+            <!-- SESIONES -->
+            <div class="sessions-card">
+                <h3 class="fw-bold mb-3">Sesiones Realizadas</h3>
+                <div id="session-list" class="session-list"></div>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- <footer class="py-5 bg-dark text-white position-relative overflow-hidden">
+        <div class="container position-relative z-2">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start mb-4 mb-md-0">
+                    <h3 class="fw-bold mb-1">LearnStudy Hub</h3>
+                    <p class="text-white-50 small">Innovación educativa continua.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <a href="#" class="text-white-50 me-3 text-decoration-none hover-white">Privacidad</a>
+                    <a href="#" class="text-white-50 text-decoration-none hover-white">Términos</a>
+                    <p class="small text-white-50 mt-2">© 2025 Todos los derechos reservados.</p>
+                </div>
+            </div>
+        </div>
+    </footer> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../javascript/pomodoro.js"></script>
+</body>
+
+</html>
