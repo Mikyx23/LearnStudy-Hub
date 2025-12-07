@@ -42,7 +42,6 @@ body{
     backdrop-filter: blur(20px);
     border-radius: 8px;
     box-shadow: 0 0px 0px .2;
-    box-sizing: border-box;
     text-align: center;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     transition: box-shadow 0.3s ease;
@@ -71,7 +70,7 @@ form{
 }
 
 input{
-    box-sizing: border-box;
+    width: 100%;
     margin-top: 8px;
     padding: 6px 12px;
     border: none;
@@ -84,6 +83,11 @@ input{
 input::placeholder{
     font-size: 16px;
     color: #fff;
+}
+
+.input-login label{
+    display: flex;
+    align-items: flex-end;
 }
 
 .form__btn{
@@ -143,10 +147,6 @@ i{
     gap: 5px;
 }
 
-.form__input--container label{
-    display: flex;
-}
-
 /* -------- REGISTRO -------- */
 .name__lastname--container {
     display: flex;
@@ -156,14 +156,20 @@ i{
     width: 90%;
 }
 
-.form__input--container label{
+.input-select{
     display: flex;
     flex-direction: column;
-    gap: 5.5px;
+    gap: 5px;
 }
 
 .parrafo-carrera{
     align-self: flex-start;
+}
+
+#career-count{
+    padding: 5px;
+    border-radius: 8px;
+
 }
 
 .ocultar{

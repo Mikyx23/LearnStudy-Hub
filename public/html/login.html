@@ -20,14 +20,14 @@
         <div class="user-icon__container"><i class="bi bi-person-circle user-icon"></i></div>
         <div class="title__container"><h2>INICIO DE SESION</h2></div>
         <form action="/api/login" method="POST">
-            <div class="form__input--container">
+            <div class="form__input--container input-login">
                 <label><i class="bi bi-person-fill "></i>
-                    <input name="username" class="form__input" type="text" placeholder="Cedula">
+                    <input name="username" class="form__input" type="text" placeholder="Cedula" required>
                 </label>
             </div>
-            <div class="form__input--container">
+            <div class="form__input--container input-login">
                 <label><i class="bi bi-lock-fill"></i>
-                    <input name="password" class="form__input" type="password" placeholder="Contraseña">
+                    <input name="password" class="form__input" type="password" placeholder="Contraseña" required>
                 </label>
             </div>
             <button class="form__btn">INICIAR SESION</button>
@@ -46,38 +46,39 @@
         <form action="" method="POST">
             <div class="name__lastname--container">
                 <div class="form__input--container">
-                    <input name="name" class="input-names" type="text" placeholder="Nombre">
+                    <input name="name" class="input-names" type="text" placeholder="Nombre"required>
                 </div>
                 <div class="form__input--container">
-                    <input name="lastname" class="input-names" type="text" placeholder="Apellido">
+                    <input name="lastname" class="input-names" type="text" placeholder="Apellido" required>
                 </div>
             </div>
             <div class="form__input--container">
                 <label>
-                    <input name="cedula" class="form__input" type="text" placeholder="Cedula">
+                    <input name="cedula" class="form__input" type="text" placeholder="Cedula" required>
                 </label>
             </div>
             <div class="form__input--container">
                 <label>
-                    <input name="email" class="form__input" type="email" placeholder="Correo">
+                    <input name="email" class="form__input" type="email" placeholder="Correo" required>
                 </label>
             </div>
             <div class="form__input--container">
                 <label>
-                    <input name="password" class="form__input" type="password" placeholder="Contraseña">
+                    <input name="password" class="form__input" type="password" placeholder="Contraseña" required>
                 </label>
             </div>
             <div class="form__input--container">
-                <label><p class="parrafo-carrera">Carrera</p>
-                    <select id="career-count">
-                    <option value="">Arquitectura</option>
-                    <option value="">Ing. Civil</option>
-                    <option value="">Ing. Electrica</option>
-                    <option value="">Ing. Electronica</option>
-                    <option value="">Ing. Industrial</option>
-                    <option value="">Ing. Mtto Mecanico</option>
-                    <option value="">Ing. Sistemas</option>
-                    <option value="">Ing. Diseño Industrial</option>
+                <label class="input-select" ><p class="parrafo-carrera"></p>
+                    <select id="career-count" required>
+                        <option disabled selected value="">Selecciona una Carrera</option>
+                        <option value="41">Arquitectura</option>
+                        <option value="42">Ing. Civil</option>
+                        <option value="43">Ing. Electrica</option>
+                        <option value="44">Ing. Electronica</option>
+                        <option value="45">Ing. Industrial</option>
+                        <option value="46">Ing. Mtto Mecanico</option>
+                        <option value="47">Ing. Sistemas</option>
+                        <option value="48">Ing. Diseño Industrial</option>
                     </select>
                 </label>
             </div>
@@ -88,12 +89,13 @@
         </div>
     </div>
 
+    <!-- RECUPERAR CONTRASEÑA -->
     <div id="form-recuperar" class="form__container ocultar">
         <div class="title__container"><h2>RECUPERAR CONTRASEÑA</h2></div>
         <form action="">
             <div class="form__input--container">
                 <label>
-                    <input name="email" class="form__input" type="email" placeholder="Correo">
+                    <input name="email" class="form__input" type="email" placeholder="Correo" required>
                 </label>
             </div>
             <button class="form__btn">ENVIAR</button>
