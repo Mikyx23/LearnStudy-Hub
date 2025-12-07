@@ -43,10 +43,10 @@
     <!-- REGISTRO -->
     <div id="form-registro" class="form__container ocultar">
         <div class="title__container"><h2>REGISTRO</h2></div>
-        <form action="" method="POST">
+        <form action="/api/login/registro" method="POST">
             <div class="name__lastname--container">
                 <div class="form__input--container">
-                    <input name="name" class="input-names" type="text" placeholder="Nombre"required>
+                    <input name="name2" class="input-names" type="text" placeholder="Nombre"required>
                 </div>
                 <div class="form__input--container">
                     <input name="lastname" class="input-names" type="text" placeholder="Apellido" required>
@@ -64,12 +64,12 @@
             </div>
             <div class="form__input--container">
                 <label>
-                    <input name="password" class="form__input" type="password" placeholder="Contraseña" required>
+                    <input name="password2" class="form__input" type="password" placeholder="Contraseña" required>
                 </label>
             </div>
             <div class="form__input--container">
                 <label class="input-select" ><p class="parrafo-carrera"></p>
-                    <select id="career-count" required>
+                    <select id="career-count" name="carrer" required>
                         <option disabled selected value="">Selecciona una Carrera</option>
                         <option value="41">Arquitectura</option>
                         <option value="42">Ing. Civil</option>

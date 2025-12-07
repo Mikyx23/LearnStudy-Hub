@@ -21,3 +21,17 @@ routerLogin.post('/', (req, res) => {
         res.send('Credenciales incorrectas');
     }
 });
+
+import { InsertarUsuarioController } from '../controllers/users-controller.js';
+routerLogin.post('/registro', async (req,res) => {
+    const {cedula, carrer, name2, password2, email, lastname } = req.body;
+
+    const registro = await InsertarUsuarioController(cedula,carrer,name2,lastname,email,password2);
+
+    if(registro.respuesta === true){
+        res.send(registro.mensaje);
+    }
+    else{
+        res.send(registro.mensaje)
+    }
+});
