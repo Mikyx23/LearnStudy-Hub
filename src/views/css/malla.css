@@ -147,6 +147,49 @@ body{
     color: var(--text-main);
 }
 
+/* --- Estilos para la interacción de Prelaciones --- */
+
+/* Cuando hay una selección activa, todas las tarjetas se "apagan" por defecto */
+.malla__grid.has-selection .asignatura-card {
+    opacity: 0.2;
+    filter: grayscale(100%);
+    transition: all 0.3s ease;
+}
+
+/* La tarjeta que clickeaste se mantiene visible y destacada */
+.malla__grid.has-selection .asignatura-card.is-selected {
+    opacity: 1;
+    filter: grayscale(0%);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.4); /* Anillo azul */
+    border-color: var(--primary-color);
+    transform: scale(1.05);
+    z-index: 10;
+}
+
+/* Las materias que "abre" la seleccionada se pintan de otro color */
+.malla__grid.has-selection .asignatura-card.is-dependent {
+    opacity: 1;
+    filter: grayscale(0%);
+    background-color: #ecfdf5; /* Verde muy claro */
+    border-color: #10b981;     /* Verde borde */
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    transform: translateY(-5px);
+}
+
+/* Pequeño indicador visual (opcional) para las dependientes */
+.malla__grid.has-selection .asignatura-card.is-dependent::after {
+    content: 'Se abre con la seleccionada';
+    position: absolute;
+    top: -3px;
+    right: 10px;
+    background: #10b981;
+    color: white;
+    font-size: 0.6rem;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
 /* Animación Keyframes */
 @keyframes fadeInUp {
     from {
