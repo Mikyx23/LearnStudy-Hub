@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/agenda.css">
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <span class="brand-icon"><i class="fas fa-layer-group"></i></span>
+                LearnStudy<span class="text-highlight">Hub</span>
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <i class="fas fa-stream text-dark"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="#hero">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#impacto">Impacto</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#equipo">Talento</a></li>
+                    <li class="nav-item ms-lg-3">
+                        <!-- <a class="btn btn-glow" href="/api/login">Acceder al Hub</a> -->
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+<div class="contenedor-angeda" id="agenda">
+    <h1>Recordatorio de Evaluaciones</h1>
+    <form> 
+        <!-- Campos generales -->
+        <div class="form-row">
+            <div class="form-group">
+                <label for="asignatura">Asignatura:</label>
+                <input type="text" id="asignatura" placeholder="Ej: Matemáticas" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="corte">Corte:</label>
+                <select id="corte" required>
+                    <option value="">Seleccione un corte</option>
+                    <option value="corte1">Corte 1 (Máx 30%)</option>
+                    <option value="corte2">Corte 2 (Máx 30%)</option>
+                    <option value="corte3">Corte 3 (Máx 40%)</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Contenedor de evaluaciones lado a lado -->
+        <div class="evaluaciones-container">
+            <!-- Sección Primera Evaluación -->
+            <div class="evaluacion-group evaluacion-1">
+                <h3><i class="fas fa-chart-line"></i> Evaluación 1</h3>
+                <div class="form-group">
+                    <label for="nombre_evaluacion1">Nombre:</label>
+                    <input type="text" id="nombre_evaluacion1" placeholder="Ej: Parcial 1" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="porcentaje_evaluacion1">Porcentaje:</label>
+                        <input type="number" id="porcentaje_evaluacion1" placeholder="ej: 10" min="0" max="100" step="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha_evaluacion1">Fecha:</label>
+                        <input type="date" id="fecha_evaluacion1" required>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección Segunda Evaluación -->
+            <div class="evaluacion-group evaluacion-2">
+                <h3><i class="fas fa-chart-bar"></i> Evaluación 2</h3>
+                <div class="form-group">
+                    <label for="nombre_evaluacion2">Nombre:</label>
+                    <input type="text" id="nombre_evaluacion2" placeholder="Ej: Parcial 2" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="porcentaje_evaluacion2">Porcentaje:</label>
+                        <input type="number" id="porcentaje_evaluacion2" placeholder="ej: 20" min="0" max="100" step="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha_evaluacion2">Fecha:</label>
+                        <input type="date" id="fecha_evaluacion2" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <button type="button" id="agregar">Agregar Evaluaciones</button>
+    </form>
+    
+    <!-- Resto del código permanece igual -->
+    <!-- Resumen de cortes -->
+    <div class="resumen-cortes">
+        <div class="corte-resumen">
+            <h3>Corte 1</h3>
+            <div class="porcentaje" id="corte1-total">0%</div>
+            <div class="maximo">Máximo: 30%</div>
+        </div>
+        <div class="corte-resumen">
+            <h3>Corte 2</h3>
+            <div class="porcentaje" id="corte2-total">0%</div>
+            <div class="maximo">Máximo: 30%</div>
+        </div>
+        <div class="corte-resumen">
+            <h3>Corte 3</h3>
+            <div class="porcentaje" id="corte3-total">0%</div>
+            <div class="maximo">Máximo: 40%</div>
+        </div>
+    </div>
+    
+    <!-- Encabezados de la lista -->
+    <div class="encabezados-lista">
+        <span>Asignatura</span>
+        <span>Corte</span>
+        <span>Evaluación</span>
+        <span>Nombre</span>
+        <span>Porcentaje</span>
+        <span>Fecha</span>
+        <span>Acción</span>
+    </div>
+    
+    <ul id="lista-examenes"></ul>
+</div>
+
+<!-- El JavaScript permanece igual -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const agregarBtn = document.getElementById('agregar');
+    const asignaturaInput = document.getElementById('asignatura');
+    const corteSelect = document.getElementById('corte');
+    const listaExamenes = document.getElementById('lista-examenes');
+    
+    // Elementos para evaluación 1
+    const nombreEvaluacion1Input = document.getElementById('nombre_evaluacion1');
+    const porcentajeEvaluacion1Input = document.getElementById('porcentaje_evaluacion1');
+    const fechaEvaluacion1Input = document.getElementById('fecha_evaluacion1');
+    
+    // Elementos para evaluación 2
+    const nombreEvaluacion2Input = document.getElementById('nombre_evaluacion2');
+    const porcentajeEvaluacion2Input = document.getElementById('porcentaje_evaluacion2');
+    const fechaEvaluacion2Input = document.getElementById('fecha_evaluacion2');
+    
+    // Elementos para el resumen de cortes
+    const corte1Total = document.getElementById('corte1-total');
+    const corte2Total = document.getElementById('corte2-total');
+    const corte3Total = document.getElementById('corte3-total');
+    
+    // Configuración de porcentajes por corte
+    const configuracionPorcentajes = {
+        corte1: { max: 30, evaluaciones: 2, colorClass: 'corte1', nombre: 'Corte 1' },
+        corte2: { max: 30, evaluaciones: 2, colorClass: 'corte2', nombre: 'Corte 2' },
+        corte3: { max: 40, evaluaciones: 2, colorClass: 'corte3', nombre: 'Corte 3' }
+    };
+    
+    // Objeto para rastrear los porcentajes por corte
+    let porcentajesUsados = {
+        corte1: 0,
+        corte2: 0,
+        corte3: 0
+    };
+    
+    // Actualizar resumen de cortes
+    function actualizarResumenCortes() {
+        corte1Total.textContent = `${porcentajesUsados.corte1}%`;
+        corte2Total.textContent = `${porcentajesUsados.corte2}%`;
+        corte3Total.textContent = `${porcentajesUsados.corte3}%`;
+    }
+    
+    agregarBtn.addEventListener('click', agregarEvaluaciones);
+    
+    function agregarEvaluaciones() {
+        const asignatura = asignaturaInput.value.trim();
+        const corte = corteSelect.value;
+        
+        // Datos evaluación 1
+        const nombreEvaluacion1 = nombreEvaluacion1Input.value.trim();
+        const porcentajeEvaluacion1 = parseFloat(porcentajeEvaluacion1Input.value);
+        const fechaEvaluacion1 = fechaEvaluacion1Input.value;
+        
+        // Datos evaluación 2
+        const nombreEvaluacion2 = nombreEvaluacion2Input.value.trim();
+        const porcentajeEvaluacion2 = parseFloat(porcentajeEvaluacion2Input.value);
+        const fechaEvaluacion2 = fechaEvaluacion2Input.value;
+        
+        // Validaciones básicas
+        if (asignatura === '' || corte === '' || 
+            nombreEvaluacion1 === '' || nombreEvaluacion2 === '' ||
+            fechaEvaluacion1 === '' || fechaEvaluacion2 === '') {
+            alert('Por favor, completa todos los campos obligatorios.');
+            return;
+        }
+        
+        // Validar que sean números
+        if (isNaN(porcentajeEvaluacion1) || isNaN(porcentajeEvaluacion2)) {
+            alert('Los porcentajes deben ser números válidos.');
+            return;
+        }
+        
+        // Validar que estén entre 0 y 100
+        if (porcentajeEvaluacion1 < 0 || porcentajeEvaluacion1 > 100 || 
+            porcentajeEvaluacion2 < 0 || porcentajeEvaluacion2 > 100) {
+            alert('Los porcentajes deben estar entre 0 y 100.');
+            return;
+        }
+        
+        // Validar fechas
+        const fechaActual = new Date().toISOString().split('T')[0];
+        if (fechaEvaluacion1 < fechaActual || fechaEvaluacion2 < fechaActual) {
+            alert('Las fechas no pueden ser anteriores a la fecha actual.');
+            return;
+        }
+        
+        // Validar que la suma no exceda el máximo del corte
+        const totalCorte = porcentajeEvaluacion1 + porcentajeEvaluacion2;
+        if (totalCorte > configuracionPorcentajes[corte].max) {
+            alert(`La suma de las evaluaciones (${totalCorte}%) excede el máximo permitido para ${configuracionPorcentajes[corte].nombre} (${configuracionPorcentajes[corte].max}%).`);
+            return;
+        }
+        
+        // Validar que no se haya alcanzado el máximo del corte
+        if (porcentajesUsados[corte] + totalCorte > configuracionPorcentajes[corte].max) {
+            alert(`No se puede agregar porque excedería el máximo de ${configuracionPorcentajes[corte].max}% para ${configuracionPorcentajes[corte].nombre}. Ya se han usado ${porcentajesUsados[corte]}%.`);
+            return;
+        }
+        
+        // Validaciones específicas por corte según tu descripción
+        if (corte === 'corte1' || corte === 'corte2') {
+            // Cortes 1 y 2: deben ser 10% y 20% (en cualquier orden)
+            const opcionesValidas = [[10, 20], [20, 10]];
+            const esValido = opcionesValidas.some(opcion => 
+                (porcentajeEvaluacion1 === opcion[0] && porcentajeEvaluacion2 === opcion[1])
+            );
+            
+            if (!esValido) {
+                alert(`Para ${configuracionPorcentajes[corte].nombre}, los porcentajes deben ser 10% y 20% (en cualquier orden).`);
+                return;
+            }
+        } else if (corte === 'corte3') {
+            // Corte 3: debe ser 20% y 20%
+            if (porcentajeEvaluacion1 !== 20 || porcentajeEvaluacion2 !== 20) {
+                alert('Para Corte 3, ambos porcentajes deben ser 20%.');
+                return;
+            }
+        }
+        
+        // Actualizar porcentajes usados
+        porcentajesUsados[corte] += totalCorte;
+        
+        // Formatear fechas para mostrar
+        const fecha1Formateada = new Date(fechaEvaluacion1).toLocaleDateString('es-ES');
+        const fecha2Formateada = new Date(fechaEvaluacion2).toLocaleDateString('es-ES');
+        
+        // Crear elementos de lista para cada evaluación
+        // Evaluación 1
+        const li1 = document.createElement('li');
+        li1.innerHTML = `
+            <span>${asignatura}</span>
+            <span class="${configuracionPorcentajes[corte].colorClass}">${configuracionPorcentajes[corte].nombre}</span>
+            <span class="evaluacion evaluacion-1"><i class="fas fa-chart-line"></i> Evaluación 1</span>
+            <span>${nombreEvaluacion1}</span>
+            <span>${porcentajeEvaluacion1}%</span>
+            <span>${fecha1Formateada}</span>
+            <button class="eliminar" data-corte="${corte}" data-porcentaje="${porcentajeEvaluacion1}"><i class="fas fa-trash"></i> Eliminar</button>
+        `;
+        
+        // Evaluación 2
+        const li2 = document.createElement('li');
+        li2.innerHTML = `
+            <span>${asignatura}</span>
+            <span class="${configuracionPorcentajes[corte].colorClass}">${configuracionPorcentajes[corte].nombre}</span>
+            <span class="evaluacion evaluacion-2"><i class="fas fa-chart-bar"></i> Evaluación 2</span>
+            <span>${nombreEvaluacion2}</span>
+            <span>${porcentajeEvaluacion2}%</span>
+            <span>${fecha2Formateada}</span>
+            <button class="eliminar" data-corte="${corte}" data-porcentaje="${porcentajeEvaluacion2}"><i class="fas fa-trash"></i> Eliminar</button>
+        `;
+        
+        // Agregar a la lista
+        listaExamenes.appendChild(li1);
+        listaExamenes.appendChild(li2);
+        
+        // Limpiar campos
+        asignaturaInput.value = '';
+        corteSelect.value = '';
+        nombreEvaluacion1Input.value = '';
+        porcentajeEvaluacion1Input.value = '';
+        fechaEvaluacion1Input.value = '';
+        nombreEvaluacion2Input.value = '';
+        porcentajeEvaluacion2Input.value = '';
+        fechaEvaluacion2Input.value = '';
+        
+        // Actualizar resumen
+        actualizarResumenCortes();
+        
+        // Agregar eventos eliminar a ambos botones
+        const eliminarBtns1 = li1.querySelectorAll('.eliminar');
+        eliminarBtns1.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const corte = this.getAttribute('data-corte');
+                const porcentaje = parseFloat(this.getAttribute('data-porcentaje'));
+                
+                // Restar del registro de porcentajes usados
+                porcentajesUsados[corte] -= porcentaje;
+                // Actualizar resumen
+                actualizarResumenCortes();
+                // Eliminar el elemento
+                listaExamenes.removeChild(li1);
+            });
+        });
+        
+        const eliminarBtns2 = li2.querySelectorAll('.eliminar');
+        eliminarBtns2.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const corte = this.getAttribute('data-corte');
+                const porcentaje = parseFloat(this.getAttribute('data-porcentaje'));
+                
+                // Restar del registro de porcentajes usados
+                porcentajesUsados[corte] -= porcentaje;
+                // Actualizar resumen
+                actualizarResumenCortes();
+                // Eliminar el elemento
+                listaExamenes.removeChild(li2);
+            });
+        });
+    }
+    
+    // Establecer fecha mínima como hoy
+    const today = new Date().toISOString().split('T')[0];
+    fechaEvaluacion1Input.min = today;
+    fechaEvaluacion2Input.min = today;
+    
+    // Inicializar resumen
+    actualizarResumenCortes();
+</script>
+
+ <script src="../javascript/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
+
+
+
+
