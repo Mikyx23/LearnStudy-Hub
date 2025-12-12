@@ -16,28 +16,116 @@
     </div>
 
     <!-- INICIO DE SESION -->
-    <div class="form-container">
+    <div class="form-container" id="form-login">
         <div class="icon-container"><i class="bi bi-person-circle user-icon"></i></div>
         <div class="btn-container">
-                <button class="btn-switch">Iniciar Sesion</button>
-                <button class="btn-switch">Registro</button>
+                <button id="btn-login_form-login" class="btn-switch form-selected">Iniciar Sesion</button>
+                <button id="btn-registro_form-login" class="btn-switch">Registro</button>
         </div>
         <form action="/api/login" class="login-form" method="POST">
             <div class="input-container">
                 <!-- <i class="bi bi-person-fill input-icon"></i> -->
-                <input type="text" placeholder="Cedula" name="Cedula" id="input-cedula" required>
+                <label for="input-name">Cedula</label>
+                <input type="text" name="Cedula" id="input-cedula" required>
             </div>
             <div class="input-container">
                 <!-- <i class="bi bi-lock-fill input-icon"></i> -->
-                <input type="password" placeholder="Contraseña" name="password" id="input-password" required>
+                <label for="input-password">Contraseña</label>
+                <input type="password" name="password" id="input-password" required>
             </div>
-            <button class="btn-login">Iniciar Sesion</button>
+            <button class="btn btn-login">Iniciar Sesion</button>
             <div class="link-container">
-                <a href="" class="link-recuperar">Olvidaste tu contraseña?</a>
+                <a id="link-recover_form-login" href="#" class="link-recuperar">Olvidaste tu contraseña?</a>
             </div>
         </form>
     </div>
     
-    <!-- <script src="../javascript/login.js"></script> -->
+    <!-- REGISTRO -->
+    <div class="form-container ocultar" id="form-registro">
+        <div class="btn-container">
+                <button id="btn-login_form-registro" class="btn-switch">Iniciar Sesion</button>
+                <button id="btn-registro_form-registro" class="btn-switch form-selected">Registro</button>
+        </div>
+        <form action="/api/login" class="register-form" method="POST">
+            <div class="name-lastname-container">
+                <div class="input-container input-container-register">
+                    <label for="input-name">Nombre</label>
+                    <input type="text" name="name" id="input-name" required>
+                </div>
+                <div class="input-container input-container-register">
+                    <label for="input-lastname">Apellido</label>
+                    <input type="text" name="lastname" id="input-lastname" required>
+                </div>
+            </div>
+            <div class="input-container input-container-register">
+                <label for="register-cedula">Cedula</label>
+                <input type="text" name="Cedula" id="register-cedula" required>
+            </div>
+            <div class="input-container input-container-register">
+                <label for="input-email">Correo Electronico</label>
+                <input type="email" name="email" id="input-email" required>
+            </div>
+            <div class="input-container input-container-register">
+                <label for="register-password">Contraseña</label>
+                <input type="password" name="password" id="register-password" required>
+            </div>
+            <div class="input-container input-container-register">
+                <label for="input-confirm-password">Confirmar Contraseña</label>
+                <input type="password" name="confirm-password" id="input-confirm-password" required>
+            </div>
+            <div class="input-container input-container-register">
+                <label for="input-num-carreras">Numero de Carreras</label>
+                <input type="number" name="num-carreras" id="input-num-carreras" required>
+            </div>
+            <div class="input-container input-container-register">
+                <label for="input-select-carrer-1">Selecciona tu Carrera</label>
+                <select name="select-carrer-1" id="input-select-carrer-1">
+                    <option value="" disabled selected>Selecciona tu Carrera</option>
+                    <option value="41">Arquitectura</option>
+                    <option value="42">Ing. Civil</option>
+                    <option value="43">Ing. Electrica</option>
+                    <option value="44">Ing. Electronica</option>
+                    <option value="45">Ing. Industrial</option>
+                    <option value="46">Ing. Mtto Mecanico</option>
+                    <option value="47">Ing. Sistemas</option>
+                    <option value="48">Ing. Diseño Industrial</option>
+                </select>
+            </div>
+            <div class="input-container input-container-register">
+                <label for="input-select-carrer-2">Selecciona tu Carrera</label>
+                <select name="select-carrer-2" id="input-select-carrer-2">
+                    <option value="" disabled selected>Selecciona tu Carrera</option>
+                    <option value="41">Arquitectura</option>
+                    <option value="42">Ing. Civil</option>
+                    <option value="43">Ing. Electrica</option>
+                    <option value="44">Ing. Electronica</option>
+                    <option value="45">Ing. Industrial</option>
+                    <option value="46">Ing. Mtto Mecanico</option>
+                    <option value="47">Ing. Sistemas</option>
+                    <option value="48">Ing. Diseño Industrial</option>
+                </select>
+            </div>
+            <button class="btn btn-register">Registrarse</button>
+        </form>
+    </div>
+
+    <!-- RECUPERAR CONTRASEÑA -->
+    <div class="form-container ocultar" id="form-recuperar">
+        <div>
+            <h2>Recuperar Contraseña</h2>
+        </div>
+        <form action="" class="recover-form">
+            <div>
+                <label for="recover-email">Correo Electronico</label>
+                <input type="email" id="recover-email" required>
+            </div>
+            <button class="btn btn-recover">Enviar</button>
+        </form>
+        <div>
+            <a href="#" class="link-recuperar" id="link-recover_form-recuperar">Volver al Login</a>
+        </div>
+    </div>
+    
+    <script src="../javascript/login.js"></script>
 </body>
 </html>

@@ -14,8 +14,6 @@ body{
     display: flex;
     flex-direction: column;
     gap: 50px;
-    align-items: center;
-    justify-content: center;
 }
 
 /* Overlay para el fondo */
@@ -29,6 +27,8 @@ body{
 
 /* Titulo de la pagina */
 .header-logo{
+    align-self: center;
+    margin-top: 40px;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -52,6 +52,7 @@ h1{
 
 /* Contenedor del formulario */
 .form-container{
+    margin: auto;
     width: 420px;
     background-color: transparent;
     backdrop-filter: blur(20px);
@@ -92,7 +93,7 @@ h1{
     background-color: #fff0;
     border: none;
     border-bottom: 1px solid #fff5;
-    color: #fff;
+    color: #fff6;
     font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
@@ -103,17 +104,18 @@ h1{
     color: #000;
 }
 
-.login-form{
+.login-form, .register-form, .recover-form{
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
     align-items: center;
 }
 
 .input-container{
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 /* .input-icon{
@@ -133,7 +135,7 @@ input{
     border: 1px solid #fff5;
 }
 
-.btn-login{
+.btn{
     width: 50%;
     padding: 10px;
     border: none;
@@ -152,5 +154,58 @@ input{
 .link-recuperar{
     font-size: 0.8rem;
     color: #48e;
-    border-bottom: 1px solid #48e;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* REGISTRO */
+
+.input-container-register{
+    width: 100%;
+}
+
+.name-lastname-container{
+    display: flex;
+    gap: 10px;
+}
+
+.btn-register{
+    width: 78%;
+}
+
+select{
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    outline: none;
+    font-size: 1rem;
+    background: #fff2;
+    border: 1px solid #fff5;
+}
+
+/* RECUPERAR CONTRASEÑA */
+
+h2{
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+label{
+    color: #0007;
+    font-weight: bold;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    margin-left: 10px;
+}
+
+.ocultar{
+    display: none;
+}
+
+.form-selected{
+    transition: border-color 0.8s;
+    border-color: #fff;
+    color: #fff;
 }

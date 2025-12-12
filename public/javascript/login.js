@@ -1,27 +1,35 @@
-const linkRegistro = document.getElementById('link-registro');
+// Elementos del DOM
+// Botones para cambiar entre formularios
+const btnLoginFormRegistro = document.getElementById('btn-login_form-registro');
+const btnRegistroFormLogin = document.getElementById('btn-registro_form-login');
+// Formularios
 const formLogin = document.getElementById('form-login');
 const formRegistro = document.getElementById('form-registro');
-const linkRecuperar = document.getElementById('link-recuperar');
 const formRecuperar = document.getElementById('form-recuperar');
-const linkLoginRegistro = document.getElementById('link-login-registro');
-const linkLoginRecuperar = document.getElementById('link-login-recuperar');
+// Links para recuperar contraseña y volver al login
+const linkRecuperar = document.getElementById('link-recover_form-login');
+const linkVolverLogin = document.getElementById('link-recover_form-recuperar');
 
-linkRegistro.addEventListener('click', () => {
-    formLogin.classList.add('ocultar');
-    formRegistro.classList.remove('ocultar');
-});
-
-linkRecuperar.addEventListener('click', () =>{
-    formLogin.classList.add('ocultar');
-    formRecuperar.classList.remove('ocultar');
-});
-
-linkLoginRecuperar.addEventListener('click', () => {
+// Volver al login desde recuperar contraseña
+linkVolverLogin.addEventListener('click', () => {
     formRecuperar.classList.add('ocultar');
     formLogin.classList.remove('ocultar');
 });
 
-linkLoginRegistro.addEventListener('click', () => {
+// Ir a recuperar contraseña desde login
+linkRecuperar.addEventListener('click', () => {
+    formLogin.classList.add('ocultar');
+    formRecuperar.classList.remove('ocultar');
+});
+
+// Cambiar a formularios de login desde registro
+btnLoginFormRegistro.addEventListener('click', () => {
     formRegistro.classList.add('ocultar');
     formLogin.classList.remove('ocultar');
 });
+
+// Cambiar a formularios de registro desde login
+btnRegistroFormLogin.addEventListener('click', () => {
+    formLogin.classList.add('ocultar');
+    formRegistro.classList.remove('ocultar');
+}); 
