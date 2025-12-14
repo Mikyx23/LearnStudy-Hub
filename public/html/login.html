@@ -46,7 +46,7 @@
                 <button id="btn-login_form-registro" class="btn-switch">Iniciar Sesion</button>
                 <button id="btn-registro_form-registro" class="btn-switch form-selected">Registro</button>
         </div>
-        <form action="/api/login" class="register-form" method="POST">
+        <form action="/api/login/registro" class="register-form" method="POST">
             <div class="name-lastname-container">
                 <div class="input-container input-container-register">
                     <label for="input-name">Nombre</label>
@@ -59,7 +59,7 @@
             </div>
             <div class="input-container input-container-register">
                 <label for="register-cedula">Cedula</label>
-                <input type="text" name="Cedula" id="register-cedula" required>
+                <input type="text" name="cedula" id="register-cedula" required>
             </div>
             <div class="input-container input-container-register">
                 <label for="input-email">Correo Electronico</label>
@@ -75,11 +75,11 @@
             </div>
             <div class="input-container input-container-register">
                 <label for="input-num-carreras">Numero de Carreras</label>
-                <input type="number" name="num-carreras" id="input-num-carreras" required>
+                <input type="number" name="numCarrer" id="input-num-carreras" required>
             </div>
-            <div class="input-container input-container-register">
+            <div class="input-container input-container-register ocultar" id="carrer-1-container">
                 <label for="input-select-carrer-1">Selecciona tu Carrera</label>
-                <select name="select-carrer-1" id="input-select-carrer-1">
+                <select name="carrer1" id="input-select-carrer-1">
                     <option value="" disabled selected>Selecciona tu Carrera</option>
                     <option value="41">Arquitectura</option>
                     <option value="42">Ing. Civil</option>
@@ -91,9 +91,9 @@
                     <option value="48">Ing. Diseño Industrial</option>
                 </select>
             </div>
-            <div class="input-container input-container-register">
+            <div class="input-container input-container-register ocultar" id="carrer-2-container">
                 <label for="input-select-carrer-2">Selecciona tu Carrera</label>
-                <select name="select-carrer-2" id="input-select-carrer-2">
+                <select name="carrer2" id="input-select-carrer-2">
                     <option value="" disabled selected>Selecciona tu Carrera</option>
                     <option value="41">Arquitectura</option>
                     <option value="42">Ing. Civil</option>
