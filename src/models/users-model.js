@@ -41,6 +41,19 @@ export class Usuarios{
             throw error;
         }
     }
+
+    static VerificarCorreo = async (correo) => {
+        try{
+            const query = 'SELECT COUNT(*) FROM tbl_usuarios WHERE correo = ?'; //Query para verificar si el correo ya existe
+            const [rows] = await pool.execute(query,[correo]); //Ejecutar consulta
+            const count = rows[0]['COUNT(*)']; //Obtener el conteo de correos encontrados
+            return count > 0; //Retorna true si el correo ya existe, false si no
+        }
+        catch(error){
+            console.error(error);
+            throw error;   
+        } 
+    }
 }
 
 

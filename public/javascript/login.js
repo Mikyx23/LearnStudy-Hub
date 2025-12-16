@@ -15,26 +15,29 @@ const selectCarrera1 = document.getElementById('carrer-1-container');
 const selectCarrera2 = document.getElementById('carrer-2-container');
 // numero de opciones en los selects
 const numeroCarreras = document.getElementById('input-num-carreras');
+//  Email verificacion
+const containerCorreo = document.getElementById('container-email');
+const formularioRegistro = document.getElementById('formulario-registro');
+const mensajeEmail = document.getElementById('email-message');
+//  Div Inputs
+const containerInputNombre = document.getElementById('input-container-name');
+const containerInputApellido = document.getElementById('input-container-lastname');
+const containerInputCedula = document.getElementById('input-container-cedula');
+const containerInputContrasena = document.getElementById('input-container-password');
+const containerInputConfirmar = document.getElementById('input-container-confirm');
+//  Inputs
+const inputNombre = document.getElementById('input-name');
+const inputApellido = document.getElementById('input-lastname');
+const inputCedula = document.getElementById('register-cedula');
+const inputCorreo = document.getElementById('input-email');
+const inputContrasena = document.getElementById('register-password');
+const inputConfirmar = document.getElementById('input-confirm-password');
+const inputCarrera1 = document.getElementById('input-select-carrer-1');
+const inputCarrera2 = document.getElementById('input-select-carrer-2');
 
-//  Eventos
+const mensajePassword = document.getElementById('password-message');
 
-//Mostrar selects
-numeroCarreras.addEventListener('change', (event) => {
-    const valorSeleccionado = event.target.value;
-
-    if (valorSeleccionado === '1') {
-        MostrarElemento(selectCarrera1);
-        OcultarElemento(selectCarrera2);
-    }
-    else if (valorSeleccionado === '2') {
-        MostrarElemento(selectCarrera1);
-        MostrarElemento(selectCarrera2);
-    }
-    else {
-        OcultarElemento(selectCarrera1);
-        OcultarElemento(selectCarrera2);
-    }
-});
+//  EVENTOS
 
 // Volver al login desde recuperar contraseña
 linkVolverLogin.addEventListener('click', () => {
@@ -60,6 +63,138 @@ btnRegistroFormLogin.addEventListener('click', () => {
     MostrarElemento(formRegistro);
 });
 
+//Mostrar selects
+numeroCarreras.addEventListener('change', (event) => {
+    const valorSeleccionado = event.target.value;
+
+    if (valorSeleccionado === '1') {
+        MostrarElemento(selectCarrera1);
+        OcultarElemento(selectCarrera2);
+        inputCarrera2.required = false;
+    }
+    else if (valorSeleccionado === '2') {
+        MostrarElemento(selectCarrera1);
+        MostrarElemento(selectCarrera2);
+        inputCarrera2.required = true;
+    }
+    else {
+        OcultarElemento(selectCarrera1);
+        OcultarElemento(selectCarrera2);
+        inputCarrera2.required = false;
+    }
+});
+
+inputNombre.addEventListener('blur', () => {
+    ValidarInput(containerInputNombre,inputNombre.value,ValidarNombreApellido);
+});
+
+inputApellido.addEventListener('blur', () => {
+    ValidarInput(containerInputApellido,inputApellido.value,ValidarNombreApellido);
+});
+
+inputCedula.addEventListener('blur', () => {
+    ValidarInput(containerInputCedula,inputCedula.value,ValidarCedula);
+});
+
+inputCorreo.addEventListener('blur', () => {
+    if(ValidarCorreo(inputCorreo.value)){
+        CampoValido(containerCorreo);
+        LimpiarError(containerCorreo,mensajeEmail);
+    }
+    else if(inputCorreo.value.trim().length === 0){
+        containerCorreo.classList.remove('valido');
+        containerCorreo.classList.remove('invalido');
+        LimpiarError(containerCorreo,mensajeEmail);
+    }
+    else{
+        CampoInvalido(containerCorreo);
+    }
+});
+
+inputContrasena.addEventListener('blur', () => {
+    if(ValidarContrasena(inputContrasena.value)){
+        CampoValido(containerInputContrasena);
+        LimpiarError(containerInputContrasena,mensajePassword);
+    }
+    else if(inputContrasena.value.trim().length === 0){
+        containerInputContrasena.classList.remove('valido');
+        containerInputContrasena.classList.remove('invalido');
+        LimpiarError(containerInputContrasena,mensajePassword);
+    }
+    else{
+        CampoInvalido(containerInputContrasena);
+        MostrarError(containerInputContrasena,mensajePassword);
+    }
+});
+
+inputConfirmar.addEventListener('blur', () => {
+    if(ValidarConfirmar(inputContrasena.value,inputConfirmar.value)){
+        CampoValido(containerInputConfirmar);
+    }
+    else if(inputConfirmar.value.trim().length === 0){
+        containerInputConfirmar.classList.remove("valido");
+        containerInputConfirmar.classList.remove("invalido");
+    }
+    else{
+        CampoInvalido(containerInputConfirmar);
+    }
+});
+
+numeroCarreras.addEventListener('keydown', (event) =>{
+    const keysPermitidas = [
+            'Tab', 'Backspace', 'Delete', 
+            'ArrowLeft', 'ArrowRight', 
+            'ArrowUp', 'ArrowDown'
+        ];
+
+    if(keysPermitidas.includes(event.key)) {
+        return; 
+    }
+    if(event.key.match(/[0-9.]/)) {
+        event.preventDefault();
+    }
+});
+
+formularioRegistro.addEventListener('submit', async (event) => {
+    if(await !ValidarCampos()){
+        return
+    }
+
+    event.preventDefault();
+    LimpiarError(containerCorreo,mensajeEmail);
+
+    const datos = new FormData(event.target);
+    const datosJSON = Object.fromEntries(datos.entries());
+    
+    try{
+        const respuesta = await fetch('/api/login/registro', {
+            method: 'POST',
+            body: JSON.stringify(datosJSON),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const datosRespuesta = await respuesta.json();
+
+        if(!respuesta.ok && datosRespuesta.message === 'El correo ya esta registrado'){
+            MostrarError(containerCorreo,mensajeEmail);
+        }
+        else{
+            if(datosRespuesta.redirectUrl){
+                setTimeout(() => {
+                    window.location.href = datosRespuesta.redirectUrl;
+                },1500)
+            }
+        }
+    }
+    catch(error){
+        console.error('Error en el registro:', error);
+        console.error('Mensaje: ', error.message);
+        alert('Error al registrar. Intente de nuevo');
+    }
+});
+
 // Funciones 
 
 //Ocultar elemento
@@ -70,4 +205,81 @@ const OcultarElemento = (elemento) => {
 //Mostrar elemento
 const MostrarElemento = (elemento) => {
     elemento.classList.remove('ocultar');
+}
+
+const MostrarError = (contenedor,mensaje) => {
+    MostrarElemento(mensaje);
+    contenedor.classList.add('invalido');
+}
+
+const LimpiarError = (contenedor,mensaje) => {
+    OcultarElemento(mensaje);
+    contenedor.classList.remove('invalido');
+}
+
+const CampoValido = (elemento) => {
+    elemento.classList.remove('invalido');
+    elemento.classList.add('valido');
+}
+
+const CampoInvalido = (elemento) => {
+    elemento.classList.remove('valido');
+    elemento.classList.add('invalido');
+}
+
+const ValidarInput = (elemento,valor,validar) => {
+    if(validar(valor) && valor.length > 0){
+        CampoValido(elemento);
+    }
+    else if(valor.trim().length === 0){
+        elemento.classList.remove('valido');
+        elemento.classList.remove('invalido');
+    }
+    else{
+        CampoInvalido(elemento);
+    }
+}
+
+const ValidarNombreApellido = (nombre) => {
+    return /^([a-zA-ZáéíóúÁÉÍÓÚñÑ])+$/.test(nombre) && nombre.length > 1;
+}
+
+const ValidarCedula = (cedula) => {
+    return /^\d+$/.test(cedula) && cedula.length > 7;
+}
+
+const ValidarCorreo = (correo) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(correo);
+}
+
+const ValidarContrasena = (contrasena) => {
+    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[\s\S]{8,}$/.test(contrasena);
+}
+
+const ValidarConfirmar = (contrasena,confirmar) => {
+    return contrasena === confirmar && contrasena.length > 0;
+}
+
+const ValidarCampos = async () => {
+    let band = true;
+    if(!ValidarNombreApellido(inputNombre.value)){
+        return band = false;
+    }
+
+    if(!ValidarNombreApellido(inputApellido.value)){
+        return band = false;
+    }
+
+    if(!ValidarCedula(inputCedula.value)){
+        return band = false;
+    }
+
+    if(!ValidarContrasena(inputContrasena.value)){
+        return band = false;
+    }
+
+    if(!ValidarConfirmar(inputConfirmar.value)){
+        return band = false;
+    }
+    return band;
 }

@@ -209,3 +209,17 @@ label{
     border-color: #fff;
     color: #fff;
 }
+
+.invalido span{
+    color: #f55;
+    font-size: 0.8rem;
+    margin-top: 5px;
+}
+
+.invalido input{
+    border-color: #f55;
+}
+
+.valido input{
+    border-color: #5f5;
+}

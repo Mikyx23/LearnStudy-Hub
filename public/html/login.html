@@ -46,40 +46,42 @@
                 <button id="btn-login_form-registro" class="btn-switch">Iniciar Sesion</button>
                 <button id="btn-registro_form-registro" class="btn-switch form-selected">Registro</button>
         </div>
-        <form action="/api/login/registro" class="register-form" method="POST">
+        <form id="formulario-registro" action="/api/login/registro" class="register-form" method="POST">
             <div class="name-lastname-container">
-                <div class="input-container input-container-register">
+                <div class="input-container input-container-register" id="input-container-name">
                     <label for="input-name">Nombre</label>
                     <input type="text" name="name" id="input-name" required>
                 </div>
-                <div class="input-container input-container-register">
+                <div class="input-container input-container-register" id="input-container-lastname">
                     <label for="input-lastname">Apellido</label>
                     <input type="text" name="lastname" id="input-lastname" required>
                 </div>
             </div>
-            <div class="input-container input-container-register">
+            <div class="input-container input-container-register" id="input-container-cedula">
                 <label for="register-cedula">Cedula</label>
                 <input type="text" name="cedula" id="register-cedula" required>
             </div>
-            <div class="input-container input-container-register">
+            <div class="input-container input-container-register" id="container-email">
                 <label for="input-email">Correo Electronico</label>
                 <input type="email" name="email" id="input-email" required>
+                <span id="email-message" class="ocultar">Este correo ya esta registrado</span>
             </div>
-            <div class="input-container input-container-register">
+            <div class="input-container input-container-register" id="input-container-password">
                 <label for="register-password">Contraseña</label>
                 <input type="password" name="password" id="register-password" required>
+                <span id="password-message" class="ocultar">Minimo 8 caracteres, una letra mayuscula y minuscula, un numero y un caracter especial</span>
             </div>
-            <div class="input-container input-container-register">
+            <div class="input-container input-container-register" id="input-container-confirm">
                 <label for="input-confirm-password">Confirmar Contraseña</label>
                 <input type="password" name="confirm-password" id="input-confirm-password" required>
             </div>
-            <div class="input-container input-container-register">
+            <div class="input-container input-container-register" id="input-container-num-carrer">
                 <label for="input-num-carreras">Numero de Carreras</label>
-                <input type="number" name="numCarrer" id="input-num-carreras" required>
+                <input type="number" name="numCarrer" id="input-num-carreras" min="1" max="2" step="1" required>
             </div>
             <div class="input-container input-container-register ocultar" id="carrer-1-container">
                 <label for="input-select-carrer-1">Selecciona tu Carrera</label>
-                <select name="carrer1" id="input-select-carrer-1">
+                <select name="carrer1" id="input-select-carrer-1" required>
                     <option value="" disabled selected>Selecciona tu Carrera</option>
                     <option value="41">Arquitectura</option>
                     <option value="42">Ing. Civil</option>

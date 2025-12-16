@@ -22,15 +22,25 @@ routerLogin.post('/', (req, res) => {
     }
 });
 
-import { CrearUsuarioController } from '../controllers/users-controller.js';
+import { CrearUsuarioController, VerificarCorreoController } from '../controllers/users-controller.js';
 import { CrearInscripcionCarreraController } from '../controllers/inscripcion-controller.js';
 routerLogin.post('/registro', async (req,res) => {
-    if(req.body.name === undefined || req.body.name === '') return res.send('El nombre es obligatorio');
-    if(req.body.lastname === undefined || req.body.lastname === '') return res.send('El apellido es obligatorio');
-    if(req.body.cedula === undefined || req.body.cedula === '') return res.send('La cedula es obligatoria');
-    if(req.body.email === undefined || req.body.email === '') return res.send('El correo es obligatorio');
-    if(req.body.password === undefined || req.body.password === '') return res.send('La contraseña es obligatoria');
-    if(req.body.numCarrer === undefined || req.body.numCarrer === '') return res.send('El numero de carreras es obligatorio');
+    // if(req.body.name === undefined || req.body.name === '') return res.send('El nombre es obligatorio');
+    // if(req.body.lastname === undefined || req.body.lastname === '') return res.send('El apellido es obligatorio');
+    // if(req.body.cedula === undefined || req.body.cedula === '') return res.send('La cedula es obligatoria');
+    // if(req.body.email === undefined || req.body.email === '') return res.send('El correo es obligatorio');
+    // if(req.body.password === undefined || req.body.password === '') return res.send('La contraseña es obligatoria');
+    // if(req.body.numCarrer === undefined || req.body.numCarrer === '') return res.send('El numero de carreras es obligatorio');
+
+    const correoExiste = await VerificarCorreoController(req.body.email);
+
+    if(correoExiste){
+        // return res.send('El correo ya esta registrado');
+        return res.status(400).json({
+            success: false,
+            message: 'El correo ya esta registrado'
+        });
+    }
 
     if(req.body.numCarrer === '1'){
         const {name, lastname, cedula, email, password, numCarrer, carrer1} = req.body;
@@ -38,7 +48,12 @@ routerLogin.post('/registro', async (req,res) => {
         const inscripcion = await CrearInscripcionCarreraController(registro.id, carrer1);
 
         if(inscripcion.respuesta && registro.respuesta){
-            res.send('Usuario registrado exitosamente');
+            // res.redirect('/');
+            res.status(200).json({
+                success: true,
+                message: 'Usuario registrado exitosamente',
+                redirectUrl: '/api/login'
+            });
         }
         else{
             res.send('Error al registrar al usuario o la inscripcion a la carrera');
@@ -51,10 +66,15 @@ routerLogin.post('/registro', async (req,res) => {
         const inscripcion2 = await CrearInscripcionCarreraController(registro.id, carrer2);
 
         if(inscripcion1.respuesta && inscripcion2.respuesta && registro.respuesta){
-            res.send('Usuario registrado exitosamente');
+            // res.send('Usuario registrado exitosamente');
+            res.status(200).json({
+                success: true,
+                message: 'Usuario registrado exitosamente',
+                redirectUrl: '/api/login'
+            });
         }
         else{
-            res.send('Error al registrar al usuario o las inscripciones a las carreras');
+            res.send('Error al registrar');
         }
     }
     else{
