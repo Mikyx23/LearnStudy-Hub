@@ -1,5 +1,5 @@
 import {pool} from './conexion.js';
-import bcrypt from 'bcryptjs';
+import bcrypt, { compareSync } from 'bcryptjs';
 
 export class Usuarios{
     constructor(id_usuario,nombre,apellido,cedula,correo,contraseña){
@@ -42,6 +42,54 @@ export class Usuarios{
         }
     }
 
+    static ObtenerUsuario = async (id) => {
+        try{
+            const query = 'SELECT nombre, apellido FROM tbl_usuarios WHERE id_usuario = ?';
+            const [rows] = await pool.execute(query,[id]);
+
+            if(rows.length > 0){
+                return {
+                    success: true,
+                    nombre: rows[0].nombre,
+                    apellido: rows[0].apellido
+                }
+            }
+            else{
+                return{
+                    success: false
+                }
+            }
+        }
+        catch{
+            throw new Error('Ha ocurrido un error inesperado');
+        }
+    }
+
+    static VerificarUsuario = async (cedula,password) => {
+        try{
+            const query = 'SELECT id_usuario, nombre, apellido, contraseña FROM tbl_usuarios WHERE cedula = ?';
+            const cedulaParseada = parseInt(cedula,10);
+            const [rows] = await pool.execute(query,[cedulaParseada]);
+
+            if(rows.length > 0 && bcrypt.compareSync(password,rows[0].contraseña)){
+                return {
+                    success: true,
+                    id: rows[0].id_usuario,
+                    name: rows[0].nombre,
+                    lastname: rows[0].apellido
+                };
+            }
+            else{
+                return {
+                    success: false
+                };
+            }
+        }
+        catch(error){
+            throw new Error('Ha ocurrido un error inesperado');
+        }
+    }
+
     static VerificarCorreo = async (correo) => {
         try{
             const query = 'SELECT COUNT(*) FROM tbl_usuarios WHERE correo = ?'; //Query para verificar si el correo ya existe
@@ -50,13 +98,19 @@ export class Usuarios{
             return count > 0; //Retorna true si el correo ya existe, false si no
         }
         catch(error){
-            console.error(error);
-            throw error;   
+            throw new Error('Ha ocurrido un error inesperado'); 
         } 
     }
+
+    static VerificarCedula = async (cedula) => {
+        try{
+            const query = 'SELECT COUNT(*) FROM tbl_usuarios WHERE cedula = ?';
+            const [rows] = await pool.execute(query,[cedula]);
+            const count = rows[0]['COUNT(*)'];
+            return count > 0;
+        }
+        catch(error){
+            throw new Error('Ha ocurrido un error inesperado'); 
+        }
+    }
 }
-
-
-// export const InsertarUsuario = async (cedula,carrer,name2,lastname,email,password2) => {
-    
-// }

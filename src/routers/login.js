@@ -3,27 +3,46 @@ export const routerLogin = express.Router();
 import path from 'path';
 // VARIABLES GLOBALES
 import { fileURLToPath } from 'url';
+import { CrearUsuarioController, VerificarCorreoController, VerificarCedulaController, VerificarUsuario } from '../controllers/users-controller.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+import jwt from 'jsonwebtoken';
 
 routerLogin.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../../public/html/login.html'));
 });
 
 // Ruta para manejar el POST del formulario
-routerLogin.post('/', (req, res) => {
-    const { username, password } = req.body;
+routerLogin.post('/', async (req, res) => {
+    const { cedula, password } = req.body;
     
-    // Aquí valida las credenciales (ej. contra una base de datos)
-    if (username === 'admin' && password === '1234') {
-        res.send('Inicio de sesión exitoso');
-    } else {
-        res.send('Credenciales incorrectas');
+    if(cedula === undefined || cedula === '') return res.status(400).json({message: 'La cedula es invalida'});
+    if(password === undefined || password === '') return res.status(400).json({message: 'La contraseña es invalida'});
+    
+    const result = await VerificarUsuario(cedula,password);
+    //  Creando token para info del usuario
+    const token = jwt.sign({id: result.id}, SECRET_JWT_KEY, {
+        expiresIn: '1h'
+    });
+
+    if(result.success){
+        res.cookie('access_token', token, {
+            httpOnly: true,
+            sameSite: 'strict',
+            maxAge: 1000 * 60 * 60
+        });
+
+        res.status(200).json({
+            redirectUrl: '/api/inicio',
+        });
+    }
+    else{
+        res.status(400).json({message: 'Cedula o contrasena invalida'});
     }
 });
 
-import { CrearUsuarioController, VerificarCorreoController } from '../controllers/users-controller.js';
 import { CrearInscripcionCarreraController } from '../controllers/inscripcion-controller.js';
+import { SECRET_JWT_KEY } from '../../config.js';
 routerLogin.post('/registro', async (req,res) => {
     // if(req.body.name === undefined || req.body.name === '') return res.send('El nombre es obligatorio');
     // if(req.body.lastname === undefined || req.body.lastname === '') return res.send('El apellido es obligatorio');
@@ -32,7 +51,15 @@ routerLogin.post('/registro', async (req,res) => {
     // if(req.body.password === undefined || req.body.password === '') return res.send('La contraseña es obligatoria');
     // if(req.body.numCarrer === undefined || req.body.numCarrer === '') return res.send('El numero de carreras es obligatorio');
 
+    const cedulaExiste = await VerificarCedulaController(req.body.cedula);
     const correoExiste = await VerificarCorreoController(req.body.email);
+
+    if(cedulaExiste){
+        return res.status(400).json({
+            success: false,
+            message: 'La cedula ya esta registrada'
+        });
+    }
 
     if(correoExiste){
         // return res.send('El correo ya esta registrado');

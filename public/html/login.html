@@ -22,16 +22,17 @@
                 <button id="btn-login_form-login" class="btn-switch form-selected">Iniciar Sesion</button>
                 <button id="btn-registro_form-login" class="btn-switch">Registro</button>
         </div>
-        <form action="/api/login" class="login-form" method="POST">
+        <form id="formulario-login" action="/api/login" class="login-form" method="POST">
             <div class="input-container">
                 <!-- <i class="bi bi-person-fill input-icon"></i> -->
                 <label for="input-name">Cedula</label>
-                <input type="text" name="Cedula" id="input-cedula" required>
+                <input type="text" name="cedula" id="input-cedula" required>
             </div>
-            <div class="input-container">
+            <div id="login-container-password" class="input-container">
                 <!-- <i class="bi bi-lock-fill input-icon"></i> -->
                 <label for="input-password">Contraseña</label>
                 <input type="password" name="password" id="input-password" required>
+                <i id="icon-eyes" class="bi bi-eye"></i>
             </div>
             <button class="btn btn-login">Iniciar Sesion</button>
             <div class="link-container">
@@ -39,7 +40,7 @@
             </div>
         </form>
     </div>
-    
+
     <!-- REGISTRO -->
     <div class="form-container ocultar" id="form-registro">
         <div class="btn-container">
@@ -60,6 +61,7 @@
             <div class="input-container input-container-register" id="input-container-cedula">
                 <label for="register-cedula">Cedula</label>
                 <input type="text" name="cedula" id="register-cedula" required>
+                <span id="cedula-message" class="ocultar">La cedula ya esta registrada</span>
             </div>
             <div class="input-container input-container-register" id="container-email">
                 <label for="input-email">Correo Electronico</label>

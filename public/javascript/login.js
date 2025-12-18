@@ -36,7 +36,11 @@ const inputCarrera1 = document.getElementById('input-select-carrer-1');
 const inputCarrera2 = document.getElementById('input-select-carrer-2');
 
 const mensajePassword = document.getElementById('password-message');
+const mensajeCedula = document.getElementById('cedula-message');
 
+const formularioLogin = document.getElementById('formulario-login');
+const ojoIcono = document.getElementById('icon-eyes');
+const inputLoginPassword = document.getElementById('input-password');
 //  EVENTOS
 
 // Volver al login desde recuperar contraseña
@@ -61,6 +65,15 @@ btnLoginFormRegistro.addEventListener('click', () => {
 btnRegistroFormLogin.addEventListener('click', () => {
     OcultarElemento(formLogin);
     MostrarElemento(formRegistro);
+});
+
+ojoIcono.addEventListener('click', () => {
+    if(inputLoginPassword.type === 'password'){
+        inputLoginPassword.setAttribute('type', 'text');
+    }
+    else{
+        inputLoginPassword.setAttribute('type', 'password');
+    }
 });
 
 //Mostrar selects
@@ -93,7 +106,18 @@ inputApellido.addEventListener('blur', () => {
 });
 
 inputCedula.addEventListener('blur', () => {
-    ValidarInput(containerInputCedula,inputCedula.value,ValidarCedula);
+    if(ValidarCedula(inputCedula.value)){
+        CampoValido(containerInputCedula);
+        LimpiarError(containerInputCedula,mensajeCedula);
+    }
+    else if(inputCedula.value.trim().length === 0){
+        containerInputCedula.classList.remove('valido');
+        containerInputCedula.classList.remove('invalido');
+        LimpiarError(containerInputCedula,mensajeCedula);
+    }
+    else{
+        CampoInvalido(containerInputCedula);
+    }
 });
 
 inputCorreo.addEventListener('blur', () => {
@@ -155,6 +179,39 @@ numeroCarreras.addEventListener('keydown', (event) =>{
     }
 });
 
+formularioLogin.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const datos = new FormData(event.target);
+    const datosJSON = Object.fromEntries(datos.entries());
+
+    try{
+        const respuesta = await fetch('/api/login', {
+            method: 'POST',
+            body: JSON.stringify(datosJSON),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const datosRespuesta = await respuesta.json();
+
+        if(!respuesta.ok){
+            alert(datosRespuesta.message);
+        }
+        else{
+            if(datosRespuesta.redirectUrl){
+                setTimeout(() => {
+                    window.location.href = datosRespuesta.redirectUrl;
+                },1500)
+            }
+        }
+    }
+    catch(error){
+        throw new Error('Ha ocurrido un error inesperado');
+    }
+});
+
 formularioRegistro.addEventListener('submit', async (event) => {
     if(await !ValidarCampos()){
         return
@@ -162,6 +219,7 @@ formularioRegistro.addEventListener('submit', async (event) => {
 
     event.preventDefault();
     LimpiarError(containerCorreo,mensajeEmail);
+    LimpiarError(containerInputCedula,mensajeCedula);
 
     const datos = new FormData(event.target);
     const datosJSON = Object.fromEntries(datos.entries());
@@ -179,6 +237,9 @@ formularioRegistro.addEventListener('submit', async (event) => {
 
         if(!respuesta.ok && datosRespuesta.message === 'El correo ya esta registrado'){
             MostrarError(containerCorreo,mensajeEmail);
+        }
+        else if(!respuesta.ok && datosRespuesta.message === 'La cedula ya esta registrada'){
+            MostrarError(containerInputCedula,mensajeCedula);
         }
         else{
             if(datosRespuesta.redirectUrl){

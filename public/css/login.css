@@ -135,6 +135,25 @@ input{
     border: 1px solid #fff5;
 }
 
+#login-container-password{
+    position: relative;
+}
+
+#icon-eyes{
+    align-self: flex-end;
+    position: absolute;
+    top: 26px;
+    right: 8px;
+    font-size: 1.2rem;
+    color: #0009;
+    padding: 2px;
+}
+
+#icon-eyes:hover{
+    background-color: #0002;
+    border-radius: 50px;
+}
+
 .btn{
     width: 50%;
     padding: 10px;
