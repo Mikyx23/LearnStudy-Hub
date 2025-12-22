@@ -22,7 +22,7 @@
                 <button id="btn-login_form-login" class="btn-switch form-selected">Iniciar Sesion</button>
                 <button id="btn-registro_form-login" class="btn-switch">Registro</button>
         </div>
-        <form id="formulario-login" action="/api/login" class="login-form" method="POST">
+        <form autocomplete="off" id="formulario-login" action="/api/login" class="login-form" method="POST">
             <div class="input-container">
                 <!-- <i class="bi bi-person-fill input-icon"></i> -->
                 <label for="input-name">Cedula</label>
@@ -32,11 +32,12 @@
                 <!-- <i class="bi bi-lock-fill input-icon"></i> -->
                 <label for="input-password">Contraseña</label>
                 <input type="password" name="password" id="input-password" required>
-                <i id="icon-eyes" class="bi bi-eye"></i>
+                <i id="icon-eyes" class="bi bi-eye icon-eyes"></i>
+                <i id="icon-eyes-slash" class="bi bi-eye-slash icon-eyes ocultar"></i>
             </div>
             <button class="btn btn-login">Iniciar Sesion</button>
             <div class="link-container">
-                <a id="link-recover_form-login" href="#" class="link-recuperar">Olvidaste tu contraseña?</a>
+                <a id="link-recover_form-login" href="/api/login/recuperar-contrasena" class="link-recuperar">Olvidaste tu contraseña?</a>
             </div>
         </form>
     </div>
@@ -47,7 +48,7 @@
                 <button id="btn-login_form-registro" class="btn-switch">Iniciar Sesion</button>
                 <button id="btn-registro_form-registro" class="btn-switch form-selected">Registro</button>
         </div>
-        <form id="formulario-registro" action="/api/login/registro" class="register-form" method="POST">
+        <form autocomplete="off" id="formulario-registro" action="/api/registro" class="register-form" method="POST">
             <div class="name-lastname-container">
                 <div class="input-container input-container-register" id="input-container-name">
                     <label for="input-name">Nombre</label>
@@ -111,23 +112,6 @@
             </div>
             <button class="btn btn-register">Registrarse</button>
         </form>
-    </div>
-
-    <!-- RECUPERAR CONTRASEÑA -->
-    <div class="form-container ocultar" id="form-recuperar">
-        <div>
-            <h2>Recuperar Contraseña</h2>
-        </div>
-        <form action="" class="recover-form">
-            <div>
-                <label for="recover-email">Correo Electronico</label>
-                <input type="email" id="recover-email" required>
-            </div>
-            <button class="btn btn-recover">Enviar</button>
-        </form>
-        <div>
-            <a href="#" class="link-recuperar" id="link-recover_form-recuperar">Volver al Login</a>
-        </div>
     </div>
     
     <script src="../javascript/login.js"></script>

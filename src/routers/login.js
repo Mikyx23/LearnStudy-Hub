@@ -3,13 +3,21 @@ export const routerLogin = express.Router();
 import path from 'path';
 // VARIABLES GLOBALES
 import { fileURLToPath } from 'url';
-import { CrearUsuarioController, VerificarCorreoController, VerificarCedulaController, VerificarUsuario } from '../controllers/users-controller.js';
+import { CrearUsuarioController, VerificarCorreoController, VerificarCedulaController, VerificarUsuario, ObtenerIdUsuarioController, ActualizarContraseñaController } from '../controllers/users-controller.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 import jwt from 'jsonwebtoken';
 
 routerLogin.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../../public/html/login.html'));
+});
+
+routerLogin.get('/preguntas-seguridad', (req,res) => {
+    res.sendFile(path.join(__dirname, '../../public/html/security-questions.html'));
+});
+
+routerLogin.get('/recuperar-contrasena', (req,res) => {
+    res.sendFile(path.join(__dirname, '../../public/html/recuperar-contrasena.html'));
 });
 
 // Ruta para manejar el POST del formulario
@@ -79,7 +87,7 @@ routerLogin.post('/registro', async (req,res) => {
             res.status(200).json({
                 success: true,
                 message: 'Usuario registrado exitosamente',
-                redirectUrl: '/api/login'
+                redirectUrl: '/api/login/preguntas-seguridad'
             });
         }
         else{
@@ -97,7 +105,7 @@ routerLogin.post('/registro', async (req,res) => {
             res.status(200).json({
                 success: true,
                 message: 'Usuario registrado exitosamente',
-                redirectUrl: '/api/login'
+                redirectUrl: '/api/login/preguntas-seguridad'
             });
         }
         else{
@@ -107,5 +115,93 @@ routerLogin.post('/registro', async (req,res) => {
     else{
         res.send('Error en el numero de carreras');
         return;
+    }
+});
+
+import { CrearRecuperarContraseñaController, ObtenerPreguntaSeguridadController, ValidarRespuestaSeguridadController } from '../controllers/recover-controller.js';
+routerLogin.post('/preguntas-seguridad', async (req,res) => {
+    const {cedula} = req.body;
+    const {pregunta1,respuesta1,pregunta2,respuesta2,pregunta3,respuesta3} = req.body;
+    const id_user = await ObtenerIdUsuarioController(cedula);
+    if(!id_user.success){
+        return res.send('Cedula invalida');
+    }
+
+    const result = await CrearRecuperarContraseñaController(id_user.id,pregunta1,respuesta1,pregunta2,respuesta2,pregunta3,respuesta3)
+    
+    if(result.success){
+        res.status(200).json({
+            success: true,
+            message: 'Registro exitoso',
+            redirectUrl: '/api/login'
+        })
+    }
+    else{
+        res.status(400).json({
+            success: false,
+            message: result.message
+        });
+    }
+});
+
+routerLogin.post('/recover-cedula', async (req,res) => {
+    const {cedula} = req.body;
+    const id_user = await ObtenerIdUsuarioController(cedula);
+
+    if(!id_user.success){
+        return res.send('Cedula invalida');
+    }
+
+    const result = await ObtenerPreguntaSeguridadController(id_user.id);
+
+    if(result.success){
+        res.status(200).json({
+            success: true,
+            pregunta: result.questions,
+            id: result.id_recover
+        })
+    }
+    else{
+        res.status(400).json({
+            success: false
+        })
+    }
+});
+
+routerLogin.post('/recover-respuesta', async (req,res) => {
+    const { datos: { respuesta }, id } = req.body;
+
+    const result = await ValidarRespuestaSeguridadController(respuesta,id);
+
+    if(result.success){
+        res.status(200).json({
+            success: true,
+            id: result.id
+        });
+    }
+    else{
+        res.status(400).json({
+            success: false,
+            message: 'Respuesta incorrecta. Intenta de nuevo'
+        })
+    }
+});
+
+routerLogin.patch('/recover-contrasena', async (req,res) =>{
+    const { datos: { contraseña }, id } = req.body;
+    const result = await ActualizarContraseñaController(id,contraseña);
+
+    if(result.success){
+        res.status(200).json({
+            success: true,
+            message: result.message,
+            redirectUrl: '/api/login'
+        })
+    }
+    else{
+        res.status(400).json({
+            success: false,
+            message: result.message,
+        })
     }
 });

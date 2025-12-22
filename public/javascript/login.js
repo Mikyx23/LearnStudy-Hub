@@ -40,20 +40,12 @@ const mensajeCedula = document.getElementById('cedula-message');
 
 const formularioLogin = document.getElementById('formulario-login');
 const ojoIcono = document.getElementById('icon-eyes');
+const ojoIconoCerrado = document.getElementById('icon-eyes-slash');
 const inputLoginPassword = document.getElementById('input-password');
+
+const formularioRecuperarCedula = document.getElementById('form-recuperar-cedula');
+const formularioRecuperarRespuesta = document.getElementById('form-recuperar-respuesta');
 //  EVENTOS
-
-// Volver al login desde recuperar contraseña
-linkVolverLogin.addEventListener('click', () => {
-    OcultarElemento(formRecuperar);
-    MostrarElemento(formLogin);
-});
-
-// Ir a recuperar contraseña desde login
-linkRecuperar.addEventListener('click', () => {
-    OcultarElemento(formLogin);
-    MostrarElemento(formRecuperar);
-});
 
 // Cambiar a formularios de login desde registro
 btnLoginFormRegistro.addEventListener('click', () => {
@@ -68,12 +60,17 @@ btnRegistroFormLogin.addEventListener('click', () => {
 });
 
 ojoIcono.addEventListener('click', () => {
-    if(inputLoginPassword.type === 'password'){
-        inputLoginPassword.setAttribute('type', 'text');
-    }
-    else{
-        inputLoginPassword.setAttribute('type', 'password');
-    }
+    inputLoginPassword.setAttribute('type', 'text');
+    OcultarElemento(ojoIcono);
+    MostrarElemento(ojoIconoCerrado);
+    inputLoginPassword.focus();
+});
+
+ojoIconoCerrado.addEventListener('click', () => {
+    inputLoginPassword.setAttribute('type', 'password');
+    OcultarElemento(ojoIconoCerrado);
+    MostrarElemento(ojoIcono);
+    inputLoginPassword.focus();
 });
 
 //Mostrar selects
@@ -322,25 +319,25 @@ const ValidarConfirmar = (contrasena,confirmar) => {
 }
 
 const ValidarCampos = async () => {
-    let band = true;
+    let validos = true;
     if(!ValidarNombreApellido(inputNombre.value)){
-        return band = false;
+        return validos = false;
     }
 
     if(!ValidarNombreApellido(inputApellido.value)){
-        return band = false;
+        return validos = false;
     }
 
     if(!ValidarCedula(inputCedula.value)){
-        return band = false;
+        return validos = false;
     }
 
     if(!ValidarContrasena(inputContrasena.value)){
-        return band = false;
+        return validos = false;
     }
 
     if(!ValidarConfirmar(inputConfirmar.value)){
-        return band = false;
+        return validos = false;
     }
-    return band;
+    return validos;
 }

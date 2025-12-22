@@ -13,41 +13,14 @@ body{
     background-position: center;
     display: flex;
     flex-direction: column;
-    gap: 50px;
 }
 
-/* Overlay para el fondo */
 .overlay{
     position: absolute;
     height: 100vh;
     width: 100vw;
     background-color: #0004; 
     z-index: -1;
-}
-
-/* Titulo de la pagina */
-.header-logo{
-    align-self: center;
-    margin-top: 40px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-strong{
-    color: #44E;
-    font-weight: bold;
-}
-
-h1{
-    color: #fff;
-    font-size: 1.5rem;
-}
-
-.fas{
-    color: #fff;
-    font-size: 1.5rem;
 }
 
 /* Contenedor del formulario */
@@ -66,45 +39,7 @@ h1{
     gap: 10px;
 }
 
-.icon-container{
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    position: relative;
-    margin-bottom: 10px;
-}
-
-.user-icon{
-    font-size: 6rem;
-    color: #fff;
-    margin-bottom: 10px;
-    position: absolute;
-    top: -110px;
-}
-
-.btn-container{
-    display: flex;
-    margin-bottom: 20px;
-}
-
-.btn-switch{
-    flex: 1;
-    padding: 4px 10px;
-    background-color: #fff0;
-    border: none;
-    border-bottom: 1px solid #fff5;
-    color: #fff6;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-.btn-switch:hover{
-    background-color: #fff3;
-    color: #000;
-}
-
-.login-form, .register-form{
+.recover-form{
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -118,12 +53,6 @@ h1{
     align-items: flex-start;
 }
 
-/* .input-icon{
-    color: #fff;
-    font-size: 1.2rem;
-    margin-right: 10px;
-} */
-
 input{
     width: 100%;
     padding: 10px;
@@ -133,25 +62,6 @@ input{
     font-size: 1rem;
     background: #fff2;
     border: 1px solid #fff5;
-}
-
-#login-container-password{
-    position: relative;
-}
-
-.icon-eyes{
-    align-self: flex-end;
-    position: absolute;
-    top: 26px;
-    right: 8px;
-    font-size: 1.2rem;
-    color: #0009;
-    padding: 2px;
-}
-
-.icon-eyes:hover{
-    background-color: #0002;
-    border-radius: 50px;
 }
 
 .btn{
@@ -164,10 +74,6 @@ input{
     font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s;
-}
-
-.btn-login:hover{
-    background-color: #45a049;
 }
 
 .link-recuperar{
@@ -192,19 +98,6 @@ input{
     width: 78%;
 }
 
-select{
-    width: 100%;
-    padding: 10px;
-    border: none;
-    border-radius: 20px;
-    outline: none;
-    font-size: 1rem;
-    background: #fff2;
-    border: 1px solid #fff5;
-}
-
-/* RECUPERAR CONTRASEÑA */
-
 h2{
     color: #fff;
     margin-bottom: 20px;
@@ -223,22 +116,8 @@ label{
     display: none;
 }
 
-.form-selected{
-    transition: border-color 0.8s;
-    border-color: #fff;
-    color: #fff;
-}
-
 .invalido span{
     color: #f55;
     font-size: 0.8rem;
     margin-top: 5px;
-}
-
-.invalido input{
-    border-color: #f55;
-}
-
-.valido input{
-    border-color: #5f5;
 }

@@ -20,3 +20,11 @@ export const VerificarCedulaController = async (cedula) => {
 export const ObtenerUsuarioController = async (id) => {
     return await Usuarios.ObtenerUsuario(id);
 }
+
+export const ObtenerIdUsuarioController = async (cedula) => {
+    return await Usuarios.ObtenerIdUsuario(cedula);
+}
+
+export const ActualizarContraseñaController = async (id_usuario,nuevaContrasena) => {
+    return await Usuarios.ActualizarContraseña(id_usuario,nuevaContrasena)
+}

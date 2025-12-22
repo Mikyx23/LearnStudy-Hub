@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preguntas de Seguridad</title>
+    <link rel="stylesheet" href="/css/security-questions.css">
+</head>
+<body>
+    <div class="overlay"></div>
+    <div class="form-container" id="form-registro">
+        <div>
+            <h2>Preguntas de Seguridad</h2>
+        </div>
+        <form id="formulario-recuperar" action="/api/login/preguntas-seguridad" class="form-recuperar" method="POST">
+            <div class="input-container">
+                <label for="register-cedula">Cedula</label>
+                <input type="text" name="cedula" required>
+            </div>
+            <div class="input-container">
+                <label for="">Pregunta 1</label>
+                <input type="text" name="pregunta1" required>
+            </div>
+            <div class="input-container">
+                <label for="">Respuesta 1</label>
+                <input type="text" name="respuesta1" required>
+            </div>
+            <div class="input-container">
+                <label for="">Pregunta 2</label>
+                <input type="text" name="pregunta2" required>
+            </div>
+            <div class="input-container">
+                <label for="">Respuesta 2</label>
+                <input type="text" name="respuesta2" required>
+            </div>
+            <div class="input-container">
+                <label for="">Pregunta 3</label>
+                <input type="text" name="pregunta3" required>
+            </div>
+            <div class="input-container">
+                <label for="">Respuesta 3</label>
+                <input type="text" name="respuesta3" required>
+            </div>
+            <button class="btn btn-register">Guardar</button>
+        </form>
+    </div>
+
+    <script src="/javascript/security-questions.js" ></script>
+</body>
+</html>

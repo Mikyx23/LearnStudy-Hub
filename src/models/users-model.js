@@ -1,5 +1,6 @@
 import {pool} from './conexion.js';
 import bcrypt, { compareSync } from 'bcryptjs';
+import { SALT_ROUNDS } from '../../config.js';
 
 export class Usuarios{
     constructor(id_usuario,nombre,apellido,cedula,correo,contraseña){
@@ -18,7 +19,7 @@ export class Usuarios{
             const cedulaParseada = parseInt(this.cedula,10);
 
             const saltRounds = 10;
-            const contrasenaHash = await bcrypt.hash(this.contraseña,saltRounds);  //Encriptar contrasena
+            const contrasenaHash = await bcrypt.hash(this.contraseña,SALT_ROUNDS);  //Encriptar contrasena
 
             const [resultado] = await pool.execute(query,[cedulaParseada,this.nombre,this.apellido,this.correo,contrasenaHash]); //Ejecutar consulta
 
@@ -39,6 +40,54 @@ export class Usuarios{
         catch(error){
             console.error(error);
             throw error;
+        }
+    }
+
+    static ActualizarContraseña = async (id_usuario,nuevaContraseña) => {
+        try{
+            const query = 'UPDATE tbl_usuarios SET contraseña = ? WHERE id_usuario = ?';
+            const contrasenaHash = await bcrypt.hash(nuevaContraseña,SALT_ROUNDS);
+
+            const [resultado] = await pool.execute(query,[contrasenaHash,id_usuario]);
+
+            if(resultado.affectedRows > 0){
+                return {
+                    success: true,
+                    message: 'Contraseña actualizada correctamente',
+                }
+            }
+            else{
+                return {
+                    success: false,
+                    message: 'Eror al actualizar la contraseña'
+                }
+            }
+        }
+        catch{
+            throw new Error('Ha ocurrido un error inesperado');
+        }
+    }
+
+    static ObtenerIdUsuario = async (cedula) => {
+        try{
+            const query = 'SELECT id_usuario FROM tbl_usuarios WHERE cedula = ?';
+            const cedulaParseada = parseInt(cedula,10);
+            const [rows] = await pool.execute(query,[cedulaParseada]);
+
+            if(rows[0]){
+                return {
+                    success: true,
+                    id: rows[0].id_usuario
+                };
+            }
+            else{
+                return {
+                    success: false
+                };
+            }
+        }
+        catch(error){
+            throw new Error('Ha ocurrido un error inesperado');
         }
     }
 
@@ -71,7 +120,7 @@ export class Usuarios{
             const cedulaParseada = parseInt(cedula,10);
             const [rows] = await pool.execute(query,[cedulaParseada]);
 
-            if(rows.length > 0 && bcrypt.compareSync(password,rows[0].contraseña)){
+            if(rows.length > 0 && compareSync(password,rows[0].contraseña)){
                 return {
                     success: true,
                     id: rows[0].id_usuario,
