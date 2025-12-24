@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
         codigo: '4706335',
         UC: 3,
         semestre: 5,
-        semestre: ['4701324','4701244']
+        prelaciones: ['4701324','4701244']
     },
     {
         nombre: 'ESTADISTICA II',

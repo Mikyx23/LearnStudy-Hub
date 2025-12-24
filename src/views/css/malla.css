@@ -10,6 +10,31 @@
     --font-family: 'Inter', system-ui, sans-serif;
 }
 
+:root {
+    /* === Variables que usa layout.css === */
+    --primary: #2563eb;
+    --dark: #0f172a;
+    --grad-primary: linear-gradient(135deg, #2563eb, #1e40af);
+    --shadow-soft: 0 4px 12px rgba(0,0,0,.08);
+}
+
+
+@font-face {
+    font-family: 'Inter';
+    src: url('../fonts/Inter/Inter-Regular.woff2') format('woff2');
+    font-weight: 400;
+}
+@font-face {
+    font-family: 'Inter';
+    src: url('../fonts/Inter/Inter-SemiBold.woff2') format('woff2');
+    font-weight: 600;
+}
+@font-face {
+    font-family: 'Inter';
+    src: url('../fonts/Inter/Inter-Bold.woff2') format('woff2');
+    font-weight: 700;
+}
+
 body{
     margin: 0;
     padding: 0;
