@@ -1,0 +1,125 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body{
+    height: 100vh;
+    background-image: url('../images/vista-de-angulo-alto-de-la-computadora-portatil-y-papeleria-sobre-fondo-azul.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.overlay{
+    position: absolute;
+    height: 100vh;
+    width: 100vw;
+    background-color: #0004; 
+    z-index: -1;
+}
+
+/* Contenedor del formulario */
+.form-container{
+    margin: auto;
+    width: 420px;
+    background-color: transparent;
+    backdrop-filter: blur(20px);
+    border: 2px solid #fff2;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #0000.1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.recover-form{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+.input-container{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 90%;
+}
+
+input{
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    outline: none;
+    font-size: 1rem;
+    background: #fff2;
+    border: 1px solid #fff5;
+}
+
+.btn{
+    width: 50%;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.link-recuperar{
+    font-size: 0.8rem;
+    color: #48e;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* REGISTRO */
+
+.input-container-register{
+    width: 100%;
+}
+
+.name-lastname-container{
+    display: flex;
+    gap: 10px;
+}
+
+.btn-register{
+    width: 78%;
+}
+
+h2{
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+label{
+    color: #0007;
+    font-weight: bold;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    margin-left: 10px;
+}
+
+.ocultar{
+    display: none;
+}
+
+.invalido span{
+    color: #f55;
+    font-size: 0.8rem;
+    margin-top: 5px;
+    margin-left: 10px;
+}

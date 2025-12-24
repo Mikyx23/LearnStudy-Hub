@@ -2,149 +2,243 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
 body{
-    min-height: 100vh;
-    display: flex;
-    /* background-image: url("../images/fondo-abstracto-de-color-con-variedad-de-gotas-de-lluvia-transparentes.jpg"); */
-    background-image: url("../images/8456421.jpg");
+    height: 100vh;
+    background-image: url('../images/vista-de-angulo-alto-de-la-computadora-portatil-y-papeleria-sobre-fondo-azul.jpg');
     background-size: cover;
+    background-repeat: no-repeat;
     background-position: center;
-}
-
-.brand-header {
-    position: absolute;
-    top: 50px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 26px;
-    color: white;
     display: flex;
-    gap: 10px;
-    align-items: center;
-    z-index: 5;
-    letter-spacing: 1px;
+    flex-direction: column;
+    gap: 50px;
 }
 
-.brand-header strong { color: #38bdf8; }
-
-/* -------- INICIO DE SESION -------- */
-
-.form__container{
-    margin: auto;
-    width: 400px;
-    padding: 2rem;
-    background: transparent;
-    border: 2px solid #fff;
-    color: #fff;
-    backdrop-filter: blur(20px);
-    border-radius: 8px;
-    box-shadow: 0 0px 0px .2;
-    box-sizing: border-box;
-    text-align: center;
-}
-
-.title__container{
-    margin-top: 10px;
-}
-
-h2{
-    font-size: 30px;
-    margin-top: 0;
-}
-
-form{
-    padding: 2rem;
-}
-
-.form__input--container{
-    margin: 50px 0;
-}
-
-input{
-    box-sizing: border-box;
-    width: 90%;
-    margin-top: 8px;
-    padding: 6px 12px;
-    border: none;
-    border-bottom: 2px solid #fff;
-    outline: none;
-    background-color: transparent;
-    color: #fff;
-}
-
-input::placeholder{
-    font-size: 16px;
-    color: #fff;
-}
-
-.form__btn{
-    width: 90%;
-    padding: 10px;
-    background-color: transparent;
-    border: 3px solid #fff;
-    border-radius: 30px;
-    font-weight: bold;
-    color: #fff;
-    transition:  color, background-color 0.3s ease; 
-}
-
-.form__btn:hover{
-    background-color: #777;
-    cursor: pointer;
-}
-
-a{
-    color: #fff;
-    text-decoration: none;
-}
-
-a:hover{
-    color: #4e8;
-}
-
-i{
-    font-size: 19px;
-}
-
-.overflow{
+/* Overlay para el fondo */
+.overlay{
+    position: absolute;
     height: 100vh;
     width: 100vw;
-    background-color: transparent;
-    backdrop-filter: blur(20px);
-    position: absolute;
+    background-color: #0004; 
+    z-index: -1;
 }
 
-.user-icon__container{
+/* Titulo de la pagina */
+.header-logo{
+    align-self: center;
+    margin-top: 40px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+strong{
+    color: #44E;
+    font-weight: bold;
+}
+
+h1{
+    color: #fff;
+    font-size: 1.5rem;
+}
+
+.fas{
+    color: #fff;
+    font-size: 1.5rem;
+}
+
+/* Contenedor del formulario */
+.form-container{
+    margin: auto;
+    width: 420px;
+    background-color: transparent;
+    backdrop-filter: blur(20px);
+    border: 2px solid #fff2;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #0000.1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.icon-container{
+    width: 100%;
+    display: flex;
+    justify-content: center;
     position: relative;
-    text-align: center;
+    margin-bottom: 10px;
 }
 
 .user-icon{
+    font-size: 6rem;
+    color: #fff;
+    margin-bottom: 10px;
     position: absolute;
-    font-size: 8rem;
-    bottom: 1px;
-    right: 102px;
+    top: -110px;
 }
 
-.link__registro--container{
-    margin-top: 20px;
+.btn-container{
     display: flex;
-    justify-content: center;
-    gap: 5px;
+    margin-bottom: 20px;
 }
 
-/* .login{
-    display: none;
+.btn-switch{
+    flex: 1;
+    padding: 4px 10px;
+    background-color: #fff0;
+    border: none;
+    border-bottom: 1px solid #fff5;
+    color: #fff6;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.btn-switch:hover{
+    background-color: #fff3;
+    color: #000;
+}
+
+.login-form, .register-form{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+.input-container{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* .input-icon{
+    color: #fff;
+    font-size: 1.2rem;
+    margin-right: 10px;
 } */
 
-.registro{
+input{
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    outline: none;
+    font-size: 1rem;
+    background: #fff2;
+    border: 1px solid #fff5;
+}
+
+#login-container-password{
+    position: relative;
+}
+
+.icon-eyes{
+    align-self: flex-end;
+    position: absolute;
+    top: 26px;
+    right: 8px;
+    font-size: 1.2rem;
+    color: #0009;
+    padding: 2px;
+}
+
+.icon-eyes:hover{
+    background-color: #0002;
+    border-radius: 50px;
+}
+
+.btn{
+    width: 50%;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-login:hover{
+    background-color: #45a049;
+}
+
+.link-recuperar{
+    font-size: 0.8rem;
+    color: #48e;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* REGISTRO */
+
+.input-container-register{
+    width: 100%;
+}
+
+.name-lastname-container{
+    display: flex;
+    gap: 10px;
+}
+
+.btn-register{
+    width: 78%;
+}
+
+select{
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    outline: none;
+    font-size: 1rem;
+    background: #fff2;
+    border: 1px solid #fff5;
+}
+
+/* RECUPERAR CONTRASEÑA */
+
+h2{
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+label{
+    color: #0007;
+    font-weight: bold;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    margin-left: 10px;
+}
+
+.ocultar{
     display: none;
 }
 
-/* -------- REGISTRO -------- */
-.name__lastname--container{
-    display: flex;
+.form-selected{
+    transition: border-color 0.8s;
+    border-color: #fff;
+    color: #fff;
+}
+
+.invalido span{
+    color: #f55;
+    font-size: 0.8rem;
+    margin-top: 5px;
+}
+
+.invalido input{
+    border-color: #f55;
+}
+
+.valido input{
+    border-color: #5f5;
 }
