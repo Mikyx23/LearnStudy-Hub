@@ -1,14 +1,53 @@
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1e40af;
+    --secondary: #06b6d4;
+    --dark: #0f172a;
+    --text-body: #475569;
+    --grad-primary: linear-gradient(135deg, #2563eb, #06b6d4);
+    --grad-card: linear-gradient(135deg, #ffffff, #f8fafc);
+    --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    --sidebar-width: 80px;
+    --sidebar-expanded: 260px;
+    --header-height: 80px;
+}
+
 /* =========================================
-   LAYOUT PRINCIPAL 
+    LAYOUT PRINCIPAL 
 ========================================= */
 
 
 body.app-layout {
-    padding-left: 80px; 
-    padding-top: 80px;  
+    padding-left: var(--sidebar-width); 
+    padding-top: var(--header-height);  
     transition: padding-left 0.4s ease;
 }
 
+
+body.app-layout {
+    padding-left: var(--sidebar-width); 
+    padding-top: var(--header-height);  
+    transition: padding-left 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    background-color: #f8fafc; /* Color de fondo base */
+}
+
+
+body.app-layout:has(.app-sidebar:hover) {
+    padding-left: var(--sidebar-expanded);
+}
+
+.app-header {
+    position: fixed;
+    top: 0;
+    left: var(--sidebar-width);
+    transition: left 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+
+.app-sidebar:hover ~ .app-header {
+    left: var(--sidebar-expanded);
+}
 @font-face {
     font-family: 'Inter';
     src: url('../fonts/Inter/Inter-Regular.woff2') format('woff2');

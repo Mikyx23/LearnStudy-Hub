@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
     header.className = "app-header";
     header.innerHTML = `
         <div class="header-brand">
-            <a href="inicio.html" class="text-decoration-none text-dark fw-bold fs-4">
+            <a href="dashboard.html" class="text-decoration-none text-dark fw-bold fs-4">
                 LearnStudy<span class="text-primary">Hub</span>
             </a>
         </div>
