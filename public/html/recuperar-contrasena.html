@@ -14,15 +14,13 @@
             <h2>Recuperar Contraseña</h2>
         </div>
         <form id="form-recuperar-cedula" action="/api/login/recover-cedula" class="recover-form" method="POST">
-            <div class="input-container">
+            <div class="input-container invalido">
                 <label for="recover-cedula">Cedula</label>
                 <input type="text" name="cedula" id="recover-cedula" required>
+                <span id="cedula-message" class="ocultar">Esta cedula no existe</span>
             </div>
             <button class="btn btn-recover">Enviar</button>
         </form>
-        <!-- <div>
-            <a href="#" class="link-recuperar" id="link-recover">Volver al Login</a>
-        </div> -->
     </div>
 
     <!-- RECUPERAR CONTRASEÑA - PREGUNTA DE SEGURIDAD -->
@@ -41,9 +39,6 @@
             </div>
             <button class="btn btn-recover">Enviar</button>
         </form>
-        <!-- <div>
-            <a href="#" class="link-recuperar" id="link-recover_form-recuperar">Volver al Login</a>
-        </div> -->
     </div>
 
     <!-- RECUPERAR CONTRASEÑA - CONTRASEÑA -->
@@ -52,15 +47,18 @@
             <h2>Registra tu nueva contraseña</h2>
         </div>
         <form id="form-recuperar-contraseña" action="/api/login/recover-contrasena" class="recover-form" method="PATCH">
-            <div class="input-container">
+            <div class="input-container invalido">
                 <label for="recover-contraseña">Contraseña</label>
-                <input type="text" name="contraseña" id="recover-contraseña" required>
+                <input type="password" name="contraseña" id="recover-contraseña" required>
+                <span id="password-message" class="ocultar">Minimo 8 caracteres, una letra mayuscula y minuscula, un numero y un caracter especial</span>
+            </div>
+            <div class="input-container invalido">
+                <label for="recover-confirmar">Confirmar contraseña</label>
+                <input type="password" name="confirmar" id="recover-confirmar" required>
+                <span id="confirm-message" class="ocultar">Las contraseñas no coinciden</span>
             </div>
             <button class="btn btn-recover">Registrar</button>
         </form>
-        <!-- <div>
-            <a href="#" class="link-recuperar" id="link-recover_form-recuperar">Volver al Login</a>
-        </div> -->
     </div>
 
     <script src="/javascript/recuperar-contrasena.js"></script>

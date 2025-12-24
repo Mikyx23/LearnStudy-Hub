@@ -1,4 +1,5 @@
 import express from'express';
+import { SECRET_JWT_KEY } from '../../config.js';
 export const routerLogin = express.Router();
 import path from 'path';
 // VARIABLES GLOBALES
@@ -50,7 +51,6 @@ routerLogin.post('/', async (req, res) => {
 });
 
 import { CrearInscripcionCarreraController } from '../controllers/inscripcion-controller.js';
-import { SECRET_JWT_KEY } from '../../config.js';
 routerLogin.post('/registro', async (req,res) => {
     // if(req.body.name === undefined || req.body.name === '') return res.send('El nombre es obligatorio');
     // if(req.body.lastname === undefined || req.body.lastname === '') return res.send('El apellido es obligatorio');
@@ -87,7 +87,8 @@ routerLogin.post('/registro', async (req,res) => {
             res.status(200).json({
                 success: true,
                 message: 'Usuario registrado exitosamente',
-                redirectUrl: '/api/login/preguntas-seguridad'
+                redirectUrl: '/api/login/preguntas-seguridad',
+                cedula: cedula
             });
         }
         else{
@@ -105,7 +106,8 @@ routerLogin.post('/registro', async (req,res) => {
             res.status(200).json({
                 success: true,
                 message: 'Usuario registrado exitosamente',
-                redirectUrl: '/api/login/preguntas-seguridad'
+                redirectUrl: '/api/login/preguntas-seguridad',
+                cedula: cedula
             });
         }
         else{
@@ -123,8 +125,12 @@ routerLogin.post('/preguntas-seguridad', async (req,res) => {
     const {cedula} = req.body;
     const {pregunta1,respuesta1,pregunta2,respuesta2,pregunta3,respuesta3} = req.body;
     const id_user = await ObtenerIdUsuarioController(cedula);
+
     if(!id_user.success){
-        return res.send('Cedula invalida');
+        return res.status(400).json({
+            success: false,
+            message: 'Esta cedula no existe'
+        })
     }
 
     const result = await CrearRecuperarContraseñaController(id_user.id,pregunta1,respuesta1,pregunta2,respuesta2,pregunta3,respuesta3)
@@ -149,7 +155,10 @@ routerLogin.post('/recover-cedula', async (req,res) => {
     const id_user = await ObtenerIdUsuarioController(cedula);
 
     if(!id_user.success){
-        return res.send('Cedula invalida');
+        return res.status(400).json({
+            success: false,
+            message: 'Esta cedula no existe'
+        })
     }
 
     const result = await ObtenerPreguntaSeguridadController(id_user.id);

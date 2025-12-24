@@ -9,6 +9,7 @@ import express from 'express';
 import pkg from 'body-parser';
 import cookieParser from 'cookie-parser';
 import jwt from 'jsonwebtoken';
+import { SECRET_JWT_KEY } from './config.js';
 const { json } = pkg;
 const app = express();
 const PUERTO = process.env.PORT || 3000;
@@ -16,6 +17,8 @@ const PUERTO = process.env.PORT || 3000;
 app.disable('x-powered-by');
 
 // ----------- MIDDLEWARES -----------
+app.set('view engine', 'ejs');
+app.set('views', './views');
 app.use(express.urlencoded({ extended: true }));    // Lee datos de entrada en formularios
 app.use(express.static(path.join(__dirname, '/public')));   // SERVIR ARCHIVOS ESTÁTICOS desde la carpeta public
 app.use(express.json());
@@ -58,7 +61,6 @@ app.get('/api/inicio', async (req,res) => {
 });
 
 import { ObtenerCarreras } from './src/models/carrers-model.js';
-import { SECRET_JWT_KEY } from './config.js';
 app.get('/api/carreras', async (req, res) => {
     try{
         const carreras = await ObtenerCarreras();

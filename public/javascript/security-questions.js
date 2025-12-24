@@ -1,4 +1,8 @@
 const formRecuperar = document.getElementById('formulario-recuperar');
+const mensajeCedula = document.getElementById('cedula-message');
+const inputCedula = document.getElementById('input-cedula');
+
+inputCedula.value = sessionStorage.getItem('cedula');
 
 formRecuperar.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -17,10 +21,14 @@ formRecuperar.addEventListener('submit', async (e) => {
 
         const datosRespuesta = await respuesta.json();
 
-        if(!respuesta.ok){
+        if(!datosRespuesta.success && datosRespuesta.message === 'Esta cedula no existe'){
+            MostrarElemento(mensajeCedula);
+        }
+        else if(!respuesta.ok){
             alert(datosRespuesta.message);
         }
         else{
+            sessionStorage.removeItem('cedula');
             if(datosRespuesta.redirectUrl){
                 setTimeout(() => {
                     window.location.href = datosRespuesta.redirectUrl;
@@ -32,3 +40,12 @@ formRecuperar.addEventListener('submit', async (e) => {
         throw new Error('Ha ocurrido un error inesperado');
     }
 });
+
+const OcultarElemento = (elemento) => {
+    elemento.classList.add('ocultar');
+}
+
+//Mostrar elemento
+const MostrarElemento = (elemento) => {
+    elemento.classList.remove('ocultar');
+}

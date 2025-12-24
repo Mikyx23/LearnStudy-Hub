@@ -5,10 +5,14 @@ const formContraseña = document.getElementById('form-recuperar-contraseña');
 const inputCedula = document.getElementById('recover-cedula');
 const inputRespuesta = document.getElementById('recover-respuesta');
 const inputContraseña = document.getElementById('recover-contraseña');
+const inputConfirmar = document.getElementById('recover-confirmar');
 
 const parrafoPregunta = document.getElementById('pregunta-seguridad');
 
 const mensajeRespuesta = document.getElementById('response-message');
+const mensajeCedula = document.getElementById('cedula-message');
+const mensajeContrasena = document.getElementById('password-message');
+const mensajeConfirmar = document.getElementById('confirm-message');
 
 const formCedulaContainer = document.getElementById('form-cedula-container');
 const formRespuestaContainer = document.getElementById('form-respuesta-container');
@@ -31,7 +35,10 @@ formCedula.addEventListener('submit', async (event) =>{
 
         const datosRespuesta = await respuesta.json();
 
-        if(!respuesta.ok){
+        if(!datosRespuesta.success && datosRespuesta.message === 'Esta cedula no existe'){
+            MostrarElemento(mensajeCedula);
+        }
+        else if(!respuesta.ok){
             alert(datosRespuesta.message);
         }
         else{
@@ -81,6 +88,7 @@ formRespuesta.addEventListener('submit', async (event) => {
         }
         else{
             sessionStorage.setItem('usuario',datosRespuesta.id);
+            sessionStorage.removeItem('recuperacion');
             OcultarElemento(formRespuestaContainer);
             MostrarElemento(formContraseñaContainer);
             if(datosRespuesta.redirectUrl){
@@ -98,6 +106,16 @@ formRespuesta.addEventListener('submit', async (event) => {
 
 formContraseña.addEventListener('submit', async (event) => {
     event.preventDefault();
+
+    if(!ValidarContrasena(inputContraseña.value)){
+        MostrarElemento(mensajeContrasena);
+        return;
+    }
+
+    if(!ValidarConfirmar(inputContraseña.value,inputConfirmar.value)){
+        MostrarElemento(mensajeConfirmar);
+        return;
+    }
 
     const datos = new FormData(event.target);
     const datosJSON = Object.fromEntries(datos.entries());
@@ -124,6 +142,7 @@ formContraseña.addEventListener('submit', async (event) => {
             alert(datosRespuesta.message);
         }
         else{
+            sessionStorage.removeItem('usuario');
             if(datosRespuesta.redirectUrl){
                 setTimeout(() => {
                     window.location.href = datosRespuesta.redirectUrl;
@@ -147,4 +166,12 @@ const MostrarElemento = (elemento) => {
 
 const ValidarCedula = (cedula) => {
     return /^\d+$/.test(cedula) && cedula.length > 7;
+}
+
+const ValidarContrasena = (contrasena) => {
+    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[\s\S]{8,}$/.test(contrasena);
+}
+
+const ValidarConfirmar = (contrasena,confirmar) => {
+    return contrasena === confirmar && contrasena.length > 0;
 }

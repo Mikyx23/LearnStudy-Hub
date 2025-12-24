@@ -92,3 +92,18 @@ label{
     margin-bottom: 5px;
     margin-left: 10px;
 }
+
+.ocultar{
+    display: none;
+}
+
+.invalido span{
+    color: #f55;
+    font-size: 0.8rem;
+    margin-top: 5px;
+    margin-left: 10px;
+}
+
+#input-cedula-container{
+    visibility: hidden;
+}

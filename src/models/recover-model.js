@@ -51,7 +51,7 @@ export class RecuperarContraseña {
             }
         }
         catch{
-            throw new Error('Ha ocurrido un error inesperado');
+            throw new Error('No se ha podido encontrar sus preguntas de seguridad');
         }
     }
 
@@ -77,8 +77,7 @@ export class RecuperarContraseña {
             }
         }
         catch(error){
-            // throw new Error('Ha ocurrido un error inesperado');
-            console.error(error);
+            throw new Error('No se ha podido verificar su respuesta');
         }
     } 
 }

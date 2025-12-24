@@ -239,6 +239,7 @@ formularioRegistro.addEventListener('submit', async (event) => {
             MostrarError(containerInputCedula,mensajeCedula);
         }
         else{
+            sessionStorage.setItem('cedula',datosRespuesta.cedula);
             if(datosRespuesta.redirectUrl){
                 setTimeout(() => {
                     window.location.href = datosRespuesta.redirectUrl;
