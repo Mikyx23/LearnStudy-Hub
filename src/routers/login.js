@@ -10,15 +10,15 @@ const __dirname = path.dirname(__filename);
 import jwt from 'jsonwebtoken';
 
 routerLogin.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../public/html/login.html'));
+    res.sendFile(path.join(__dirname, '../../public/login/login.html'));
 });
 
 routerLogin.get('/preguntas-seguridad', (req,res) => {
-    res.sendFile(path.join(__dirname, '../../public/html/security-questions.html'));
+    res.sendFile(path.join(__dirname, '../../public/security-questions/security-questions.html'));
 });
 
 routerLogin.get('/recuperar-contrasena', (req,res) => {
-    res.sendFile(path.join(__dirname, '../../public/html/recuperar-contrasena.html'));
+    res.sendFile(path.join(__dirname, '../../public/recover-password/recover-password.html'));
 });
 
 // Ruta para manejar el POST del formulario
