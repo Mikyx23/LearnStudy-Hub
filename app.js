@@ -41,7 +41,7 @@ app.use('/api/login', routerLogin);
 
 // ----------- ROUTING -----------
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '/public/html/index.html'));
+    res.sendFile(path.join(__dirname, '/public/index/index.html'));
 });
 
 import { ObtenerUsuarioController } from './src/controllers/users-controller.js';
