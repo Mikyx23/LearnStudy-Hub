@@ -18,7 +18,7 @@ app.disable('x-powered-by');
 
 // ----------- MIDDLEWARES -----------
 app.set('view engine', 'ejs');
-app.set('views', './views');
+app.set('views', './src/views');
 app.use(express.urlencoded({ extended: true }));    // Lee datos de entrada en formularios
 app.use(express.static(path.join(__dirname, '/public')));   // SERVIR ARCHIVOS ESTÁTICOS desde la carpeta public
 app.use(express.json());
@@ -38,6 +38,9 @@ app.use((req,res,next) => {
 // ----------- ROUTERS -----------
 import {routerLogin} from './src/routers/login.js';
 app.use('/api/login', routerLogin);
+
+import {routerMalla} from './src/routers/malla.js';
+app.use('/api/malla', routerMalla);
 
 // ----------- ROUTING -----------
 app.get('/', (req, res) => {

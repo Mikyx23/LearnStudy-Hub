@@ -1,0 +1,1 @@
+export const toRomano = (num) => ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"][num - 1];

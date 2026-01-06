@@ -1,6 +1,6 @@
-import express from'express';
-import { SECRET_JWT_KEY } from '../../config.js';
+import express from 'express';
 export const routerLogin = express.Router();
+import { SECRET_JWT_KEY } from '../../config.js';
 import path from 'path';
 // VARIABLES GLOBALES
 import { fileURLToPath } from 'url';
@@ -30,7 +30,7 @@ routerLogin.post('/', async (req, res) => {
     
     const result = await VerificarUsuario(cedula,password);
     //  Creando token para info del usuario
-    const token = jwt.sign({id: result.id}, SECRET_JWT_KEY, {
+    const token = jwt.sign({id: result.id, carrer: result.carrers[0]}, SECRET_JWT_KEY, {
         expiresIn: '1h'
     });
 
