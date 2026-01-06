@@ -1,6 +1,6 @@
-import express from'express';
-import { SECRET_JWT_KEY } from '../../config.js';
+import express from 'express';
 export const routerLogin = express.Router();
+import { SECRET_JWT_KEY } from '../../config.js';
 import path from 'path';
 // VARIABLES GLOBALES
 import { fileURLToPath } from 'url';
@@ -30,7 +30,7 @@ routerLogin.post('/', async (req, res) => {
     
     const result = await VerificarUsuario(cedula,password);
     //  Creando token para info del usuario
-    const token = jwt.sign({id: result.id}, SECRET_JWT_KEY, {
+    const token = jwt.sign({id: result.id, carrer: result.carrers[0], name: result.name, lastname: result.lastname}, SECRET_JWT_KEY, {
         expiresIn: '1h'
     });
 
@@ -52,13 +52,6 @@ routerLogin.post('/', async (req, res) => {
 
 import { CrearInscripcionCarreraController } from '../controllers/inscripcion-controller.js';
 routerLogin.post('/registro', async (req,res) => {
-    // if(req.body.name === undefined || req.body.name === '') return res.send('El nombre es obligatorio');
-    // if(req.body.lastname === undefined || req.body.lastname === '') return res.send('El apellido es obligatorio');
-    // if(req.body.cedula === undefined || req.body.cedula === '') return res.send('La cedula es obligatoria');
-    // if(req.body.email === undefined || req.body.email === '') return res.send('El correo es obligatorio');
-    // if(req.body.password === undefined || req.body.password === '') return res.send('La contraseña es obligatoria');
-    // if(req.body.numCarrer === undefined || req.body.numCarrer === '') return res.send('El numero de carreras es obligatorio');
-
     const cedulaExiste = await VerificarCedulaController(req.body.cedula);
     const correoExiste = await VerificarCorreoController(req.body.email);
 
@@ -70,7 +63,6 @@ routerLogin.post('/registro', async (req,res) => {
     }
 
     if(correoExiste){
-        // return res.send('El correo ya esta registrado');
         return res.status(400).json({
             success: false,
             message: 'El correo ya esta registrado'

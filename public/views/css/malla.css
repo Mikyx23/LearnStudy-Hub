@@ -1,141 +1,117 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 :root {
-    --primary-color: #2563eb; /* Azul moderno */
-    --bg-color: #f8fafc;      /* Gris muy claro de fondo */
+    --primary-color: #2563eb;
+    --bg-color: #f8fafc;
     --card-bg: #ffffff;
     --text-main: #1e293b;
     --text-secondary: #64748b;
-    --border-radius: 12px;
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+    --border-radius: 8px; /* Reducido ligeramente */
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
     --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
     --font-family: 'Inter', system-ui, sans-serif;
-}
-
-:root {
-    /* === Variables que usa layout.css === */
+    
+    /* Variables layout */
     --primary: #2563eb;
     --dark: #0f172a;
     --grad-primary: linear-gradient(135deg, #2563eb, #1e40af);
-    --shadow-soft: 0 4px 12px rgba(0,0,0,.08);
 }
 
-
-@font-face {
-    font-family: 'Inter';
-    src: url('../fonts/Inter/Inter-Regular.woff2') format('woff2');
-    font-weight: 400;
-}
-@font-face {
-    font-family: 'Inter';
-    src: url('../fonts/Inter/Inter-SemiBold.woff2') format('woff2');
-    font-weight: 600;
-}
-@font-face {
-    font-family: 'Inter';
-    src: url('../fonts/Inter/Inter-Bold.woff2') format('woff2');
-    font-weight: 700;
-}
-
-body{
+body {
     margin: 0;
     padding: 0;
     background-color: var(--bg-color);
     font-family: var(--font-family);
     color: var(--text-main);
+    overflow-x: hidden; /* Evita scroll lateral */
 }
 
+/* Header más compacto para ganar espacio vertical */
 .main-header {
     text-align: center;
-    padding: 40px 20px;
+    padding: 15px 10px;
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
     color: white;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+    box-shadow: var(--shadow-sm);
 }
 
 .main-header h1 {
     margin: 0;
-    font-size: 2rem;
+    font-size: 1.2rem;
     font-weight: 700;
 }
 
 .subtitulo {
-    margin: 5px 0 0;
+    margin: 2px 0 0;
     opacity: 0.8;
     font-weight: 300;
-    font-size: 1.1rem;
+    font-size: 0.85rem;
 }
 
-.malla{
-    max-width: 1600px;
+/* Contenedor de Malla optimizado para ancho total */
+.malla {
+    max-width: 99vw;
     margin: 0 auto;
-    padding: 0 20px 40px;
+    padding: 0 10px 20px;
 }
 
-.malla__grid{
+/* Grid de 10 columnas fijas */
+.malla__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 25px;
-    align-items: start; 
+    grid-template-columns: repeat(10, 1fr); 
+    gap: 6px; 
+    align-items: start;
 }
 
-.malla__semestre{
-    background-color: transparent;
+.malla__semestre {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 6px;
+    min-width: 0; /* Permite que las columnas se encojan si es necesario */
 }
 
 .semestre__header {
     background: var(--primary-color);
     color: white;
-    padding: 10px;
-    border-radius: 8px;
+    padding: 6px 2px;
+    border-radius: 4px;
     text-align: center;
-    margin-bottom: 5px;
-    box-shadow: var(--shadow-sm);
+    margin-bottom: 2px;
 }
 
 .semestre__header h2 {
     margin: 0;
-    font-size: 1rem;
+    font-size: 0.65rem;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
 }
 
-/* Tarjetas de Asignatura */
+/* Tarjetas de Asignatura Compactas */
 .asignatura-card {
     background-color: var(--card-bg);
-    padding: 16px;
-    border-radius: var(--border-radius);
+    padding: 8px;
+    border-radius: 6px;
     border: 1px solid #e2e8f0;
     box-shadow: var(--shadow-sm);
     transition: all 0.2s ease;
     cursor: pointer;
     position: relative;
-    overflow: hidden;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    
-    /* Animación de entrada */
-    animation: fadeInUp 0.5s ease backwards;
+    gap: 4px;
+    animation: fadeInUp 0.4s ease backwards;
 }
 
-/* Hover Effects */
 .asignatura-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
     border-color: var(--primary-color);
 }
 
-/* Decoración lateral en la tarjeta */
 .asignatura-card::before {
     content: '';
     position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 4px;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
     background-color: var(--primary-color);
     opacity: 0.7;
 }
@@ -144,85 +120,104 @@ body{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 4px;
 }
 
 .codigo-badge {
-    font-size: 0.7rem;
+    font-size: 0.55rem;
     color: var(--text-secondary);
     background: #f1f5f9;
-    padding: 2px 6px;
-    border-radius: 4px;
+    padding: 1px 4px;
+    border-radius: 3px;
     font-family: monospace;
 }
 
 .uc-badge {
-    font-size: 0.7rem;
+    font-size: 0.55rem;
     font-weight: 700;
     color: var(--primary-color);
     background: #dbeafe;
-    padding: 3px 8px;
-    border-radius: 20px;
+    padding: 1px 5px;
+    border-radius: 10px;
 }
 
 .nombre-asignatura {
     font-weight: 600;
-    font-size: 0.9rem;
-    line-height: 1.4;
+    font-size: 0.68rem; /* Tamaño optimizado */
+    line-height: 1.2;
     color: var(--text-main);
+    word-wrap: break-word;
 }
 
-/* --- Estilos para la interacción de Prelaciones --- */
+/* --- Estados de Interacción --- */
 
-/* Cuando hay una selección activa, todas las tarjetas se "apagan" por defecto */
 .malla__grid.has-selection .asignatura-card {
     opacity: 0.2;
-    filter: grayscale(100%);
-    transition: all 0.3s ease;
+    filter: grayscale(90%);
 }
 
-/* La tarjeta que clickeaste se mantiene visible y destacada */
 .malla__grid.has-selection .asignatura-card.is-selected {
     opacity: 1;
     filter: grayscale(0%);
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.4); /* Anillo azul */
-    border-color: var(--primary-color);
-    transform: scale(1.05);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+    transform: scale(1.03);
     z-index: 10;
 }
 
-/* Las materias que "abre" la seleccionada se pintan de otro color */
-.malla__grid.has-selection .asignatura-card.is-dependent {
+.malla__grid.has-selection .asignatura-card.is-requisito {
     opacity: 1;
     filter: grayscale(0%);
-    background-color: #ecfdf5; /* Verde muy claro */
-    border-color: #10b981;     /* Verde borde */
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
-    transform: translateY(-5px);
+    border-color: #ef4444;
+    background-color: #fef2f2;
 }
 
-/* Pequeño indicador visual (opcional) para las dependientes */
-.malla__grid.has-selection .asignatura-card.is-dependent::after {
-    content: 'Se abre con la seleccionada';
+.malla__grid.has-selection .asignatura-card.is-requisito::after {
+    content: 'Requisito';
     position: absolute;
-    top: -3px;
-    right: 10px;
-    background: #10b981;
+    top: -6px; left: 50%;
+    transform: translateX(-50%);
+    background: #ef4444;
     color: white;
-    font-size: 0.6rem;
-    padding: 2px 6px;
-    border-radius: 10px;
+    font-size: 0.5rem;
+    padding: 0px 4px;
+    border-radius: 3px;
     font-weight: bold;
 }
 
-/* Animación Keyframes */
+.malla__grid.has-selection .asignatura-card.is-correquisito {
+    opacity: 1;
+    filter: grayscale(0%);
+    border-color: #f59e0b;
+    background-color: #fffbeb;
+}
+
+.malla__grid.has-selection .asignatura-card.is-correquisito::after {
+    content: 'Correquisito';
+    position: absolute;
+    top: -6px; left: 50%;
+    transform: translateX(-50%);
+    background: #f59e0b;
+    color: white;
+    font-size: 0.5rem;
+    padding: 0px 4px;
+    border-radius: 3px;
+}
+
+/* SMA: Semestre Requerido */
+.malla__semestre.semestre-requerido {
+    border: 1.5px dashed #6366f1;
+    background-color: rgba(99, 102, 241, 0.03);
+    border-radius: 6px;
+}
+
+/* Adaptabilidad para pantallas pequeñas */
+@media (max-width: 1400px) {
+    .malla__grid { grid-template-columns: repeat(5, 1fr); }
+}
+@media (max-width: 768px) {
+    .malla__grid { grid-template-columns: repeat(2, 1fr); }
+}
+
 @keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }

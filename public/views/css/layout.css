@@ -48,21 +48,6 @@ body.app-layout:has(.app-sidebar:hover) {
 .app-sidebar:hover ~ .app-header {
     left: var(--sidebar-expanded);
 }
-@font-face {
-    font-family: 'Inter';
-    src: url('../fonts/Inter/Inter-Regular.woff2') format('woff2');
-    font-weight: 400;
-}
-@font-face {
-    font-family: 'Inter';
-    src: url('../fonts/Inter/Inter-SemiBold.woff2') format('woff2');
-    font-weight: 600;
-}
-@font-face {
-    font-family: 'Inter';
-    src: url('../fonts/Inter/Inter-Bold.woff2') format('woff2');
-    font-weight: 700;
-}
 
 /* --- HEADER GLASS --- */
 .app-header {
