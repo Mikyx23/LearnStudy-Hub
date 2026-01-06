@@ -171,7 +171,7 @@ body {
 }
 
 .malla__grid.has-selection .asignatura-card.is-requisito::after {
-    content: 'REQ';
+    content: 'Requisito';
     position: absolute;
     top: -6px; left: 50%;
     transform: translateX(-50%);
@@ -191,7 +191,7 @@ body {
 }
 
 .malla__grid.has-selection .asignatura-card.is-correquisito::after {
-    content: 'CO';
+    content: 'Correquisito';
     position: absolute;
     top: -6px; left: 50%;
     transform: translateX(-50%);

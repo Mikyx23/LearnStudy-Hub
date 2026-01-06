@@ -18,7 +18,7 @@ function ClickAsignatura(codigoSeleccionado) {
     const materiaData = pensum.find(m => m.codigo === codStr);
 
     if (materiaData) {
-        // --- 1. Requisitos y Correquisitos ---
+        //  Requisitos y Correquisitos 
         materiaData.requisitos.forEach(r => {
             const el = document.querySelector(`.asignatura-card[data-codigo="${r}"]`);
             if (el) el.classList.add('is-requisito');
@@ -29,7 +29,7 @@ function ClickAsignatura(codigoSeleccionado) {
             if (el) el.classList.add('is-correquisito');
         });
 
-        // --- 2. Lógica de SMA (Solo el semestre indicado) ---
+        //  SMA (Semestre Aprobado)
         if (materiaData.SMA > 0) {
             // Buscamos directamente el contenedor del semestre específico
             const semestreDiv = document.getElementById(`semestre${materiaData.SMA}`);
@@ -51,7 +51,6 @@ function ClickAsignatura(codigoSeleccionado) {
     }
 }
 
-// IMPORTANTE: Asegúrate de que ReiniciarEstilos limpie la clase
 function ReiniciarEstilos() {
     const grid = document.getElementById('gridContainer');
     grid.classList.remove('has-selection');
