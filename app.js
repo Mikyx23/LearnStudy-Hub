@@ -8,8 +8,7 @@ const __dirname = path.dirname(__filename);
 import express from 'express';
 import pkg from 'body-parser';
 import cookieParser from 'cookie-parser';
-import jwt from 'jsonwebtoken';
-import { SECRET_JWT_KEY } from './config.js';
+import {getToken, authenticateUser} from './src/middleware/auth.js';
 const { json } = pkg;
 const app = express();
 const PUERTO = process.env.PORT || 3000;
@@ -23,34 +22,24 @@ app.use(express.urlencoded({ extended: true }));    // Lee datos de entrada en f
 app.use(express.static(path.join(__dirname, '/public')));   // SERVIR ARCHIVOS ESTÁTICOS desde la carpeta public
 app.use(express.json());
 app.use(cookieParser());
-app.use((req,res,next) => {
-    const token = req.cookies.access_token;
-    req.session = {user: null}
-
-    try{
-        const data = jwt.verify(token, SECRET_JWT_KEY);
-        req.session.user = data;
-    }catch{}
-
-    next()
-});
-
-// ----------- ROUTERS -----------
-import {routerLogin} from './src/routers/login.js';
-app.use('/api/login', routerLogin);
-
-import {routerMalla} from './src/routers/malla.js';
-app.use('/api/malla', routerMalla);
+app.use(getToken);
 
 // ----------- ROUTING -----------
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/index/index.html'));
 });
 
+// ----------- ROUTERS -----------
+import {routerLogin} from './src/routers/login.js';
+app.use('/api/login', routerLogin);
+
+app.use(authenticateUser);
+import {routerMalla} from './src/routers/malla.js';
+app.use('/api/malla', routerMalla);
+
 import { ObtenerUsuarioController } from './src/controllers/users-controller.js';
 app.get('/api/inicio', async (req,res) => {
     const {user} = req.session;
-    if(!user) return res.status(403).send('Acceso no autorizado');
     // PAGINA DE INICIO CON LOGUEAR 
 
     const usuario = await ObtenerUsuarioController(user.id);
@@ -74,6 +63,10 @@ app.get('/api/carreras', async (req, res) => {
         res.send('Error al obtener las carreras').status(500);
         throw error;
     }
+});
+
+app.get('/logout', (req, res) =>{
+    res.clearCookie('access_token').redirect('/');
 });
 
 app.listen(PUERTO, () => {

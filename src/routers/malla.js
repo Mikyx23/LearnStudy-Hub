@@ -5,8 +5,6 @@ import { ObtenerMallaCurricularController, ProcesarMallaCurricularController} fr
 routerMalla.get('/', async (req,res) => {
     const {user} = req.session;
 
-    if(!user) return res.status(403).send('Acceso no autorizado');
-
     const pensum = await ObtenerMallaCurricularController(user.carrer);
 
     const pensumProcesado = await ProcesarMallaCurricularController(pensum.pensum);
