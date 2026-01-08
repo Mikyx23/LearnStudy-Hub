@@ -25,6 +25,7 @@ const containerInputApellido = document.getElementById('input-container-lastname
 const containerInputCedula = document.getElementById('input-container-cedula');
 const containerInputContrasena = document.getElementById('input-container-password');
 const containerInputConfirmar = document.getElementById('input-container-confirm');
+const containerInputContrasenaLogin = document.getElementById('login-container-password');
 //  Inputs
 const inputNombre = document.getElementById('input-name');
 const inputApellido = document.getElementById('input-lastname');
@@ -37,6 +38,7 @@ const inputCarrera2 = document.getElementById('input-select-carrer-2');
 
 const mensajePassword = document.getElementById('password-message');
 const mensajeCedula = document.getElementById('cedula-message');
+const mensajeLogin = document.getElementById('login-message');
 
 const formularioLogin = document.getElementById('formulario-login');
 const ojoIcono = document.getElementById('icon-eyes');
@@ -179,6 +181,8 @@ numeroCarreras.addEventListener('keydown', (event) =>{
 formularioLogin.addEventListener('submit', async (event) => {
     event.preventDefault();
 
+    OcultarElemento(mensajeLogin);
+
     const datos = new FormData(event.target);
     const datosJSON = Object.fromEntries(datos.entries());
 
@@ -192,9 +196,12 @@ formularioLogin.addEventListener('submit', async (event) => {
         });
 
         const datosRespuesta = await respuesta.json();
-
-        if(!respuesta.ok){
-            alert(datosRespuesta.message);
+        
+        if(!respuesta.ok && datosRespuesta.message === 'Cedula o contrasena invalida'){
+            MostrarElemento(mensajeLogin);
+        }
+        else if(!respuesta.ok){
+            alert('Error al iniciar sesion');
         }
         else{
             if(datosRespuesta.redirectUrl){

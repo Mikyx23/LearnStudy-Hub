@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/views/css/perfil.css">
+    <title>Perfil del Estudiante - Learnstudy-Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/views/css/layout.css">
+</head>
+<body>
+
+    <div class="container">
+        <div class="profile-card">
+            <div class="profile-image">
+                <img src="<%= user.foto_perfil || '/images/default-avatar.svg' %>" alt="Foto de perfil">
+            </div>
+            <div class="profile-info">
+                <h1><%= user.name %> <%= user.lastname %></h1>
+                <p><%= user.code %> - <%= user.career %></p>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Cedula</label>
+                        <span><%= user.cedula %></span>
+                    </div>
+                    <div class="info-item">
+                        <label>Correo Electrónico</label>
+                        <span><%= user.email %></span>
+                    </div>
+                    <div class="info-item">
+                        <label>Semestre Actual</label>
+                        <span><%= user.current_semester %></span>
+                    </div>
+                    <div class="info-item">
+                        <label>Promedio General</label>
+                        <span><%= average %></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <% if (subject && subject.length > 0) { %>
+            <div class="grades-section">
+                <h2 class="section-title">Historial Académico </h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Materia</th>
+                            <th>UC</th>
+                            <th>Calificación</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% subject.forEach(materia => { %>
+                            <tr>
+                                <td data-label="Materia"><%= materia.subject_name %></td>
+                                <td data-label="UC"><%= materia.uc %></td>
+                                <td data-label="Calificación">
+                                    <strong><%= materia.nota %></strong>
+                                </td>
+                                <td data-label="Estado">
+                                    <% if (materia.nota >= 10) { %>
+                                        <span class="status passed">Aprobado</span>
+                                    <% } else { %>
+                                        <span class="status failed">Reprobado</span>
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <div class="no-data-message">
+                <p>No se encontraron calificaciones registradas para este periodo.</p>
+            </div>
+        <% } %>
+    </div>
+    </div>
+
+    <script src="/views/javascript/layout.js"></script>
+</body>
+</html>

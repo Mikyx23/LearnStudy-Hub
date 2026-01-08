@@ -242,3 +242,10 @@ label{
 .valido input{
     border-color: #5f5;
 }
+
+#login-message{
+    color: #f55;
+    font-size: 0.8rem;
+    margin-top: 5px;
+    margin-left: 10px;
+}

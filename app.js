@@ -34,8 +34,12 @@ import {routerLogin} from './src/routers/login.js';
 app.use('/api/login', routerLogin);
 
 app.use(authenticateUser);
+
 import {routerMalla} from './src/routers/malla.js';
 app.use('/api/malla', routerMalla);
+
+import {routerProfile} from './src/routers/profile.js';
+app.use('/api/perfil', routerProfile);
 
 import { ObtenerUsuarioController } from './src/controllers/users-controller.js';
 app.get('/api/inicio', async (req,res) => {

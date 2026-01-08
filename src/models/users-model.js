@@ -18,7 +18,6 @@ export class Usuarios{
 
             const cedulaParseada = parseInt(this.cedula,10);
 
-            const saltRounds = 10;
             const contrasenaHash = await bcrypt.hash(this.contraseña,SALT_ROUNDS);  //Encriptar contrasena
 
             const [resultado] = await pool.execute(query,[cedulaParseada,this.nombre,this.apellido,this.correo,contrasenaHash]); //Ejecutar consulta
