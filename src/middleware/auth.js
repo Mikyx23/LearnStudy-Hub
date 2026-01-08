@@ -1,4 +1,5 @@
-import { SECRET_JWT_KEY } from '../../config.js';
+import { config } from '../../config.js';
+const { jwtSecret } = config;
 import jwt from 'jsonwebtoken';
 
 export const getToken = (req, res, next) =>{
@@ -6,7 +7,7 @@ export const getToken = (req, res, next) =>{
     req.session = {user: null}
 
     try{
-        const data = jwt.verify(token, SECRET_JWT_KEY);
+        const data = jwt.verify(token, jwtSecret);
         req.session.user = data;
     }catch{}
 

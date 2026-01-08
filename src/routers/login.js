@@ -1,6 +1,5 @@
 import express from 'express';
 export const routerLogin = express.Router();
-import { SECRET_JWT_KEY } from '../../config.js';
 import path from 'path';
 // VARIABLES GLOBALES
 import { fileURLToPath } from 'url';
@@ -8,6 +7,8 @@ import { CrearUsuarioController, VerificarCorreoController, VerificarCedulaContr
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 import jwt from 'jsonwebtoken';
+import { config } from '../../config.js';
+const { jwtSecret } = config;
 
 routerLogin.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../../public/login/login.html'));
@@ -25,16 +26,13 @@ routerLogin.get('/recuperar-contrasena', (req,res) => {
 routerLogin.post('/', async (req, res) => {
     const { cedula, password } = req.body;
     
-    if(cedula === undefined || cedula === '') return res.status(400).json({message: 'La cedula es invalida'});
-    if(password === undefined || password === '') return res.status(400).json({message: 'La contraseña es invalida'});
-    
     const result = await VerificarUsuario(cedula,password);
-    //  Creando token para info del usuario
-    const token = jwt.sign({id: result.id, carrer: result.carrers[0], name: result.name, lastname: result.lastname}, SECRET_JWT_KEY, {
-        expiresIn: '1h'
-    });
 
     if(result.success){
+        const token = jwt.sign({id: result.id, carrer: result.carrers[0], name: result.name, lastname: result.lastname}, jwtSecret, {
+            expiresIn: '1h'
+        });
+
         res.cookie('access_token', token, {
             httpOnly: true,
             sameSite: 'strict',

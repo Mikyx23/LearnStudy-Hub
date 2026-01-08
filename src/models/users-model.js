@@ -1,6 +1,7 @@
 import {pool} from './conexion.js';
 import bcrypt, { compareSync } from 'bcryptjs';
-import { SALT_ROUNDS } from '../../config.js';
+import { config } from '../../config.js';
+const { saltRounds } = config;
 
 export class Usuarios{
     constructor(id_usuario,nombre,apellido,cedula,correo,contraseña){
@@ -18,8 +19,7 @@ export class Usuarios{
 
             const cedulaParseada = parseInt(this.cedula,10);
 
-            const saltRounds = 10;
-            const contrasenaHash = await bcrypt.hash(this.contraseña,SALT_ROUNDS);  //Encriptar contrasena
+            const contrasenaHash = await bcrypt.hash(this.contraseña,saltRounds);  //Encriptar contrasena
 
             const [resultado] = await pool.execute(query,[cedulaParseada,this.nombre,this.apellido,this.correo,contrasenaHash]); //Ejecutar consulta
 
@@ -46,7 +46,7 @@ export class Usuarios{
     static ActualizarContraseña = async (id_usuario,nuevaContraseña) => {
         try{
             const query = 'UPDATE tbl_usuarios SET contraseña = ? WHERE id_usuario = ?';
-            const contrasenaHash = await bcrypt.hash(nuevaContraseña,SALT_ROUNDS);
+            const contrasenaHash = await bcrypt.hash(nuevaContraseña,saltRounds);
 
             const [resultado] = await pool.execute(query,[contrasenaHash,id_usuario]);
 
