@@ -1,17 +1,17 @@
 // VARIABLES GLOBALES
+import { config } from './config.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const { port } = config;
 
 // ----------- MODULOS IMPORTADOS -----------
 import express from 'express';
 import pkg from 'body-parser';
 import cookieParser from 'cookie-parser';
 import {getToken, authenticateUser} from './src/middleware/auth.js';
-const { json } = pkg;
 const app = express();
-const PUERTO = process.env.PORT || 3000;
 
 app.disable('x-powered-by');
 
@@ -73,6 +73,6 @@ app.get('/logout', (req, res) =>{
     res.clearCookie('access_token').redirect('/');
 });
 
-app.listen(PUERTO, () => {
-    console.log(`Servidor escuchando en  http://localhost:${PUERTO}`);
+app.listen(port, () => {
+    console.log(`Servidor escuchando en  http://localhost:${port}`);
 });

@@ -1,3 +1,6 @@
+// ----- QUERIES USERS -----
+
+
 // ----- QUERIES MALLA -----
 export const GET_MALLA_CURRICULAR = `
     SELECT 

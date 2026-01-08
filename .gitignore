@@ -1,3 +1,4 @@
 #se ignora la carpeta de las dependencias
 node_modules/
 .vscode/
+.env

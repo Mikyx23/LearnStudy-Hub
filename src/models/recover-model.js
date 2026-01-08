@@ -1,13 +1,16 @@
-import { SALT_ROUNDS } from '../../config.js';
 import {pool} from './conexion.js';
-import bcrypt, { compareSync } from 'bcryptjs';
+import bcrypt from 'bcryptjs';
+import { config } from '../../config.js';
+const { saltRounds } = config;
+
+
 
 export class RecuperarContraseña {
     static CrearRecuperarContraseña = async (id_usuario,pregunta1,respuesta1,pregunta2,respuesta2,pregunta3,respuesta3) => {
         const query = 'INSERT INTO tbl_recuperacion (id_usuario,pregunta,respuesta) VALUES ?';
-        const hash1 = await bcrypt.hash(respuesta1,SALT_ROUNDS);
-        const hash2 = await bcrypt.hash(respuesta2,SALT_ROUNDS);
-        const hash3 = await bcrypt.hash(respuesta3,SALT_ROUNDS);
+        const hash1 = await bcrypt.hash(respuesta1,saltRounds);
+        const hash2 = await bcrypt.hash(respuesta2,saltRounds);
+        const hash3 = await bcrypt.hash(respuesta3,saltRounds);
         const registros = [
             [id_usuario,pregunta1,hash1],
             [id_usuario,pregunta2,hash2],
