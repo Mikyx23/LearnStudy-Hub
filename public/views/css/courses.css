@@ -1,0 +1,4 @@
+body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
+h1, h2 { font-family: 'Playfair Display', serif; }
+.course-card:hover { transform: translateY(-5px); transition: all 0.3s ease; }
+.modal-blur { backdrop-filter: blur(8px); }

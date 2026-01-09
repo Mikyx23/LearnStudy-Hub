@@ -41,6 +41,9 @@ app.use('/api/malla', routerMalla);
 import {routerProfile} from './src/routers/profile.js';
 app.use('/api/perfil', routerProfile);
 
+import {routerCourses} from './src/routers/courses.js';
+app.use('/api/cursos', routerCourses);
+
 import { ObtenerUsuarioController } from './src/controllers/users-controller.js';
 app.get('/api/inicio', async (req,res) => {
     const {user} = req.session;
