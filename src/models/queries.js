@@ -57,39 +57,46 @@ export const GET_MALLA_CURRICULAR = `
 
 // ----- QUERIES PROFILE -----
 export const GET_USER_PROFILE = `
-    SELECT 
+SELECT 
     t.codigo,
     t.nombre_formateado AS subject_name,
-    estudiante.name,
-    estudiante.lastname,
-    estudiante.cedula,
-    estudiante.email,
-    estudiante.career,
-    estudiante.uc,
+    u.nombre AS name,
+    u.apellido AS lastname,
+    u.cedula,
+    u.correo AS email,
+    c.nombre_carrera AS career,
+    t.uc,
     estudiante.nota,
-    estudiante.subject_semester,
-    estudiante.current_semester
-FROM (
-    /* Subconsulta 1: Lógica de nombres romanos */
+    t.semestre AS subject_semester,
+    (
+        SELECT ac2.semestre
+        FROM tbl_cursos_academicos ca2
+        INNER JOIN tbl_asignaturas_carreras ac2 ON ca2.id_asignatura_carrera = ac2.id_asignatura_carrera
+        WHERE ca2.id_usuario = u.id_usuario 
+        AND ca2.id_lapso = ?
+        GROUP BY ac2.semestre
+        ORDER BY COUNT(*) DESC, ac2.semestre DESC
+        LIMIT 1
+    ) AS current_semester
+FROM tbl_usuarios u
+INNER JOIN tbl_inscripciones_carreras ic ON u.id_usuario = ic.id_usuario
+INNER JOIN tbl_carreras c ON ic.id_carrera = c.id_carrera
+-- Traemos todas las asignaturas de la carrera del usuario
+CROSS JOIN (
     SELECT 
         ac.codigo_asignatura AS codigo,
         ac.semestre,
+        ac.uc_asignatura AS uc,
+        ac.id_asignatura_carrera,
         CASE 
             WHEN a.nombre_asignatura = 'PROYECTO DE SERVICIO COMUNITARIO' THEN a.nombre_asignatura
             WHEN COUNT(*) OVER (PARTITION BY a.nombre_asignatura) > 1 THEN 
                 CONCAT(a.nombre_asignatura, ' ', 
                     CASE ROW_NUMBER() OVER (PARTITION BY a.nombre_asignatura ORDER BY ac.semestre)
-                        WHEN 1 THEN 'I'
-                        WHEN 2 THEN 'II'
-                        WHEN 3 THEN 'III'
-                        WHEN 4 THEN 'IV'
-                        WHEN 5 THEN 'V'
-                        WHEN 6 THEN 'VI'
-                        WHEN 7 THEN 'VII'
-                        WHEN 8 THEN 'VIII'
-                        WHEN 9 THEN 'IX'
-                        WHEN 10 THEN 'X'
-                        ELSE '' 
+                        WHEN 1 THEN 'I' WHEN 2 THEN 'II' WHEN 3 THEN 'III' 
+                        WHEN 4 THEN 'IV' WHEN 5 THEN 'V' WHEN 6 THEN 'VI' 
+                        WHEN 7 THEN 'VII' WHEN 8 THEN 'VIII' WHEN 9 THEN 'IX' 
+                        WHEN 10 THEN 'X' ELSE '' 
                     END)
             ELSE a.nombre_asignatura 
         END AS nombre_formateado
@@ -97,39 +104,17 @@ FROM (
     INNER JOIN tbl_asignaturas a ON ac.id_asignatura = a.id_asignatura
     WHERE ac.id_carrera = ?
 ) t
-INNER JOIN (
-    /* Subconsulta 2: Calificaciones y datos (Cambiado a INNER JOIN para evitar NULLs) */
+-- Intentamos unir las calificaciones si existen
+LEFT JOIN (
     SELECT 
-        u.nombre AS name,
-        u.apellido AS lastname,
-        u.cedula,
-        u.correo AS email,
-        c.nombre_carrera AS career,
-        ac.codigo_asignatura AS codigo_ref,
-        ac.uc_asignatura AS uc,
-        SUM(cal.calificacion) AS nota,
-        ac.semestre AS subject_semester,
-        (
-            SELECT ac2.semestre
-            FROM tbl_cursos_academicos ca2
-            INNER JOIN tbl_asignaturas_carreras ac2 ON ca2.id_asignatura_carrera = ac2.id_asignatura_carrera
-            WHERE ca2.id_usuario = u.id_usuario 
-            AND ca2.id_lapso = ca.id_lapso
-            GROUP BY ac2.semestre
-            ORDER BY COUNT(*) DESC, ac2.semestre DESC
-            LIMIT 1
-        ) AS current_semester
-    FROM tbl_usuarios u
-    INNER JOIN tbl_inscripciones_carreras ic ON u.id_usuario = ic.id_usuario
-    INNER JOIN tbl_carreras c ON ic.id_carrera = c.id_carrera
-    INNER JOIN tbl_cursos_academicos ca ON ca.id_usuario = u.id_usuario
+        ca.id_asignatura_carrera,
+        SUM(cal.calificacion) AS nota
+    FROM tbl_cursos_academicos ca
     INNER JOIN tbl_calificaciones cal ON ca.id_curso = cal.id_curso
-    INNER JOIN tbl_asignaturas_carreras ac ON ca.id_asignatura_carrera = ac.id_asignatura_carrera
-    WHERE u.id_usuario = ? AND c.id_carrera = ? AND ca.id_lapso = ?
-    GROUP BY 
-        u.id_usuario, u.nombre, u.apellido, u.cedula, u.correo, 
-        c.nombre_carrera, ac.codigo_asignatura, ac.uc_asignatura, ac.semestre, ca.id_lapso
-) estudiante ON t.codigo = estudiante.codigo_ref
+    WHERE ca.id_usuario = ? AND ca.id_lapso = ?
+    GROUP BY ca.id_asignatura_carrera
+) estudiante ON t.id_asignatura_carrera = estudiante.id_asignatura_carrera
+WHERE u.id_usuario = ? AND c.id_carrera = ?
 ORDER BY t.semestre, subject_name;
 `;
 

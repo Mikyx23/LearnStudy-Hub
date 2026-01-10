@@ -3,17 +3,20 @@ export const routerCourses = express.Router();
 import { ObtenerCursosController, ObtenerCursosDisponiblesController, InsertarCursoController } from '../controllers/courses-controller.js';
 import { config } from '../../config.js';
 const { lapsoActual } = config;
+import { CalculateCredits } from '../../public/utils/utils.js';
 
 routerCourses.get('/', async (req,res) => {
     const {user} = req.session;
 
     const result = await ObtenerCursosController(user.id,lapsoActual);
     const result2 = await ObtenerCursosDisponiblesController(user.id,lapsoActual,user.carrer);
+    const creditosInscritos = await CalculateCredits(result.courses);
 
-    if(result.success){
+    if(result.success || result2.success){
         res.render('courses', { 
-            misAsignaturas: result.courses,
-            disponibles: result2.availables,
+            misAsignaturas: result.courses || [],
+            disponibles: result2.availables || [],
+            creditosInscritos: creditosInscritos || 0
         });
     }
 });

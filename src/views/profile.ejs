@@ -33,7 +33,7 @@
                     </div>
                     <div class="info-item">
                         <label>Semestre Actual</label>
-                        <span><%= user.current_semester %></span>
+                        <span><%= user.current_semester || 1 %></span>
                     </div>
                     <div class="info-item">
                         <label>Promedio General</label>
@@ -42,8 +42,9 @@
                 </div>
             </div>
         </div>
-
-        <% if (subject && subject.length > 0) { %>
+        
+        <% const todasLasNotasNull = subject.every(obj => obj.nota === null); %>
+        <% if (subject && subject.length > 0 && !todasLasNotasNull) { %>
             <div class="grades-section">
                 <h2 class="section-title">Historial Académico </h2>
                 <table>
@@ -57,27 +58,29 @@
                     </thead>
                     <tbody>
                         <% subject.forEach(materia => { %>
-                            <tr>
-                                <td data-label="Materia"><%= materia.subject_name %></td>
-                                <td data-label="UC"><%= materia.uc %></td>
-                                <td data-label="Calificación">
-                                    <strong><%= materia.nota %></strong>
-                                </td>
-                                <td data-label="Estado">
-                                    <% if (materia.nota >= 10) { %>
-                                        <span class="status passed">Aprobado</span>
-                                    <% } else { %>
-                                        <span class="status failed">Reprobado</span>
-                                    <% } %>
-                                </td>
+                            <% if(materia.nota){ %>
+                                <tr>
+                                    <td data-label="Materia"><%= materia.subject_name %></td>
+                                    <td data-label="UC"><%= materia.uc %></td>
+                                    <td data-label="Calificación">
+                                        <strong><%= materia.nota %></strong>
+                                    </td>
+                                    <td data-label="Estado">
+                                        <% if (materia.nota >= 10) { %>
+                                            <span class="status passed">Aprobado</span>
+                                        <% } else { %>
+                                            <span class="status failed">Reprobado</span>
+                                        <% } %>
+                                    </td>
                             </tr>
+                            <% } %>
                         <% }); %>
                     </tbody>
                 </table>
             </div>
         <% } else { %>
             <div class="no-data-message">
-                <p>No se encontraron calificaciones registradas para este periodo.</p>
+                <p>No se encontraron calificaciones registradas</p>
             </div>
         <% } %>
     </div>
