@@ -163,18 +163,22 @@ export const GET_COURSES_AVAILABLE = `
 WITH MateriasAprobadas AS (
     -- 1. Materias que el usuario ya aprobó
     SELECT 
-        ac.id_asignatura_carrera,
+        ca.id_asignatura_carrera,
         ac.uc_asignatura,
         ac.semestre
     FROM tbl_cursos_academicos ca
     JOIN tbl_asignaturas_carreras ac ON ca.id_asignatura_carrera = ac.id_asignatura_carrera
-    JOIN tbl_calificaciones cal ON ca.id_curso = cal.id_curso
+    -- Unimos con la agenda para obtener el peso de cada evaluación
+    JOIN tbl_agenda_evaluaciones age ON ca.id_curso = age.id_curso
+    -- Unimos con calificaciones para obtener la nota del alumno
+    JOIN tbl_calificaciones cal ON age.id_evaluacion = cal.id_evaluacion
     WHERE ca.id_usuario = ? 
-    GROUP BY ca.id_curso
-    HAVING SUM(cal.calificacion * (cal.ponderacion / 100)) >= 9.5
+    GROUP BY ca.id_curso, ac.id_asignatura_carrera, ac.uc_asignatura, ac.semestre
+    -- El cálculo ahora usa la ponderación desde 'age' (tbl_agenda_evaluaciones)
+    HAVING SUM(cal.calificacion * (age.ponderacion / 100)) >= 9.5
 ),
 ResumenInscripcionActual AS (
-    -- 2. Corregido: Especificamos ac.id_asignatura_carrera para evitar la ambigüedad
+    -- 2. UC inscritas en el lapso vigente
     SELECT 
         ac.id_asignatura_carrera, 
         SUM(ac.uc_asignatura) OVER() as total_uc_inscritas
@@ -183,14 +187,14 @@ ResumenInscripcionActual AS (
     WHERE ca.id_usuario = ? AND ca.id_lapso = ?
 ),
 ResumenEstudiante AS (
-    -- 3. Totales históricos para verificar prelaciones académicas
+    -- 3. Totales históricos
     SELECT 
         COALESCE(SUM(uc_asignatura), 0) AS total_uca,
         COALESCE(MAX(semestre), 0) AS max_semestre_aprobado
     FROM MateriasAprobadas
 ),
 MallaBaseFormateada AS (
-    -- 4. Malla con la lógica de nombres y números romanos
+    -- 4. Malla curricular con formato de nombres
     SELECT 
         t.id_asignatura_carrera,
         t.codigo,
@@ -238,10 +242,10 @@ WHERE
     -- REGLA 2: No tenerla inscrita en el lapso actual
     AND m.id_asignatura_carrera NOT IN (SELECT id_asignatura_carrera FROM ResumenInscripcionActual)
 
-    -- REGLA DE LAS 21 UC: Lo ya inscrito + esta materia no debe superar 21
+    -- REGLA DE LAS 21 UC
     AND (COALESCE(curr.total_uc_inscritas, 0) + m.uc_asignatura) <= 21
 
-    -- REGLA 3: Cumplir prelaciones de materias (REQUISITOS)
+    -- REGLA 3: Prelaciones de materias
     AND NOT EXISTS (
         SELECT 1 FROM tbl_prelaciones_materias pm
         WHERE pm.id_asignatura_carrera = m.id_asignatura_carrera
@@ -249,7 +253,7 @@ WHERE
         AND pm.id_asignatura_prelacion NOT IN (SELECT id_asignatura_carrera FROM MateriasAprobadas)
     )
 
-    -- REGLA 4: Cumplir prelaciones académicas (UCA o Semestre)
+    -- REGLA 4: Prelaciones académicas
     AND NOT EXISTS (
         SELECT 1 FROM tbl_prelaciones_academicas pa
         WHERE pa.id_asignatura_carrera = m.id_asignatura_carrera
@@ -259,4 +263,87 @@ WHERE
         )
     )
 ORDER BY m.semestre, m.nombre_completo;
+`;
+
+// ----- QUERIES AGENDA -----
+export const INSERT_EXAM = `INSERT INTO tbl_agenda_evaluaciones (id_curso, descripcion, corte, ponderacion, fecha_entrega) VALUES (?, ?, ?, ?, ?)`;
+
+export const GET_COURSES_AGENDA = `
+WITH AsignaturasProcesadas AS (
+    SELECT 
+        ac.id_asignatura_carrera,
+        ac.id_carrera,
+        CASE 
+            WHEN a.nombre_asignatura = 'PROYECTO DE SERVICIO COMUNITARIO' THEN a.nombre_asignatura
+            WHEN COUNT(*) OVER (PARTITION BY a.nombre_asignatura, ac.id_carrera) > 1 THEN 
+                CONCAT(a.nombre_asignatura, ' ', 
+                    CASE ROW_NUMBER() OVER (PARTITION BY a.nombre_asignatura, ac.id_carrera ORDER BY ac.semestre)
+                        WHEN 1 THEN 'I' WHEN 2 THEN 'II' WHEN 3 THEN 'III' WHEN 4 THEN 'IV'
+                        WHEN 5 THEN 'V' WHEN 6 THEN 'VI' WHEN 7 THEN 'VII' WHEN 8 THEN 'VIII'
+                        WHEN 9 THEN 'IX' WHEN 10 THEN 'X' ELSE '' 
+                    END)
+            ELSE a.nombre_asignatura 
+        END AS nombre_asignatura_romano
+    FROM tbl_asignaturas_carreras ac
+    INNER JOIN tbl_asignaturas a ON ac.id_asignatura = a.id_asignatura
+)
+SELECT
+    ca.id_curso AS id,
+    ap.nombre_asignatura_romano AS nombre
+FROM tbl_cursos_academicos ca
+-- Unimos con el CTE usando el id_asignatura_carrera
+INNER JOIN AsignaturasProcesadas ap 
+    ON ap.id_asignatura_carrera = ca.id_asignatura_carrera
+-- Es importante filtrar por la carrera del usuario para que el ROW_NUMBER funcione bien
+INNER JOIN tbl_inscripciones_carreras ic 
+    ON ic.id_usuario = ca.id_usuario AND ic.id_carrera = ap.id_carrera
+WHERE ca.id_usuario = ? AND ca.id_lapso = ?;
+`;
+
+export const GET_EXAMS = `
+WITH AsignaturasProcesadas AS (
+    SELECT 
+        ac.id_asignatura_carrera,
+        ac.codigo_asignatura,
+        ac.uc_asignatura,
+        ac.id_carrera,
+        a.nombre_asignatura,
+        -- Calculamos la secuencia y el total antes para evitar conflictos en el CASE
+        ROW_NUMBER() OVER (PARTITION BY a.nombre_asignatura, ac.id_carrera ORDER BY ac.semestre) AS secuencia,
+        COUNT(*) OVER (PARTITION BY a.nombre_asignatura, ac.id_carrera) AS total_repeticiones
+    FROM tbl_asignaturas_carreras ac
+    INNER JOIN tbl_asignaturas a ON ac.id_asignatura = a.id_asignatura
+),
+MallaConNombres AS (
+    SELECT 
+        id_asignatura_carrera,
+        CASE 
+            WHEN nombre_asignatura = 'PROYECTO DE SERVICIO COMUNITARIO' THEN nombre_asignatura
+            WHEN total_repeticiones > 1 THEN 
+                CONCAT(nombre_asignatura, ' ', 
+                    CASE secuencia
+                        WHEN 1 THEN 'I' WHEN 2 THEN 'II' WHEN 3 THEN 'III' WHEN 4 THEN 'IV'
+                        WHEN 5 THEN 'V' WHEN 6 THEN 'VI' WHEN 7 THEN 'VII' WHEN 8 THEN 'VIII'
+                        WHEN 9 THEN 'IX' WHEN 10 THEN 'X' ELSE '' 
+                    END)
+            ELSE nombre_asignatura 
+        END AS nombre_romano
+    FROM AsignaturasProcesadas
+)
+SELECT
+    ca.id_curso AS id,
+    ap.nombre_romano AS asignatura_nombre,
+    ae.descripcion AS nombre,
+    ae.corte AS corte,
+    ae.ponderacion AS porcentaje,
+    ae.fecha_entrega AS fecha
+FROM tbl_cursos_academicos ca
+INNER JOIN MallaConNombres ap 
+    ON ca.id_asignatura_carrera = ap.id_asignatura_carrera
+-- Cambia a LEFT JOIN si quieres ver cursos aunque no tengan evaluaciones cargadas
+INNER JOIN tbl_agenda_evaluaciones ae 
+    ON ca.id_curso = ae.id_curso
+WHERE ca.id_usuario = ? 
+    AND ca.id_lapso = ?
+ORDER BY ap.nombre_romano, ae.fecha_entrega;
 `;

@@ -7,115 +7,61 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/agenda.css">
+    <link rel="stylesheet" href="/views/css/layout.css">">
+    <link rel="stylesheet" href="/views/css/agenda.css">
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <span class="brand-icon"><i class="fas fa-layer-group"></i></span>
-                LearnStudy<span class="text-highlight">Hub</span>
-            </a>
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <i class="fas fa-stream text-dark"></i>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item"><a class="nav-link" href="#hero">Inicio</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#impacto">Impacto</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#equipo">Talento</a></li>
-                    <li class="nav-item ms-lg-3">
-                        <!-- <a class="btn btn-glow" href="/api/login">Acceder al Hub</a> -->
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
 <!-- Sección Agenda -->
     <div class="contenedor-angeda" id="agenda">
         <h1>Recordatorio de Evaluaciones</h1>
-        <form> 
+        <form  id="formulario-evaluaciones" method="POST" action="/api/agenda/registrar"> 
             <!-- Campos generales -->
             <div class="form-row">
                 <div class="form-group">
                     <label for="asignatura">Asignatura:</label>
-                    <input type="text" id="asignatura" placeholder="Ej: Matemáticas" required>
+                    <select id="asignatura" name="asignatura_id" required>
+                        <option value="">Seleccione una asignatura</option>
+                        <% asignaturas.forEach(function(asig) { %>
+                            <option value="<%= asig.id %>"><%= asig.nombre %></option>
+                        <% }); %>
+                    </select>
                 </div>
                 
                 <div class="form-group">
                     <label for="corte">Corte:</label>
-                    <select id="corte" required>
+                    <select id="corte" name="corte" required>
                         <option value="">Seleccione un corte</option>
-                        <option value="corte1">Corte 1 (Máx 30%)</option>
-                        <option value="corte2">Corte 2 (Máx 30%)</option>
-                        <option value="corte3">Corte 3 (Máx 40%)</option>
+                        <option value="1">Corte 1 (Máx 30%)</option>
+                        <option value="2">Corte 2 (Máx 30%)</option>
+                        <option value="3">Corte 3 (Máx 40%)</option>
                     </select>
                 </div>
             </div>
             
             <!-- Contenedor de evaluaciones lado a lado -->
             <div class="evaluaciones-container">
-                <!-- Sección Primera Evaluación -->
-                <div class="evaluacion-group evaluacion-1">
-                    <h3><i class="fas fa-chart-line"></i> Evaluación 1</h3>
+                <div class="evaluacion-group evaluacion-unica">
+                    <h3><i class="fas fa-edit"></i> Nueva Evaluación</h3>
                     <div class="form-group">
-                        <label for="nombre_evaluacion1">Nombre:</label>
-                        <input type="text" id="nombre_evaluacion1" placeholder="Ej: Parcial 1" required>
+                        <label for="descripcion_evaluacion">Descripción:</label>
+                        <textarea id="descripcion_evaluacion" name="descripcion" placeholder="Detalles de la evaluación..." rows="2"></textarea>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="porcentaje_evaluacion1">Porcentaje:</label>
-                            <input type="number" id="porcentaje_evaluacion1" placeholder="ej: 10" min="0" max="100" step="1" required>
+                            <label for="porcentaje_evaluacion">Porcentaje (%):</label>
+                            <input type="number" id="porcentaje_evaluacion" name="porcentaje" min="1" max="40" required>
                         </div>
                         <div class="form-group">
-                            <label for="fecha_evaluacion1">Fecha:</label>
-                            <input type="date" id="fecha_evaluacion1" required>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Sección Segunda Evaluación -->
-                <div class="evaluacion-group evaluacion-2">
-                    <h3><i class="fas fa-chart-bar"></i> Evaluación 2</h3>
-                    <div class="form-group">
-                        <label for="nombre_evaluacion2">Nombre:</label>
-                        <input type="text" id="nombre_evaluacion2" placeholder="Ej: Parcial 2" required>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="porcentaje_evaluacion2">Porcentaje:</label>
-                            <input type="number" id="porcentaje_evaluacion2" placeholder="ej: 20" min="0" max="100" step="1" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="fecha_evaluacion2">Fecha:</label>
-                            <input type="date" id="fecha_evaluacion2" required>
+                            <label for="fecha_evaluacion">Fecha:</label>
+                            <input type="date" id="fecha_evaluacion" name="fecha" required>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <button type="button" id="agregar">Agregar Evaluaciones</button>
+            <button id="agregar">Agregar Evaluaciones</button>
         </form>
-        
-        <!-- Resumen de cortes -->
-        <div class="resumen-cortes">
-            <div class="corte-resumen">
-                <h3>Corte 1</h3>
-                <div class="porcentaje" id="corte1-total">0%</div>
-                <div class="maximo">Máximo: 30%</div>
-            </div>
-            <div class="corte-resumen">
-                <h3>Corte 2</h3>
-                <div class="porcentaje" id="corte2-total">0%</div>
-                <div class="maximo">Máximo: 30%</div>
-            </div>
-            <div class="corte-resumen">
-                <h3>Corte 3</h3>
-                <div class="porcentaje" id="corte3-total">0%</div>
-                <div class="maximo">Máximo: 40%</div>
-            </div>
-        </div>
         
         <!-- Encabezados de la lista -->
         <div class="encabezados-lista">
@@ -125,10 +71,28 @@
             <span>Nombre</span>
             <span>Porcentaje</span>
             <span>Fecha</span>
-            <span>Acción</span>
         </div>
         
-        <ul id="lista-examenes"></ul>
+        <ul id="lista-examenes">
+            <% if (evaluaciones && evaluaciones.length > 0) { %>
+                <% evaluaciones.forEach(function(eval) { %>
+                    <li class="examen-item" data-id="<%= eval.id %>">
+                        <span><%= eval.asignatura_nombre %></span>
+                        <span>Corte <%= eval.corte %></span>
+                        <span><i class="fas fa-file-alt"></i></span>
+                        <span><%= eval.nombre %></span>
+                        <span><%= eval.porcentaje %>%</span>
+                        <span><%= new Date(eval.fecha).toLocaleDateString() %></span>
+                        <span>
+                            </span>
+                    </li>
+                <% }); %>
+            <% } else { %>
+                <li class="sin-evaluaciones">
+                    <p>No existen evaluaciones registradas actualmente.</p>
+                </li>
+            <% } %>
+            </ul>
     </div>
 
     <!-- Sección Calendario -->
@@ -245,33 +209,15 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="py-5 bg-dark text-white position-relative overflow-hidden">
-        <div class="container position-relative z-2">
-            <div class="row align-items-center">
-                <div class="col-md-6 text-center text-md-start mb-4 mb-md-0">
-                    <h3 class="fw-bold mb-1">LearnStudy Hub</h3>
-                    <p class="text-white-50 small">Innovación educativa continua.</p>
-                </div>
-                <div class="col-md-6 text-center text-md-end">
-                    <a href="#" class="text-white-50 me-3 text-decoration-none hover-white">Privacidad</a>
-                    <a href="#" class="text-white-50 text-decoration-none hover-white">Términos</a>
-                    <p class="small text-white-50 mt-2">© 2025 Todos los derechos reservados.</p>
-                </div>
-            </div>
-        </div>
-
-
-
-
+    <script>
+        // Usamos un nombre único para evitar el error de "already declared"
+        const DATOS_INICIALES_DEL_SERVIDOR = <%- JSON.stringify(todasLasEvaluaciones) %>;
+    </script>   
 <!-- El JavaScript permanece igual -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../javascript/agenda.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/views/javascript/layout.js" ></script>
+    <script src="/views/javascript/agenda.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
-
-
-
-
