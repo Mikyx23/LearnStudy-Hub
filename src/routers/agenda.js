@@ -11,16 +11,12 @@ routerAgenda.get('/', async(req, res) => {
         const result = await ObtenerCursosAgendaController(user.id,lapsoActual);
         const result2 = await ObtenerEvaluacionesController(user.id,lapsoActual);
 
-        if(result.sucess){
-            res.status(200).render('agenda', {
-                asignaturas: result.courses || [],
-                evaluaciones: result2.exams || [],
-                todasLasEvaluaciones: result2.exams || []
-            });
-        }
-        else{
-            res.status(404).send(result.message);
-        }
+        res.status(200).render('agenda', {
+            asignaturas: result.courses || [],
+            evaluaciones: result2.exams || [],
+            todasLasEvaluaciones: result2.exams || []
+        });
+        
     }
     catch(error){
         throw new Error('Error al obtener la agenda');
@@ -30,7 +26,6 @@ routerAgenda.get('/', async(req, res) => {
 routerAgenda.post('/registrar', async (req, res) => {
     try{
         const { asignatura_id, descripcion, corte, porcentaje, fecha} = req.body;
-        console.log(asignatura_id, descripcion, corte, porcentaje, fecha);
 
         const result = await CrearEvaluacionController(asignatura_id, descripcion, corte, porcentaje, fecha);
 
