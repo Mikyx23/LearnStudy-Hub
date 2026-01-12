@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnStudyHub - Gestión Académica</title>
+    <link rel="stylesheet" href="/views/css/layout.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="/views/css/courses.css">
+</head>
+<body class="text-slate-800">
+
+    <main class="max-w-7xl mx-auto p-6 md:p-10">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+        <div>
+            <h1 class="text-4xl text-slate-900 font-bold">Mis Cursos</h1>
+            <p class="text-slate-500 mt-1">
+                <% if (misAsignaturas.length > 0) { %>
+                    Tienes <%= misAsignaturas.length %> cursos activos. <%= creditosInscritos || 0 %> unidades de crédito inscritas.
+                <% } else { %>
+                    No tienes materias inscritas todavía.
+                <% } %>
+            </p>
+        </div>
+    </div>
+
+    <% if (misAsignaturas.length === 0) { %>
+        <div class="flex flex-col items-center justify-center py-20 border-2 border-dashed border-slate-200 rounded-3xl bg-slate-50/50">
+            <div class="bg-blue-100 p-6 rounded-full mb-4">
+                <i data-lucide="book-plus" class="text-blue-600 w-12 h-12"></i>
+            </div>
+            <h2 class="text-xl font-semibold text-slate-700 mb-2">Comienza tu semestre</h2>
+            <p class="text-slate-500 mb-8 text-center max-w-sm">
+                Aún no has inscrito asignaturas. Haz clic en el botón de abajo para ver el catálogo disponible.
+            </p>
+            <button onclick="toggleModal()" class="flex items-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold shadow-lg shadow-blue-200 transition-all transform hover:scale-105 active:scale-95">
+                <i data-lucide="plus" class="w-5 h-5"></i>
+                Inscribir mi primera materia
+            </button>
+        </div>
+
+    <% } else { %>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <% misAsignaturas.forEach(curso => { %>
+                <div class="course-card bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden relative">
+                    <div class="h-2 w-full <%= curso.facultad === 'Ingeniería' ? 'bg-cyan-500' : 'bg-pink-500' %>"></div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider 
+                                <%= curso.facultad === 'Ingeniería' ? 'bg-cyan-50 text-cyan-700' : 'bg-pink-50 text-pink-700' %>">
+                                <%= curso.facultad %>
+                            </span>
+                            <i data-lucide="book" class="text-slate-300 w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-1 text-slate-800"><%= curso.nombre_asignatura %></h3>
+                        <p class="text-sm text-slate-400 mb-4 font-mono uppercase"><%= curso.codigo %></p>
+                        
+                        <div class="mt-6 pt-4 border-t border-slate-50 flex justify-between items-center">
+                            <span class="flex items-center gap-1 text-blue-600 font-semibold text-sm">
+                                <i data-lucide="award" class="w-4 h-4"></i> <%= curso.creditos %> Créditos
+                            </span>
+                            <span class="text-xs font-medium px-2 py-1 bg-green-100 text-green-700 rounded-full italic">Inscrito</span>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+
+            <button onclick="toggleModal()" class="border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center p-10 hover:border-blue-300 hover:bg-blue-50 transition-all group">
+                <div class="bg-slate-100 p-4 rounded-full group-hover:bg-blue-100 transition-colors">
+                    <i data-lucide="plus" class="text-slate-400 group-hover:text-blue-500 w-8 h-8"></i>
+                </div>
+                <p class="text-slate-400 mt-4 group-hover:text-blue-600 font-medium">Nueva materia</p>
+            </button>
+        </div>
+    <% } %>
+    </main>
+
+    <div id="courseModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-slate-900/60 modal-blur" onclick="toggleModal()"></div>
+        <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl z-10 overflow-hidden">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-slate-900">Catálogo de Asignaturas</h2>
+                    <button onclick="toggleModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x"></i></button>
+                </div>
+
+                <div class="relative mb-8">
+                    <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5"></i>
+                    <input type="text" id="searchInput" onkeyup="filterCourses()" placeholder="Buscar por nombre o código..." 
+                        class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                
+                <% if(creditosInscritos < 21){ %>
+                    <div class="grid grid-cols-1 gap-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar" id="catalogList">
+                        <% disponibles.forEach(asignatura => { %>
+                            <div onclick="selectCourse(this, '<%= asignatura.id %>')" class="course-item group flex items-center justify-between p-4 border border-slate-100 rounded-2xl cursor-pointer hover:border-blue-200 hover:bg-blue-50 transition-all">
+                                <div class="flex items-center gap-4">
+                                    <div class="bg-slate-100 p-3 rounded-xl group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                                        <i data-lucide="plus-circle" class="w-6 h-6"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-slate-800 course-name"><%= asignatura.nombre_asignatura %></h4>
+                                        <p class="text-xs text-slate-500 italic uppercase"><%= asignatura.codigo %> • <%= asignatura.creditos %> Créditos</p>
+                                    </div>
+                                </div>
+                                <div class="selection-check hidden"><i data-lucide="check-circle-2" class="text-blue-600 w-6 h-6"></i></div>
+                            </div>
+                        <% }); %>
+                    </div>
+                <% } %>
+                <form action="/inscribir" method="POST" id="inscribeForm">
+                    <input type="hidden" name="asignaturaId" id="selectedCourseId">
+                    <div class="mt-8 flex gap-3">
+                        <button type="button" onclick="toggleModal()" class="flex-1 px-6 py-3 border border-slate-200 rounded-xl font-semibold text-slate-600">Cerrar</button>
+                        <button type="submit" id="btnInscribir" disabled class="flex-1 px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold opacity-50 cursor-not-allowed">
+                            Confirmar Inscripción
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="/views/javascript/layout.js" ></script>
+    <script src="/views/javascript/courses.js"></script>
+</body>
+</html>

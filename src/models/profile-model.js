@@ -4,7 +4,7 @@ import { GET_USER_PROFILE } from './queries.js';
 export class Perfil {
     static ObtenerPerfilUsuario = async (id_usuario,id_carrera,id_lapso) => {
         try{
-            const [rows] = await pool.execute(GET_USER_PROFILE,[id_carrera, id_usuario, id_carrera, id_lapso]);
+            const [rows] = await pool.execute(GET_USER_PROFILE,[id_lapso,id_carrera,id_usuario,id_lapso,id_usuario,id_carrera]);
 
             if(rows.length > 0){
                 return {

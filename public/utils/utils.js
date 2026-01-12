@@ -4,11 +4,29 @@ export const CalculateAverage = async (notas) => {
     let suma = 0;
     let n = 0;
     
+    if (!notas || !Array.isArray(notas)) {
+        return 0;
+    }
+
     notas.forEach(row => {
         suma += parseFloat(row.nota);
         n++;
     });
 
     const promedio = suma / n;
-    return promedio;
+    return promedio || 0;
+}
+
+export const CalculateCredits = async (materia) => {
+    let suma = 0;
+
+    if(!materia || !Array.isArray(materia)){
+        return 0;
+    }
+
+    materia.forEach(row => {
+        suma += parseFloat(row.creditos);
+    });
+
+    return suma;
 }
