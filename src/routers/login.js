@@ -40,7 +40,7 @@ routerLogin.post('/', async (req, res) => {
         });
 
         res.status(200).json({
-            redirectUrl: '/api/inicio',
+            redirectUrl: '/api/dashboard',
         });
     }
     else{

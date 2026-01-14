@@ -35,6 +35,9 @@ app.use('/api/login', routerLogin);
 
 app.use(authenticateUser);
 
+import {routerDashboard} from './src/routers/dashboard.js';
+app.use('/api/dashboard', routerDashboard);
+
 import {routerMalla} from './src/routers/malla.js';
 app.use('/api/malla', routerMalla);
 
@@ -50,20 +53,20 @@ app.use('/api/agenda', routerAgenda);
 import {routerQualifications} from './src/routers/qualifications.js';
 app.use('/api/calificaciones', routerQualifications);
 
-import { ObtenerUsuarioController } from './src/controllers/users-controller.js';
-app.get('/api/inicio', async (req,res) => {
-    const {user} = req.session;
-    // PAGINA DE INICIO CON LOGUEAR 
+// import { ObtenerUsuarioController } from './src/controllers/users-controller.js';
+// app.get('/api/inicio', async (req,res) => {
+//     const {user} = req.session;
+//     // PAGINA DE INICIO CON LOGUEAR 
 
-    const usuario = await ObtenerUsuarioController(user.id);
+//     const usuario = await ObtenerUsuarioController(user.id);
 
-    if(!usuario){
-        res.send('Usuario no encontrado');
-    }
-    else{
-        res.send(`Bienvenido a LearnStudy Hub ${usuario.nombre} ${usuario.apellido}`);
-    }
-});
+//     if(!usuario){
+//         res.send('Usuario no encontrado');
+//     }
+//     else{
+//         res.send(`Bienvenido a LearnStudy Hub ${usuario.nombre} ${usuario.apellido}`);
+//     }
+// });
 
 import { ObtenerCarreras } from './src/models/carrers-model.js';
 app.get('/api/carreras', async (req, res) => {
