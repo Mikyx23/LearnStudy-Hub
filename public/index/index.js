@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // 3. EFECTO TYPEWRITER MEJORADO
+    // 3. EFECTO TYPEWRITER
     const textElement = document.getElementById('typewriter');
     const phrases = [
         "Plataforma intuitiva.", 

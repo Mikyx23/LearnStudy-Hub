@@ -188,3 +188,65 @@ body.app-layout:has(.app-sidebar:hover) {
     left: 260px;
 }
 
+/* =========================================
+    FOOTER
+========================================= */
+.app-footer {
+    background: #0f172a; /* Azul oscuro elegante */
+    color: #cbd5f5;
+    padding: 40px 20px;
+    margin-top: 60px;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.footer-socials {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.footer-socials a {
+    color: #cbd5f5;
+    font-size: 1.3rem;
+    transition: transform 0.3s, color 0.3s;
+}
+
+.footer-socials a:hover {
+    color: #38bdf8;
+    transform: translateY(-3px);
+}
+
+.footer-links {
+    font-size: 0.9rem;
+}
+
+.footer-links a {
+    color: #94a3b8;
+    text-decoration: none;
+    margin: 0 8px;
+}
+
+.footer-links a:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+.footer-copy {
+    font-size: 0.8rem;
+    color: #94a3b8;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .footer-container {
+        gap: 10px;
+    }
+}

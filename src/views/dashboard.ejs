@@ -1,259 +1,263 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Estudiante - Sistema Académico</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Inicio - LearnStudy-Hub</title>
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- <link rel="stylesheet" href="/views/css/layout.css"> -->
+
+    <!-- Tailwind & Lucide -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Estilos propios -->
+    <link rel="stylesheet" href="/views/css/layout.css">
+    <link rel="stylesheet" href="/views/css/dashboard.css">
+
     <style>
-        /* Estilos personalizados adicionales si son necesarios */
+        /* RESET COMPATIBLE CON layout.js */
         body {
             font-family: 'Inter', sans-serif;
+            display: block !important;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        .main-content-wrapper {
+            width: 100%;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+
+        .app-footer {
+            width: 100%;
+            position: relative;
+            z-index: 5;
         }
 
         .custom-scrollbar-h::-webkit-scrollbar {
             height: 6px;
         }
+
         .custom-scrollbar-h::-webkit-scrollbar-track {
             background: #f1f5f9;
-            border-radius: 10px;
         }
+
         .custom-scrollbar-h::-webkit-scrollbar-thumb {
             background: #e2e8f0;
             border-radius: 10px;
         }
-        .custom-scrollbar-h::-webkit-scrollbar-thumb:hover {
-            background: #cbd5e1;
-        }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans h-screen flex overflow-hidden">
 
-    <!-- <aside class="w-64 bg-white border-r border-slate-200 flex flex-col justify-between shadow-sm z-10">
-        <div>
-            <div class="h-16 flex items-center px-6 border-b border-slate-100">
-                <i data-lucide="graduation-cap" class="w-8 h-8 text-blue-600 mr-3"></i>
-                <span class="text-xl font-bold text-blue-900">LearnStudyHub</span>
-            </div>
-            <nav class="mt-6 px-4 space-y-2">
-                <a href="/api/dashboard" class="flex items-center px-4 py-3 bg-blue-50 text-blue-700 rounded-lg font-medium">
-                    <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i>
-                    Dashboard
-                </a>
-                <a href="/api/malla" class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-blue-600 rounded-lg transition-colors group">
-                    <i data-lucide="book-open" class="w-5 h-5 mr-3 text-slate-400 group-hover:text-blue-500"></i>
-                    Malla Curricular
-                </a>
-                <a href="/api/cursos" class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-blue-600 rounded-lg transition-colors group">
-                    <i data-lucide="library" class="w-5 h-5 mr-3 text-slate-400 group-hover:text-blue-500"></i>
-                    Mis Cursos
-                </a>
-                <a href="/api/agenda" class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-blue-600 rounded-lg transition-colors group">
-                    <i data-lucide="calendar-days" class="w-5 h-5 mr-3 text-slate-400 group-hover:text-blue-500"></i>
-                    Agenda / Evaluaciones
-                </a>
-                <a href="/api/calificaciones" class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-blue-600 rounded-lg transition-colors group">
-                    <i data-lucide="bar-chart-3" class="w-5 h-5 mr-3 text-slate-400 group-hover:text-blue-500"></i>
-                    Calificaciones
-                </a>
-                <a href="#" class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-blue-600 rounded-lg transition-colors group">
-                    <i data-lucide="timer" class="w-5 h-5 mr-3 text-slate-400 group-hover:text-blue-500"></i>
-                    Pomodoro
-                </a>
-                <a href="#" class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-blue-600 rounded-lg transition-colors group">
-                    <i data-lucide="clock" class="w-5 h-5 mr-3 text-slate-400 group-hover:text-blue-500"></i>
-                    Horario
-                </a>
-            </nav>
-        </div>
-        <div class="p-4">
-            <a href="#" class="flex items-center px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                <i data-lucide="log-out" class="w-5 h-5 mr-3"></i>
-                Cerrar Sesión
-            </a>
-        </div>
-    </aside> -->
+<body class="bg-slate-100 text-slate-800 font-sans">
 
-    <main class="flex-1 flex flex-col overflow-hidden">
-        <!-- <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shadow-sm z-10">
-            <div>
-                <h2 class="text-xl font-semibold text-slate-800">Panel Principal</h2>
-            </div>
-            <div class="flex items-center space-x-4">
-                <button class="p-2 text-slate-400 hover:text-blue-600 rounded-full hover:bg-slate-100 relative">
-                    <i data-lucide="bell" class="w-6 h-6"></i>
-                    <span class="absolute top-2 right-2 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
-                </button>
-                <div class="flex items-center pl-4 border-l border-slate-200">
-                    <img class="h-9 w-9 rounded-full object-cover border-2 border-blue-100" src="/images/default-avatar.svg" alt="Foto de perfil">
-                    <span class="ml-3 font-medium text-slate-700"> <%= user.nombre %> <%= user.apellido %> </span>
+    <!-- Header / Sidebar / Footer los inyecta layout.js -->
+
+    <main class="main-content-wrapper">
+        <div class="grid grid-cols-12 gap-6">
+
+            <!-- BIENVENIDA -->
+            <div
+                class="col-span-12 md:col-span-6 lg:col-span-4 bg-white p-6 rounded-xl shadow-sm border flex items-center">
+                <div class="p-3 bg-blue-100 text-blue-600 rounded-full mr-5">
+                    <i data-lucide="graduation-cap"></i>
                 </div>
-            </div>
-        </header> -->
-
-        <div class="flex-1 overflow-y-auto p-8">
-            <div class="grid grid-cols-12 gap-6">
-
-                <div class="col-span-12 md:col-span-6 lg:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex items-center">
-                    <div class="p-3 bg-blue-100 text-blue-600 rounded-full mr-5">
-                        <i data-lucide="graduation-cap"></i>  
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium text-slate-500 uppercase">Bienvenido de nuevo</p>
-                        <h3 class="text-3xl font-bold text-slate-800"><%= user.nombre %> <%= user.apellido %></h3>
-                        <p class="text-xs text-green-600 font-medium mt-1">Continua aprendiendo desde donde lo dejaste</p>
-                    </div>
-                </div>
-
-                <div class="col-span-12 md:col-span-6 lg:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-red-100 flex items-center relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-2 h-full bg-red-500"></div>
-                    <div class="p-3 bg-red-100 text-red-600 rounded-full mr-5 ml-2">
-                        <i data-lucide="alert-triangle" class="w-8 h-8"></i>
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium text-slate-500 uppercase">Próxima Evaluación</p>
-                        <% if (typeof next_exam !== 'undefined' && next_exam && next_exam.length > 0) { %>
-                            <h3 class="text-xl font-bold text-slate-800"> <%= next_exam.descripcion %> </h3>
-                            <p class="text-sm text-red-600 font-semibold mt-1">Mañana, 10:00 AM</p>
-                        <% } else { %>
-                            <h3 class="text-lg font-medium text-slate-400 italic">No tienes evaluaciones registradas</h3>
-                        <% } %>
-                    </div>
-                </div>
-
-                <div class="col-span-12 lg:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                    <div class="flex justify-between items-center mb-2">
-                        <p class="text-sm font-medium text-slate-500 uppercase">Progreso de la Carrera</p>
-                        
-                        <% if (user && user.progress) { %>
-                            <span class="text-sm font-bold text-blue-600"><%= user.progress %></span>
-                        <% } else { %>
-                            <span class="text-sm font-bold text-slate-400 italic">0% (Sin registros)</span>
-                        <% } %>
-                    </div>
-                    <div class="w-full bg-slate-200 rounded-full h-4">
-                        <div class="bg-blue-600 h-4 rounded-full transition-all duration-500" 
-                            style="width: <%= (user && user.progress) ? user.progress : '0%' %>">
-                        </div>
-                    </div>
-                    <p class="text-xs text-slate-500 mt-3 text-center">Estás en el <%= user.semester || 1 %> semestre de 10</p>
-                </div>
-
-                <div class="col-span-12 lg:col-span-8 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-lg font-bold text-slate-800">Clases de Hoy</h3>
-                    </div>
-                    <% if (typeof classes !== 'undefined' && classes.length > 0) { %>
-                        <div class="flex gap-4 overflow-x-auto snap-x pb-4">
-                            <% classes.forEach(clase => { %>
-                                <div class="flex-none w-64 snap-start p-4 bg-indigo-50 border-2 border-indigo-100 rounded-2xl relative overflow-hidden group">
-                                    <h4 class="text-sm font-bold text-slate-800 mb-1 truncate"> <%= clase.asignatura_nombre %> </h4>
-                                    <p class="text-xs text-slate-500 mb-4 flex items-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                        <%= clase.schedule || 'Hora no definida' %>
-                                    </p>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-[10px] px-2 py-1 bg-white text-indigo-600 rounded-md font-semibold border border-indigo-100">
-                                            <%= clase.room || 'Aula TBD' %>
-                                        </span>
-                                    </div>
-                                </div>
-                            <% }); %>
-                        </div>
-                    <% } else { %>
-                        <div class="h-64 bg-slate-50 rounded-lg border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mb-2 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            <p class="text-sm font-medium">No tienes clases programadas para hoy</p>
-                            <p class="text-xs">¡Disfruta tu día libre!</p>
-                        </div>
-                    <% } %>
-                </div>
-
-                <div class="col-span-12 lg:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                    <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
-                        <i data-lucide="calendar" class="w-5 h-5 mr-2 text-blue-500"></i>
-                        Próximas Evaluaciones
+                <div>
+                    <p class="text-sm font-medium text-slate-500 uppercase">Bienvenido de nuevo</p>
+                    <h3 class="text-3xl font-bold text-slate-800">
+                        <%= user.nombre %>
+                            <%= user.apellido %>
                     </h3>
-                    <% if (typeof exams !== 'undefined' && exams.length > 0) { %>
-                        <% let cont = 0 %>
-                        <div class="space-y-4">
-                            <% for (const exam of exams) { %>
-                                <% if (!(cont < 3)) break; %>
+                    <p class="text-xs text-green-600 font-medium mt-1">
+                        Continúa aprendiendo desde donde lo dejaste
+                    </p>
+                </div>
+            </div>
 
-                                <div class="flex items-start p-3 bg-red-50 border-l-4 border-red-500 rounded-md shadow-sm">
+            <!-- PRÓXIMA EVALUACIÓN -->
+            <div
+                class="col-span-12 md:col-span-6 lg:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-red-100 flex items-center relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-2 h-full bg-red-500"></div>
+                <div class="p-3 bg-red-100 text-red-600 rounded-full mr-5 ml-2">
+                    <i data-lucide="alert-triangle"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-slate-500 uppercase">Próxima Evaluación</p>
+                    <% if (next_exam && next_exam.length> 0) { %>
+                        <h3 class="text-xl font-bold">
+                            <%= next_exam.descripcion %>
+                        </h3>
+                        <p class="text-sm text-red-600 font-semibold mt-1">Mañana, 10:00 AM</p>
+                        <% } else { %>
+                            <h3 class="text-lg text-slate-400 italic">No tienes evaluaciones registradas</h3>
+                            <% } %>
+                </div>
+            </div>
+
+            <!-- PROGRESO -->
+            <div class="col-span-12 lg:col-span-4 bg-white p-6 rounded-xl shadow-sm border">
+                <div class="flex justify-between items-center mb-2">
+                    <p class="text-sm font-medium text-slate-500 uppercase">Progreso de la Carrera</p>
+                    <span class="text-sm font-bold text-blue-600">
+                        <%= user.progress || '0%' %>
+                    </span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-4">
+                    <div class="bg-blue-600 h-4 rounded-full" style="width: <%= user.progress || '0%' %>"></div>
+                </div>
+                <p class="text-xs text-slate-500 mt-3 text-center">
+                    Estás en el <%= user.semester || 1 %> semestre de 10
+                </p>
+            </div>
+        </div>
+        <div class="col-span-12 lg:col-span-8 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold text-slate-800">Clases de Hoy</h3>
+            </div>
+            <% if (typeof classes !=='undefined' && classes.length> 0) { %>
+                <div class="flex gap-4 overflow-x-auto snap-x pb-4">
+                    <% classes.forEach(clase=> { %>
+                        <div
+                            class="flex-none w-64 snap-start p-4 bg-indigo-50 border-2 border-indigo-100 rounded-2xl relative overflow-hidden group">
+                            <h4 class="text-sm font-bold text-slate-800 mb-1 truncate">
+                                <%= clase.asignatura_nombre %>
+                            </h4>
+                            <p class="text-xs text-slate-500 mb-4 flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <%= clase.schedule || 'Hora no definida' %>
+                            </p>
+                            <div class="flex items-center justify-between">
+                                <span
+                                    class="text-[10px] px-2 py-1 bg-white text-indigo-600 rounded-md font-semibold border border-indigo-100">
+                                    <%= clase.room || 'Aula TBD' %>
+                                </span>
+                            </div>
+                        </div>
+                        <% }); %>
+                </div>
+                <% } else { %>
+                    <div
+                        class="h-64 bg-slate-50 rounded-lg border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mb-2 opacity-20" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <p class="text-sm font-medium">No tienes clases programadas para hoy</p>
+                        <p class="text-xs">¡Disfruta tu día libre!</p>
+                    </div>
+                    <% } %>
+        </div>
+
+        <div class="col-span-12 lg:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                <i data-lucide="calendar" class="w-5 h-5 mr-2 text-blue-500"></i>
+                Próximas Evaluaciones
+            </h3>
+            <% if (typeof exams !=='undefined' && exams.length> 0) { %>
+                <% let cont=0 %>
+                    <div class="space-y-4">
+                        <% for (const exam of exams) { %>
+                            <% if (!(cont < 3)) break; %>
+
+                                <div
+                                    class="flex items-start p-3 bg-red-50 border-l-4 border-red-500 rounded-md shadow-sm">
                                     <div class="flex-1">
-                                        <h4 class="font-semibold text-slate-800"><%= exam.descripcion %></h4>
-                                        <p class="text-sm text-slate-600"> <%= new Intl.DateTimeFormat('es-ES').format(new Date(exam.fecha_entrega)) %> </p>
+                                        <h4 class="font-semibold text-slate-800">
+                                            <%= exam.descripcion %>
+                                        </h4>
+                                        <p class="text-sm text-slate-600">
+                                            <%= new Intl.DateTimeFormat('es-ES').format(new Date(exam.fecha_entrega)) %>
+                                        </p>
                                     </div>
-                                    <span class="text-[10px] font-bold text-red-600 uppercase tracking-wider">Pendiente</span>
+                                    <span
+                                        class="text-[10px] font-bold text-red-600 uppercase tracking-wider">Pendiente</span>
                                 </div>
 
                                 <% cont++; %>
-                            <% } %>
-                        </div>
+                                    <% } %>
+                    </div>
                     <% } else { %>
                         <div class="p-6 bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl text-center">
-                            <div class="inline-flex items-center justify-center w-12 h-12 bg-green-100 text-green-600 rounded-full mb-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            <div
+                                class="inline-flex items-center justify-center w-12 h-12 bg-green-100 text-green-600 rounded-full mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7" />
                                 </svg>
                             </div>
                             <p class="text-slate-600 font-medium">¡Todo al día!</p>
                             <p class="text-xs text-slate-400">No tienes exámenes próximos registrados.</p>
                         </div>
-                    <% } %>
-                    <button class="w-full mt-4 text-sm text-blue-600 font-medium hover:text-blue-800 transition-colors">
-                        Ver agenda completa →
-                    </button>
+                        <% } %>
+                            <button
+                                class="w-full mt-4 text-sm text-blue-600 font-medium hover:text-blue-800 transition-colors">
+                                Ver agenda completa →
+                            </button>
+        </div>
+
+        <div class="col-span-12 md:col-span-6 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                <i data-lucide="pen-tool" class="w-5 h-5 mr-2 text-purple-500"></i>
+                Frase del Dia
+            </h3>
+            <div class="flex items-center justify-between bg-purple-50 p-5 rounded-lg">
+                <div>
+                    <h4 class="text-xl font-bold text-purple-900">Frase</h4>
+                    <p class="text-sm font-medium text-purple-700 mt-1">Algo mas</p>
                 </div>
+            </div>
+        </div>
 
-                <div class="col-span-12 md:col-span-6 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                    <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
-                        <i data-lucide="pen-tool" class="w-5 h-5 mr-2 text-purple-500"></i> 
-                        Frase del Dia
-                    </h3>
-                    <div class="flex items-center justify-between bg-purple-50 p-5 rounded-lg">
-                        <div>
-                            <h4 class="text-xl font-bold text-purple-900">Frase</h4>
-                            <p class="text-sm font-medium text-purple-700 mt-1">Algo mas</p>
-                        </div>
-                    </div>
+        <div
+            class="col-span-12 md:col-span-6 bg-gradient-to-r from-blue-600 to-indigo-700 p-6 rounded-xl shadow-sm flex items-center justify-between text-white relative overflow-hidden">
+            <i data-lucide="timer" class="absolute -right-6 -bottom-6 w-32 h-32 text-white opacity-10"></i>
+
+            <div>
+                <h3 class="text-lg font-bold flex items-center mb-2">
+                    <i data-lucide="focus" class="w-5 h-5 mr-2"></i>
+                    Sesión de Estudio
+                </h3>
+                <p class="text-blue-100 text-sm mb-4">¿Listo para enfocarte?</p>
+                <div class="flex space-x-2">
+                    <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-medium">25 min</span>
+                    <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-medium">50 min</span>
                 </div>
+            </div>
+            <button
+                class="bg-white text-blue-700 hover:bg-blue-50 p-4 rounded-full shadow-lg transition-transform hover:scale-105 flex items-center font-bold">
+                <i data-lucide="play" class="w-6 h-6 mr-2 fill-current"></i>
+                INICIAR POMODORO
+            </button>
+        </div>
 
-                <div class="col-span-12 md:col-span-6 bg-gradient-to-r from-blue-600 to-indigo-700 p-6 rounded-xl shadow-sm flex items-center justify-between text-white relative overflow-hidden">
-                    <i data-lucide="timer" class="absolute -right-6 -bottom-6 w-32 h-32 text-white opacity-10"></i>
-
-                    <div>
-                        <h3 class="text-lg font-bold flex items-center mb-2">
-                            <i data-lucide="focus" class="w-5 h-5 mr-2"></i>
-                            Sesión de Estudio
-                        </h3>
-                        <p class="text-blue-100 text-sm mb-4">¿Listo para enfocarte?</p>
-                        <div class="flex space-x-2">
-                            <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-medium">25 min</span>
-                            <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-medium">50 min</span>
-                        </div>
-                    </div>
-                    <button class="bg-white text-blue-700 hover:bg-blue-50 p-4 rounded-full shadow-lg transition-transform hover:scale-105 flex items-center font-bold">
-                        <i data-lucide="play" class="w-6 h-6 mr-2 fill-current"></i>
-                        INICIAR POMODORO
-                    </button>
-                </div>
-
-            </div> </div>
+    </div>
+        
     </main>
-    <!-- <script src="/views/javascript/layout.js" ></script> -->
+    <!-- Scripts -->
+    <script src="/views/javascript/layout.js"></script>
+    <script src="/views/javascript/dashboard.js"></script>
     <script>
-        lucide.createIcons();
+        document.addEventListener("DOMContentLoaded", () => {
+            setTimeout(() => {
+                if (typeof lucide !== "undefined") {
+                    lucide.createIcons();
+                }
+            }, 100);
+        });
     </script>
+
 </body>
+
 </html>

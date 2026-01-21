@@ -1,91 +1,134 @@
 document.addEventListener("DOMContentLoaded", () => {
-    
-    const user = {
-        name: "Estudiante",
-        initials: "ES"
+
+    /* =========================
+        CONFIGURACIÓN GLOBAL
+    ========================== */
+    const appConfig = {
+        appName: "LearnStudyHub",
+        user: {
+            name: "Estudiante",
+            initials: "ES"
+        },
+        menuItems: [
+            { name: "  Dashboard", icon: "layout-dashboard", href: "/api/dashboard" },
+            { name: "  Malla Curricular", icon: "book-open", href: "/api/malla" },
+            { name: "  Mis Cursos", icon: "library", href: "/api/cursos" },
+            { name: "  Agenda / Evaluaciones", icon: "calendar-days", href: "/api/agenda" },
+            { name: "  Calificaciones", icon: "bar-chart-3", href: "/api/calificaciones" },
+            { name: "  Pomodoro", icon: "timer", href: "/pomodoro" },
+            { name: "  Horario", icon: "clock", href: "/horario" }
+        ],
+        footer: {
+            socials: [
+                { name: "Facebook", icon: "fab fa-facebook-f", href: "#" },
+                { name: "Instagram", icon: "fab fa-instagram", href: "#" },
+                { name: "Twitter", icon: "fab fa-x-twitter", href: "#" }
+            ],
+            links: [
+                { name: "Política de Privacidad", href: "/privacidad" },
+                { name: "Términos y Condiciones", href: "/terminos" }
+            ]
+        }
     };
 
-    const menuItems = [
-        { name: "Malla Curricular", icon: "fa-project-diagram", href: "malla.html" },
-        { name: "Pomodoro", icon: "fa-clock", href: "pomodoro.html" },
-        { name: "Mi Agenda", icon: "fa-calendar-alt", href: "agenda.html" },
-        { name: "Notas", icon: "fa-sticky-note", href: "notas.html" }
-    ];
+    const currentPath = window.location.pathname;
 
-    // 1. INYECTAR SIDEBAR
+    /* =========================
+        SIDEBAR
+    ========================== */
     const sidebar = document.createElement("nav");
     sidebar.className = "app-sidebar";
-    
-    // marcar "active"
-    const currentPath = window.location.pathname.split("/").pop(); 
 
-    let menuHTML = `
+    sidebar.innerHTML = `
         <div>
             <div class="sidebar-logo">
-                <i class="fas fa-layer-group text-primary"></i>
-                <span class="nav-text ms-2 fw-bold">LearnHub</span>
+                <span class="nav-text">${appConfig.appName}</span>
             </div>
-            <div class="d-flex flex-column">
-    `;
 
-    menuItems.forEach(item => {
-        // Verificar
-        const isActive = currentPath === item.href ? "active" : "";
-        
-        menuHTML += `
-            <a href="${item.href}" class="nav-item-app ${isActive}">
-                <i class="fas ${item.icon}"></i>
-                <span class="nav-text">${item.name}</span>
-            </a>
-        `;
-    });
-
-    menuHTML += `
-            </div>
+            <nav class="sidebar-menu">
+                ${appConfig.menuItems.map(item => {
+                    const isActive = currentPath.startsWith(item.href);
+                    return `
+                        <a href="${item.href}" 
+                            class="nav-item-app ${isActive ? "active" : ""}">
+                            <i data-lucide="${item.icon}" class="menu-icon"></i>
+                            <span class="nav-text">${item.name}</span>
+                        </a>
+                    `;
+                }).join("")}
+            </nav>
         </div>
-        <a href="/api/logout" class="nav-item-app logout-btn">
-            <i class="fas fa-sign-out-alt"></i>
+
+        <a href="/logout" class="nav-item-app logout-btn">
+            <i data-lucide="log-out" class="menu-icon"></i>
             <span class="nav-text">Cerrar Sesión</span>
         </a>
     `;
 
-    sidebar.innerHTML = menuHTML;
     document.body.prepend(sidebar);
 
-    // 2. INYECTAR HEADER SUPERIOR
+    /* =========================
+        HEADER
+    ========================== */
     const header = document.createElement("header");
     header.className = "app-header";
+
     header.innerHTML = `
         <div class="header-brand">
-            <a href="dashboard.html" class="text-decoration-none text-dark fw-bold fs-4">
-                LearnStudy<span class="text-primary">Hub</span>
-            </a>
+            <a href="/api/dashboard">${appConfig.appName}</a>
         </div>
-        
+
         <div class="user-profile">
-            <div class="text-end me-2 d-none d-sm-block">
-                <small class="text-muted d-block" style="font-size: 0.75rem;">Bienvenido,</small>
-                <span class="fw-bold text-dark" style="font-size: 0.9rem;">${user.name}</span>
+            <div class="user-info">
+                <small>Bienvenido</small>
+                <strong>${appConfig.user.name}</strong>
             </div>
-            <div class="user-avatar shadow-sm">
-                ${user.initials}
+            <div class="user-avatar">
+                ${appConfig.user.initials}
             </div>
         </div>
     `;
-    
-    // Insertar header después del sidebar
+
     sidebar.after(header);
 
-    // 3. INYECTAR FOOTER (Reutilizando estilo existente)
+    /* =========================
+        FOOTER
+    ========================== */
     const footer = document.createElement("footer");
-    footer.className = "py-4 mt-5 bg-white text-center text-muted border-top";
+    footer.className = "app-footer";
+
     footer.innerHTML = `
-        <div class="container">
-            <small>© 2025 LearnStudy Hub. Todos los derechos reservados.</small>
+        <div class="footer-container">
+            <div class="footer-socials">
+                ${appConfig.footer.socials.map(s => `
+                    <a href="${s.href}" aria-label="${s.name}">
+                        <i class="${s.icon}"></i>
+                    </a>
+                `).join("")}
+            </div>
+
+            <div class="footer-links">
+                ${appConfig.footer.links.map(l => `
+                    <a href="${l.href}">${l.name}</a>
+                `).join(" | ")}
+            </div>
+
+            <div class="footer-copy">
+                © <span id="year"></span> ${appConfig.appName}. Todos los derechos reservados.
+            </div>
         </div>
     `;
+
     document.body.append(footer);
 
-    // 4. AJUSTAR BODY CLASS
+    document.getElementById("year").textContent = new Date().getFullYear();
+
     document.body.classList.add("app-layout");
+
+    /* =========================
+        LUCIDE ICONS
+    ========================== */
+    if (window.lucide) {
+        lucide.createIcons();
+    }
 });
