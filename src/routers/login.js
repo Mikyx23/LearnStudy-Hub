@@ -24,12 +24,12 @@ routerLogin.get('/recuperar-contrasena', (req,res) => {
 
 // Ruta para manejar el POST del formulario
 routerLogin.post('/', async (req, res) => {
-    const { cedula, password } = req.body;
+    const { cedula, password, timezone } = req.body;
     
     const result = await VerificarUsuario(cedula,password);
 
     if(result.success){
-        const token = jwt.sign({id: result.id, carrer: result.carrers[0], name: result.name, lastname: result.lastname}, jwtSecret, {
+        const token = jwt.sign({id: result.id, carrer: result.carrers[0], name: result.name, lastname: result.lastname, timezone: timezone}, jwtSecret, {
             expiresIn: '1h'
         });
 

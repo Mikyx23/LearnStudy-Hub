@@ -186,7 +186,9 @@ formularioLogin.addEventListener('submit', async (event) => {
     const datos = new FormData(event.target);
     const datosJSON = Object.fromEntries(datos.entries());
 
-    try{
+    datosJSON.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    try {
         const respuesta = await fetch('/api/login', {
             method: 'POST',
             body: JSON.stringify(datosJSON),
@@ -203,16 +205,18 @@ formularioLogin.addEventListener('submit', async (event) => {
         else if(!respuesta.ok){
             alert('Error al iniciar sesion');
         }
-        else{
+        else {
             if(datosRespuesta.redirectUrl){
                 setTimeout(() => {
                     window.location.href = datosRespuesta.redirectUrl;
-                },1500)
+                }, 1500);
             }
         }
     }
     catch(error){
-        throw new Error('Ha ocurrido un error inesperado');
+        // Es mejor un console.error para debug y un alert para el usuario
+        console.error(error);
+        alert('Ha ocurrido un error inesperado');
     }
 });
 

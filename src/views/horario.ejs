@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Constructor de Horario Académico</title>
+    <link rel="stylesheet" href="/views/css/horario.css">
+</head>
+<body>
+    <% if(mensaje){ %>
+            <div id="no-courses-msg" class="no-courses-card">
+                <div class="card-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h2 class="card-title">Sin cursos inscritos</h2>
+                <p class="card-text">
+                    No se encontraron registros para este período. 
+                    <strong>Debe inscribir cursos en este lapso académico para cargar horarios.</strong>
+                </p>
+                <div class="card-footer-line"></div>
+            </div>
+    <% }else { %>
+    <div class="container">
+        <header>
+            <h1>Constructor de Horario Académico</h1>
+            <p class="description">Planifica tu semestre agregando tus clases. Selecciona los detalles abajo para añadir bloques a tu parrilla semanal.</p>
+        </header>
+        
+        <div class="app-container">
+            <div class="form-container">
+                <h2>Agregar Nueva Clase</h2>
+                <div class="form-group">
+                    <label for="subject">MATERIA</label>
+                    <select id="subject">
+                        <option value="" disabled selected>Seleccionar materia...</option>
+                        <!-- Las opciones se generarán dinámicamente con JavaScript -->
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="day">DÍA</label>
+                    <select id="day">
+                        <option value="lunes">Lunes</option>
+                        <option value="martes">Martes</option>
+                        <option value="miércoles">Miércoles</option>
+                        <option value="jueves">Jueves</option>
+                        <option value="viernes">Viernes</option>
+                        <option value="sábado">Sábado</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="start-time">HORA DE INICIO</label>
+                    <select id="start-time">
+                        <!-- Las horas se generarán dinámicamente con JavaScript -->
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="end-time">HORA DE FINALIZACIÓN</label>
+                    <select id="end-time">
+                        <!-- Las horas se generarán dinámicamente con JavaScript -->
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="classroom">AULA</label>
+                    <input type="text" id="classroom" placeholder="Ej. A-204">
+                </div>
+                
+                <button class="btn-add" id="add-btn">+ Agregar</button>
+                <button class="btn-guardar" id="btn-guardar" type="button">Guardar Horario</button>
+            </div>
+            
+            <div class="schedule-container">
+                <h2>Horario Semanal</h2>
+                <div id="schedule-table">
+                    <!-- La tabla se generará dinámicamente con JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Datos de materias con sus IDs (esto normalmente vendría de la base de datos)
+        const materiasConIDs = <%- JSON.stringify(materias) %>;
+
+        // Vector que simula datos de una base de datos
+        // Ahora cada clase incluye el id_curso
+        const initialScheduleData = <%- JSON.stringify(horarios) %>;
+    </script>
+    <script src="/views/javascript/horario.js" ></script>
+    <% } %>
+</body>
+</html>
