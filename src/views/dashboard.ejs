@@ -117,9 +117,13 @@
                     </div>
                     <div>
                         <p class="text-sm font-medium text-slate-500 uppercase">Próxima Evaluación</p>
-                        <% if (typeof next_exam !== 'undefined' && next_exam && next_exam.length > 0) { %>
+                        <% if (typeof next_exam !== 'undefined' && Object.keys(next_exam).length > 0) { %>
                             <h3 class="text-xl font-bold text-slate-800"> <%= next_exam.descripcion %> </h3>
-                            <p class="text-sm text-red-600 font-semibold mt-1">Mañana, 10:00 AM</p>
+                            <p class="text-sm text-red-600 font-semibold mt-1">
+                            <%= DateTime.fromJSDate(new Date(next_exam.fecha_entrega))
+                                .setLocale('es')
+                                .toRelative({ base: DateTime.now() }) %>
+                            </p>
                         <% } else { %>
                             <h3 class="text-lg font-medium text-slate-400 italic">No tienes evaluaciones registradas</h3>
                         <% } %>
@@ -152,16 +156,16 @@
                         <div class="flex gap-4 overflow-x-auto snap-x pb-4">
                             <% classes.forEach(clase => { %>
                                 <div class="flex-none w-64 snap-start p-4 bg-indigo-50 border-2 border-indigo-100 rounded-2xl relative overflow-hidden group">
-                                    <h4 class="text-sm font-bold text-slate-800 mb-1 truncate"> <%= clase.asignatura_nombre %> </h4>
+                                    <h4 class="text-sm font-bold text-slate-800 mb-1 truncate"> <%= clase.subject%> </h4>
                                     <p class="text-xs text-slate-500 mb-4 flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
-                                        <%= clase.schedule || 'Hora no definida' %>
+                                        <%= clase.startTime || 'Hora no definida' %>
                                     </p>
                                     <div class="flex items-center justify-between">
                                         <span class="text-[10px] px-2 py-1 bg-white text-indigo-600 rounded-md font-semibold border border-indigo-100">
-                                            <%= clase.room || 'Aula TBD' %>
+                                            <%= clase.classroom || 'Aula TBD' %>
                                         </span>
                                     </div>
                                 </div>

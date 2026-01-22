@@ -1,5 +1,5 @@
 import {pool} from './conexion.js';
-import { GET_USER_DATA, GET_ACADEMIC_DATA } from './queries.js';
+import { GET_USER_DATA, GET_ACADEMIC_DATA, GET_TODAY_CLASSES } from './queries.js';
 
 export class Dashboard {
     static ObtenerDatosUsuario = async (id_usuario, id_lapso) => {
@@ -43,6 +43,28 @@ export class Dashboard {
         }
         catch(error){
             throw new Error('Ha ocurrido un error inesperado: No se han podido obtener los datos académicos');
+        }
+    }
+
+    static ObtenerClasesDiaActual = async (id_usuario, id_lapso, dia_semana) => {
+        try{
+            const [rows] = await pool.execute(GET_TODAY_CLASSES,[id_usuario,id_lapso,dia_semana]);
+
+            if(rows.length > 0){
+                return {
+                    success: true,
+                    today: rows
+                }
+            }
+            else{
+                return {
+                    success: false,
+                    message: 'No se han podido obtener las clases del día'
+                }
+            }
+        }
+        catch(error){
+            throw new Error('Ha ocurrido un error inesperado: No se ha podido obtener las clases del día');
         }
     }
 }

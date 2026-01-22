@@ -34,7 +34,7 @@ routerHorario.get('/', async (req,res) => {
 routerHorario.post('/guardar', async (req,res) => {
     try{
         const datos = req.body;
-        console.log(datos)
+
         const result = await CrearHorarioController(datos);
 
         if(result.success){
@@ -45,6 +45,6 @@ routerHorario.post('/guardar', async (req,res) => {
         }
     }
     catch(error){
-        // throw new Error('No se ha podido guardar el horario');
+        throw new Error('No se ha podido guardar el horario');
     }
 })

@@ -4,7 +4,6 @@ import { GET_COURSES_SCHEDULE, GET_SCHEDULE, INSERT_SCHEDULE } from './queries.j
 export class Horario {
     static CrearHorario = async (horario) => {
         try{
-            console.log(horario);
             const [resultado] = await pool.query(INSERT_SCHEDULE,[horario]);
 
             if(resultado.affectedRows > 0){
@@ -20,8 +19,7 @@ export class Horario {
             }
         }
         catch(error){
-            // throw new Error('Ha ocurrido un error inesperado: No se ha podido crear el horario');
-            console.error(error)
+            throw new Error('Ha ocurrido un error inesperado: No se ha podido crear el horario');
         }
     }
 
