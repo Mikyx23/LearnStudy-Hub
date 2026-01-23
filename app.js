@@ -8,9 +8,8 @@ const { port } = config;
 
 // ----------- MODULOS IMPORTADOS -----------
 import express from 'express';
-import pkg from 'body-parser';
 import cookieParser from 'cookie-parser';
-import {getToken, authenticateUser} from './src/middleware/auth.js';
+import { getToken, authenticateUser } from './src/middleware/auth.js';
 const app = express();
 
 app.disable('x-powered-by');
@@ -26,6 +25,11 @@ app.use(getToken);
 
 // ----------- ROUTING -----------
 app.get('/', (req, res) => {
+    const {user} = req.session;
+
+    if(user){
+        res.redirect('/api/dashboard');
+    }
     res.sendFile(path.join(__dirname, '/public/index/index.html'));
 });
 
@@ -55,6 +59,9 @@ app.use('/api/calificaciones', routerQualifications);
 
 import {routerHorario} from './src/routers/horario.js';
 app.use('/api/horario', routerHorario);
+
+import {routerPomodoro} from './src/routers/pomodoro.js';
+app.use('/api/pomodoro', routerPomodoro);
 
 // import { ObtenerUsuarioController } from './src/controllers/users-controller.js';
 // app.get('/api/inicio', async (req,res) => {

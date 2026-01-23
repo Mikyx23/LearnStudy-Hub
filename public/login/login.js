@@ -185,7 +185,6 @@ formularioLogin.addEventListener('submit', async (event) => {
 
     const datos = new FormData(event.target);
     const datosJSON = Object.fromEntries(datos.entries());
-
     datosJSON.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     try {

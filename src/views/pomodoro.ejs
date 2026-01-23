@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro Study Hub</title>
+    <style>
+        :root {
+            --primary: #a78bfa;
+            --secondary: #c4b5fd;
+            --accent: #8b5cf6;
+            --bg-start: #f0f4f8;
+            --bg-end: #e0e7f1;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --card-bg: rgba(255, 255, 255, 0.7);
+            --shadow: rgba(139, 92, 246, 0.1);
+            --success: #86efac;
+            --work-mode: #a78bfa;
+            --break-mode: #86efac;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 0.5s ease;
+        }
+
+        body.break-mode {
+            background: linear-gradient(135deg, #d4f4dd 0%, #b8e8c7 100%);
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .tab-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            padding: 0.8rem 2rem;
+            background: rgba(255, 255, 255, 0.5);
+            border: 2px solid transparent;
+            border-radius: 15px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .history-section {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .history-header h2 {
+            font-size: 1.5rem;
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        .clear-history-btn {
+            padding: 0.6rem 1.5rem;
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .clear-history-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .session-card {
+            background: rgba(255, 255, 255, 0.6);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--accent);
+            transition: all 0.3s ease;
+        }
+
+        .session-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.2);
+        }
+
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.8rem;
+        }
+
+        .session-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .session-course {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .session-date {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-align: right;
+        }
+
+        .session-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(139, 92, 246, 0.1);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--accent);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .empty-history {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-history-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(196, 181, 253, 0.1));
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .summary-value {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--accent);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .main-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px var(--shadow);
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .selection-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .input-group label {
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        select {
+            padding: 1rem 1.5rem;
+            border: 2px solid transparent;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--text-primary);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        select:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.2);
+        }
+
+        select:focus {
+            border-color: var(--accent);
+        }
+
+        .current-task {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 1.5rem;
+            border-radius: 20px;
+            margin-bottom: 3rem;
+            text-align: center;
+            color: white;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .current-task h3 {
+            font-size: 1rem;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .current-task p {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .timer-container {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .mode-indicator {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--accent);
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .mode-indicator.break {
+            background: rgba(134, 239, 172, 0.2);
+            color: #16a34a;
+        }
+
+        .timer-display {
+            font-size: 5rem;
+            font-weight: 300;
+            color: var(--accent);
+            margin-bottom: 2rem;
+            transition: color 0.5s ease;
+        }
+
+        .timer-display.break {
+            color: #16a34a;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 3rem;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+            border-radius: 10px;
+            width: 0%;
+            transition: width 1s linear;
+        }
+
+        .progress-bar.break {
+            background: linear-gradient(90deg, #16a34a, var(--success));
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            color: white;
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--accent);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(139, 92, 246, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.02);
+            }
+        }
+
+        .timer-display.active {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @media (max-width: 768px) {
+            .selection-section {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .timer-display {
+                font-size: 3.5rem;
+            }
+
+            .main-card {
+                padding: 2rem;
+            }
+
+            button {
+                padding: 0.8rem 2rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍅 Pomodoro Study Hub</h1>
+            <p>Organiza tu estudio con la técnica Pomodoro</p>
+        </div>
+
+        <div class="tab-container">
+            <button class="tab-btn active" data-tab="timer">⏱️ Temporizador</button>
+            <button class="tab-btn" data-tab="history">📊 Historial</button>
+        </div>
+
+        <div class="main-card">
+            <!-- Tab: Temporizador -->
+            <div class="tab-content active" id="timer-tab">
+                <div class="selection-section">
+                    <div class="input-group">
+                        <label for="course-select">Curso</label>
+                        <select id="course-select">
+                            <option value="">Selecciona un curso</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="exam-select">Evaluación</label>
+                        <select id="exam-select" disabled>
+                            <option value="">Primero selecciona un curso</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="current-task">
+                    <h3>Objetivo Actual</h3>
+                    <p id="current-objective">Selecciona una evaluación para comenzar</p>
+                </div>
+
+                <div class="timer-container">
+                    <div class="mode-indicator" id="mode-indicator">Modo Estudio</div>
+                    <div class="timer-display" id="timer-display">25:00</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn-primary" id="start-btn" disabled>Iniciar</button>
+                    <button class="btn-secondary" id="pause-btn" disabled>Pausar</button>
+                    <button class="btn-secondary" id="reset-btn">Reiniciar</button>
+                </div>
+            </div>
+
+            <!-- Tab: Historial -->
+            <div class="tab-content" id="history-tab">
+                <div class="stats-summary" id="stats-summary">
+                    <div class="summary-card">
+                        <span class="summary-value" id="total-sessions">0</span>
+                        <span class="summary-label">Sesiones Totales</span>
+                    </div>
+                    <div class="summary-card">
+                        <span class="summary-value" id="total-minutes">0</span>
+                        <span class="summary-label">Minutos Estudiados</span>
+                    </div>
+                    <div class="summary-card">
+                        <span class="summary-value" id="total-breaks">0</span>
+                        <span class="summary-label">Descansos Tomados</span>
+                    </div>
+                </div>
+
+                <div class="history-header">
+                    <h2>Sesiones Anteriores</h2>
+                    <button class="clear-history-btn" id="clear-history-btn">🗑️ Limpiar Historial</button>
+                </div>
+
+                <div class="history-section" id="history-section">
+                    <div class="empty-history">
+                        <div class="empty-history-icon">📋</div>
+                        <p>No hay sesiones registradas aún</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const studyData = {
+            courses: <%- JSON.stringify(data) %>
+        };
+
+        const courseSelect = document.getElementById('course-select');
+        const examSelect = document.getElementById('exam-select');
+        const currentObjective = document.getElementById('current-objective');
+        const timerDisplay = document.getElementById('timer-display');
+        const modeIndicator = document.getElementById('mode-indicator');
+        const progressBar = document.getElementById('progress-bar');
+        const startBtn = document.getElementById('start-btn');
+        const pauseBtn = document.getElementById('pause-btn');
+        const resetBtn = document.getElementById('reset-btn');
+
+        let timerInterval = null;
+        let timeRemaining = 1500;
+        let totalTime = 1500;
+        let isWorkMode = true;
+        let isPaused = false;
+        let lastUpdateTime = Date.now();
+        let currentSession = {
+            id_evaluacion: null,
+            courseName: '',
+            examName: '',
+            workSessions: 0,
+            breakSessions: 0,
+            startTime: null,
+            descripcion_sesion: ''
+        };
+
+        // Manejar visibilidad de la página
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && timerInterval) {
+                // Cuando vuelve a la pestaña, calcular tiempo perdido
+                const now = Date.now();
+                const timePassed = Math.floor((now - lastUpdateTime) / 1000);
+                
+                if (timePassed > 0) {
+                    timeRemaining = Math.max(0, timeRemaining - timePassed);
+                    updateDisplay();
+                    
+                    if (timeRemaining <= 0) {
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                        
+                        if (isWorkMode) {
+                            currentSession.workSessions++;
+                        } else {
+                            currentSession.breakSessions++;
+                        }
+                        
+                        switchMode();
+                    }
+                }
+                
+                lastUpdateTime = Date.now();
+            }
+        });
+
+        // Guardar sesión en la base de datos
+        async function saveSessionToDatabase() {
+            if (currentSession.workSessions === 0 || !currentSession.id_evaluacion) {
+                return { success: false };
+            }
+
+            const horaFinal = new Date();
+            const descripcion = `${currentSession.workSessions} Pomodoro(s) completado(s), ${currentSession.breakSessions} descanso(s) tomado(s)`;
+
+            const datosJSON = {
+                id_evaluacion: currentSession.id_evaluacion,
+                descripcion_sesion: descripcion,
+                hora_inicio: currentSession.startTime.toISOString(),
+                hora_final: horaFinal.toISOString(),
+                completada: true
+            };
+
+            try {
+                const respuesta = await fetch('/api/pomodoro/registrar', {
+                    method: 'POST',
+                    body: JSON.stringify(datosJSON),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const datosRespuesta = await respuesta.json();
+
+                if (!respuesta.ok) {
+                    console.error('Error al guardar la sesión en la base de datos');
+                    alert('Error al guardar la sesión en la base de datos');
+                    return { success: false };
+                } else {
+                    console.log('Sesión guardada exitosamente:', datosRespuesta);
+                    
+                    // Agregar la nueva sesión al array de historial
+                    const nuevaSesion = {
+                        id_sesion: datosRespuesta.id_sesion,
+                        courseName: currentSession.courseName,
+                        examName: currentSession.examName,
+                        workSessions: currentSession.workSessions,
+                        breakSessions: currentSession.breakSessions,
+                        totalMinutes: currentSession.workSessions * 25,
+                        fecha_sesion: horaFinal.toISOString(),
+                        hora_inicio: currentSession.startTime.toISOString(),
+                        hora_final: horaFinal.toISOString()
+                    };
+                    
+                    historyData.unshift(nuevaSesion);
+                    
+                    return { success: true };
+                }
+            } catch (error) {
+                console.error('Error al conectar con el servidor:', error);
+                alert('Ha ocurrido un error al guardar la sesión');
+                return { success: false };
+            }
+        }
+
+        // Renderizar historial desde el servidor
+        function renderHistory() {
+            const historySection = document.getElementById('history-section');
+            
+            if (!historyData || historyData.length === 0) {
+                historySection.innerHTML = `
+                    <div class="empty-history">
+                        <div class="empty-history-icon">📋</div>
+                        <p>No hay sesiones registradas aún</p>
+                    </div>
+                `;
+            } else {
+                historySection.innerHTML = historyData.map(session => {
+                    const date = new Date(session.fecha_sesion);
+                    const dateStr = date.toLocaleDateString('es-ES', { 
+                        day: '2-digit', 
+                        month: 'short', 
+                        year: 'numeric' 
+                    });
+                    const timeStr = date.toLocaleTimeString('es-ES', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    });
+
+                    return `
+                        <div class="session-card">
+                            <div class="session-header">
+                                <div>
+                                    <div class="session-title">${session.examName}</div>
+                                    <div class="session-course">${session.courseName}</div>
+                                </div>
+                                <div class="session-date">
+                                    ${dateStr}<br>${timeStr}
+                                </div>
+                            </div>
+                            <div class="session-stats">
+                                <div class="stat-item">
+                                    <span class="stat-value">${session.workSessions}</span>
+                                    <span class="stat-label">Pomodoros</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">${session.totalMinutes}</span>
+                                    <span class="stat-label">Minutos</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">${session.breakSessions}</span>
+                                    <span class="stat-label">Descansos</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            updateStatsSummary(historyData);
+        }
+
+        // Actualizar resumen de estadísticas
+        function updateStatsSummary(history) {
+            const totalSessions = history.reduce((sum, s) => sum + s.workSessions, 0);
+            const totalMinutes = history.reduce((sum, s) => sum + s.totalMinutes, 0);
+            const totalBreaks = history.reduce((sum, s) => sum + s.breakSessions, 0);
+
+            document.getElementById('total-sessions').textContent = totalSessions;
+            document.getElementById('total-minutes').textContent = totalMinutes;
+            document.getElementById('total-breaks').textContent = totalBreaks;
+        }
+
+        // Limpiar historial
+        async function clearHistory() {
+            if (confirm('¿Estás seguro de que quieres eliminar todo el historial?')) {
+                try {
+                    const respuesta = await fetch('/api/pomodoro/limpiar', {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    const datosRespuesta = await respuesta.json();
+
+                    if (!respuesta.ok) {
+                        alert('Error al limpiar el historial');
+                    } else {
+                        historyData.length = 0; // Vaciar el array
+                        renderHistory();
+                        alert('Historial limpiado exitosamente');
+                    }
+                } catch (error) {
+                    console.error('Error al limpiar historial:', error);
+                    alert('Ha ocurrido un error al limpiar el historial');
+                }
+            }
+        }
+
+        // Sistema de pestañas
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabName = btn.dataset.tab;
+                
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                btn.classList.add('active');
+                document.getElementById(`${tabName}-tab`).classList.add('active');
+                
+                if (tabName === 'history') {
+                    renderHistory();
+                }
+            });
+        });
+
+        document.getElementById('clear-history-btn').addEventListener('click', clearHistory);
+
+        studyData.courses.forEach(course => {
+            const option = document.createElement('option');
+            option.value = course.id;
+            option.textContent = course.name;
+            courseSelect.appendChild(option);
+        });
+
+        courseSelect.addEventListener('change', (e) => {
+            const courseId = parseInt(e.target.value);
+            examSelect.innerHTML = '<option value="">Selecciona una evaluación</option>';
+            examSelect.disabled = true;
+            startBtn.disabled = true;
+            currentObjective.textContent = 'Selecciona una evaluación para comenzar';
+
+            if (courseId && !isNaN(courseId)) {
+                const course = studyData.courses.find(c => c.id === courseId);
+                if (course) {
+                    let exams = course.exams;
+                    
+                    // Si exams es un string (viene de MySQL JSON_ARRAYAGG), parsearlo
+                    if (typeof exams === 'string') {
+                        try {
+                            exams = JSON.parse(exams);
+                        } catch (error) {
+                            console.error('Error parsing exams:', error);
+                            exams = [];
+                        }
+                    }
+                    
+                    // Verificar que sea un array válido
+                    if (Array.isArray(exams) && exams.length > 0) {
+                        exams.forEach(exam => {
+                            const option = document.createElement('option');
+                            option.value = exam.id;
+                            option.textContent = exam.name;
+                            examSelect.appendChild(option);
+                        });
+                        examSelect.disabled = false;
+                    }
+                }
+            }
+        });
+
+        examSelect.addEventListener('change', (e) => {
+            if (e.target.value) {
+                const examId = parseInt(e.target.value);
+                const examName = e.target.options[e.target.selectedIndex].text;
+                const courseName = courseSelect.options[courseSelect.selectedIndex].text;
+                
+                currentObjective.textContent = examName;
+                currentSession.id_evaluacion = examId;
+                currentSession.examName = examName;
+                currentSession.courseName = courseName;
+                currentSession.workSessions = 0;
+                currentSession.breakSessions = 0;
+                currentSession.startTime = null;
+                startBtn.disabled = false;
+            } else {
+                currentObjective.textContent = 'Selecciona una evaluación para comenzar';
+                currentSession.id_evaluacion = null;
+                startBtn.disabled = true;
+            }
+        });
+
+        function updateDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            const progress = ((totalTime - timeRemaining) / totalTime) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        function startTimer() {
+            if (timerInterval) return;
+            
+            if (!currentSession.startTime) {
+                currentSession.startTime = new Date();
+            }
+            
+            lastUpdateTime = Date.now();
+            
+            startBtn.textContent = 'En progreso';
+            startBtn.disabled = true;
+            pauseBtn.disabled = false;
+            timerDisplay.classList.add('active');
+
+            timerInterval = setInterval(() => {
+                lastUpdateTime = Date.now();
+                timeRemaining--;
+                updateDisplay();
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    
+                    if (isWorkMode) {
+                        currentSession.workSessions++;
+                    } else {
+                        currentSession.breakSessions++;
+                    }
+                    
+                    switchMode();
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                pauseBtn.textContent = 'Reanudar';
+                startBtn.textContent = 'Iniciar';
+                startBtn.disabled = false;
+                timerDisplay.classList.remove('active');
+            } else {
+                startTimer();
+                pauseBtn.textContent = 'Pausar';
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            
+            // Guardar sesión si hubo al menos un pomodoro completado
+            if (currentSession.workSessions > 0) {
+                saveSessionToDatabase().then(result => {
+                    if (result.success) {
+                        renderHistory();
+                        alert('¡Sesión guardada exitosamente! 🎉');
+                    }
+                });
+            }
+            
+            isWorkMode = true;
+            timeRemaining = 1500;
+            totalTime = 1500;
+            updateDisplay();
+            
+            document.body.classList.remove('break-mode');
+            timerDisplay.classList.remove('break', 'active');
+            progressBar.classList.remove('break');
+            modeIndicator.classList.remove('break');
+            modeIndicator.textContent = 'Modo Estudio';
+            
+            startBtn.textContent = 'Iniciar';
+            startBtn.disabled = examSelect.value === '';
+            pauseBtn.textContent = 'Pausar';
+            pauseBtn.disabled = true;
+            
+            // Resetear sesión actual
+            currentSession.id_evaluacion = examSelect.value ? parseInt(examSelect.value) : null;
+            currentSession.workSessions = 0;
+            currentSession.breakSessions = 0;
+            currentSession.startTime = null;
+        }
+
+        function switchMode() {
+            isWorkMode = !isWorkMode;
+            
+            if (isWorkMode) {
+                timeRemaining = 1500;
+                totalTime = 1500;
+                document.body.classList.remove('break-mode');
+                timerDisplay.classList.remove('break');
+                progressBar.classList.remove('break');
+                modeIndicator.classList.remove('break');
+                modeIndicator.textContent = 'Modo Estudio';
+            } else {
+                timeRemaining = 300;
+                totalTime = 300;
+                document.body.classList.add('break-mode');
+                timerDisplay.classList.add('break');
+                progressBar.classList.add('break');
+                modeIndicator.classList.add('break');
+                modeIndicator.textContent = 'Modo Descanso';
+            }
+            
+            updateDisplay();
+            startBtn.disabled = false;
+            startBtn.textContent = 'Iniciar';
+            pauseBtn.textContent = 'Pausar';
+            pauseBtn.disabled = true;
+            timerDisplay.classList.remove('active');
+        }
+
+        startBtn.addEventListener('click', startTimer);
+        pauseBtn.addEventListener('click', pauseTimer);
+        resetBtn.addEventListener('click', resetTimer);
+
+        updateDisplay();
+        renderHistory();
+    </script>
+</body>
+</html>
