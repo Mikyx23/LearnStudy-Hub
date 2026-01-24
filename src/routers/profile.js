@@ -11,19 +11,21 @@ routerProfile.get('/', async (req,res) => {
         let average = 0;
 
         const result = await ObtenerPerfilUsuarioController(user.id,user.carrer,lapsoActual);
-        
+
+        const subjectsArray = JSON.parse(result.user[0].subjects);
+
         if(result && result.success && result.user) {
-            average = await CalculateAverage(result.user);
+            average = await CalculateAverage(subjectsArray);
         }
 
         if(result.success){
-            res.render('profile', {user: result.user[0], subject: result.user, average: average});
+            res.render('profile', {user: result.user[0], subject: subjectsArray, average: average});
         }else {
             return res.status(404).send(result.message);
         }
     }
     catch(error){
         console.log(error);
-        throw new Error('Error al obtener el perfil');
+        // throw new Error('Error al obtener el perfil');
     }
 });

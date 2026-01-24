@@ -180,16 +180,16 @@ export const GET_MALLA_CURRICULAR = `
 // ----- QUERIES PROFILE -----
 export const GET_USER_PROFILE = `
 SELECT 
-    t.codigo,
-    t.nombre_formateado AS subject_name,
     u.nombre AS name,
     u.apellido AS lastname,
     u.cedula,
     u.correo AS email,
     c.nombre_carrera AS career,
-    t.uc,
-    estudiante.nota,
-    t.semestre AS subject_semester,
+    -- Unidades de Crédito Cursadas (UCC)
+    SUM(CASE WHEN nota_estudiante.nota_final IS NOT NULL THEN ac.uc_asignatura ELSE 0 END) AS ucc,
+    -- Unidades de Crédito Aprobadas (UCA)
+    SUM(CASE WHEN nota_estudiante.nota_final >= 10 THEN ac.uc_asignatura ELSE 0 END) AS uca,
+    -- Semestre actual calculado por mayoría de inscripciones en el lapso
     (
         SELECT ac2.semestre
         FROM tbl_cursos_academicos ca2
@@ -199,45 +199,36 @@ SELECT
         GROUP BY ac2.semestre
         ORDER BY COUNT(*) DESC, ac2.semestre DESC
         LIMIT 1
-    ) AS current_semester
+    ) AS current_semester,
+    -- JSON con el detalle de las asignaturas
+    JSON_ARRAYAGG(
+        JSON_OBJECT(
+            'codigo', ac.codigo_asignatura,
+            'subject_name', a.nombre_asignatura,
+            'uc', ac.uc_asignatura,
+            'nota', ROUND(COALESCE(nota_estudiante.nota_final, 0), 2),
+            'subject_semester', ac.semestre
+        )
+    ) AS subjects
 FROM tbl_usuarios u
 INNER JOIN tbl_inscripciones_carreras ic ON u.id_usuario = ic.id_usuario
 INNER JOIN tbl_carreras c ON ic.id_carrera = c.id_carrera
--- Traemos todas las asignaturas de la carrera del usuario
-CROSS JOIN (
-    SELECT 
-        ac.codigo_asignatura AS codigo,
-        ac.semestre,
-        ac.uc_asignatura AS uc,
-        ac.id_asignatura_carrera,
-        CASE 
-            WHEN a.nombre_asignatura = 'PROYECTO DE SERVICIO COMUNITARIO' THEN a.nombre_asignatura
-            WHEN COUNT(*) OVER (PARTITION BY a.nombre_asignatura) > 1 THEN 
-                CONCAT(a.nombre_asignatura, ' ', 
-                    CASE ROW_NUMBER() OVER (PARTITION BY a.nombre_asignatura ORDER BY ac.semestre)
-                        WHEN 1 THEN 'I' WHEN 2 THEN 'II' WHEN 3 THEN 'III' 
-                        WHEN 4 THEN 'IV' WHEN 5 THEN 'V' WHEN 6 THEN 'VI' 
-                        WHEN 7 THEN 'VII' WHEN 8 THEN 'VIII' WHEN 9 THEN 'IX' 
-                        WHEN 10 THEN 'X' ELSE '' 
-                    END)
-            ELSE a.nombre_asignatura 
-        END AS nombre_formateado
-    FROM tbl_asignaturas_carreras ac
-    INNER JOIN tbl_asignaturas a ON ac.id_asignatura = a.id_asignatura
-    WHERE ac.id_carrera = ?
-) t
--- Intentamos unir las calificaciones si existen
+-- Traemos la malla curricular de la carrera
+INNER JOIN tbl_asignaturas_carreras ac ON c.id_carrera = ac.id_carrera
+INNER JOIN tbl_asignaturas a ON ac.id_asignatura = a.id_asignatura
+-- Unión con las notas calculadas ponderadamente
 LEFT JOIN (
     SELECT 
         ca.id_asignatura_carrera,
-        SUM(cal.calificacion) AS nota
+        SUM(cal.calificacion * (ae.ponderacion / 100)) AS nota_final
     FROM tbl_cursos_academicos ca
     INNER JOIN tbl_calificaciones cal ON ca.id_curso = cal.id_curso
+    INNER JOIN tbl_agenda_evaluaciones ae ON cal.id_evaluacion = ae.id_evaluacion
     WHERE ca.id_usuario = ? AND ca.id_lapso = ?
     GROUP BY ca.id_asignatura_carrera
-) estudiante ON t.id_asignatura_carrera = estudiante.id_asignatura_carrera
+) AS nota_estudiante ON ac.id_asignatura_carrera = nota_estudiante.id_asignatura_carrera
 WHERE u.id_usuario = ? AND c.id_carrera = ?
-ORDER BY t.semestre, subject_name;
+GROUP BY u.id_usuario, c.id_carrera;
 `;
 
 // ----- QUERIES CURSOS -----
