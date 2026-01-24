@@ -6,10 +6,9 @@ body{
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     grid-template-rows: repeat(5, 1fr);
-    gap: 16px;
+    gap: 20px;
     column-gap: 16px;
     row-gap: 20px;
-
 }
     
 .sidebar {

@@ -57,8 +57,6 @@
 
 <body class="bg-slate-100 text-slate-800 font-sans">
 
-    <!-- Header / Sidebar / Footer los inyecta layout.js -->
-
     <main class="main-content-wrapper">
         <div class="grid grid-cols-12 gap-6">
 
@@ -159,65 +157,70 @@
                     <% } %>
         </div>
 
-        <div class="col-span-12 lg:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
-                <i data-lucide="calendar" class="w-5 h-5 mr-2 text-blue-500"></i>
-                Próximas Evaluaciones
-            </h3>
-            <% if (typeof exams !=='undefined' && exams.length> 0) { %>
-                <% let cont=0 %>
-                    <div class="space-y-4">
-                        <% for (const exam of exams) { %>
-                            <% if (!(cont < 3)) break; %>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
 
-                                <div
-                                    class="flex items-start p-3 bg-red-50 border-l-4 border-red-500 rounded-md shadow-sm">
-                                    <div class="flex-1">
-                                        <h4 class="font-semibold text-slate-800">
-                                            <%= exam.descripcion %>
-                                        </h4>
-                                        <p class="text-sm text-slate-600">
-                                            <%= new Intl.DateTimeFormat('es-ES').format(new Date(exam.fecha_entrega)) %>
-                                        </p>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                    <i data-lucide="calendar" class="w-5 h-5 mr-2 text-blue-500"></i>
+                    Próximas Evaluaciones
+                </h3>
+
+                <% if (typeof exams !=='undefined' && exams.length> 0) { %>
+                    <% let cont=0 %>
+                        <div class="space-y-4">
+                            <% for (const exam of exams) { %>
+                                <% if (!(cont < 3)) break; %>
+                                    <div
+                                        class="flex items-start p-3 bg-red-50 border-l-4 border-red-500 rounded-md shadow-sm">
+                                        <div class="flex-1">
+                                            <h4 class="font-semibold text-slate-800">
+                                                <%= exam.descripcion %>
+                                            </h4>
+                                            <p class="text-sm text-slate-600">
+                                                <%= new Intl.DateTimeFormat('es-ES').format(new
+                                                    Date(exam.fecha_entrega)) %>
+                                            </p>
+                                        </div>
+                                        <span
+                                            class="text-[10px] font-bold text-red-600 uppercase tracking-wider">Pendiente</span>
                                     </div>
-                                    <span
-                                        class="text-[10px] font-bold text-red-600 uppercase tracking-wider">Pendiente</span>
-                                </div>
-
-                                <% cont++; %>
-                                    <% } %>
-                    </div>
-                    <% } else { %>
-                        <div class="p-6 bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl text-center">
-                            <div
-                                class="inline-flex items-center justify-center w-12 h-12 bg-green-100 text-green-600 rounded-full mb-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7" />
-                                </svg>
-                            </div>
-                            <p class="text-slate-600 font-medium">¡Todo al día!</p>
-                            <p class="text-xs text-slate-400">No tienes exámenes próximos registrados.</p>
+                                    <% cont++; %>
+                                        <% } %>
                         </div>
-                        <% } %>
-                            <button
-                                class="w-full mt-4 text-sm text-blue-600 font-medium hover:text-blue-800 transition-colors">
-                                Ver agenda completa →
-                            </button>
-        </div>
+                        <% } else { %>
+                            <div class="p-6 bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl text-center">
+                                <div
+                                    class="inline-flex items-center justify-center w-12 h-12 bg-green-100 text-green-600 rounded-full mb-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <p class="text-slate-600 font-medium">¡Todo al día!</p>
+                                <p class="text-xs text-slate-400">No tienes exámenes próximos registrados.</p>
+                            </div>
+                            <% } %>
 
-        <div class="col-span-12 md:col-span-6 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
-                <i data-lucide="pen-tool" class="w-5 h-5 mr-2 text-purple-500"></i>
-                Frase del Dia
-            </h3>
-            <div class="flex items-center justify-between bg-purple-50 p-5 rounded-lg">
-                <div>
-                    <h4 class="text-xl font-bold text-purple-900">Frase</h4>
-                    <p class="text-sm font-medium text-purple-700 mt-1">Algo mas</p>
+                                <button
+                                    class="w-full mt-4 text-sm text-blue-600 font-medium hover:text-blue-800 transition-colors">
+                                    Ver agenda completa →
+                                </button>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                    <i data-lucide="pen-tool" class="w-5 h-5 mr-2 text-purple-500"></i>
+                    Frase del Dia
+                </h3>
+                <div class="flex items-center justify-between bg-purple-50 p-5 rounded-lg h-full max-h-[200px]">
+                    <div>
+                        <h4 class="text-xl font-bold text-purple-900">Frase</h4>
+                        <p class="text-sm font-medium text-purple-700 mt-1">Algo mas</p>
+                    </div>
                 </div>
             </div>
+
         </div>
 
         <div
@@ -242,8 +245,8 @@
             </button>
         </div>
 
-    </div>
-        
+        </div>
+
     </main>
     <!-- Scripts -->
     <script src="/views/javascript/layout.js"></script>
