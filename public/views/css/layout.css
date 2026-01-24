@@ -1,190 +1,323 @@
+/* Importar fuente Inter */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 :root {
-    --primary: #2563eb;
-    --primary-dark: #1e40af;
-    --secondary: #06b6d4;
-    --dark: #0f172a;
-    --text-body: #475569;
-    --grad-primary: linear-gradient(135deg, #2563eb, #06b6d4);
-    --grad-card: linear-gradient(135deg, #ffffff, #f8fafc);
-    --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-    --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    --primary: #2563eb;        
+    --primary-hover: #1d4ed8;
+    --secondary: #06b6d4;       
+    --dark: #0f172a;      
+    --surface: #ffffff;
+    --bg-body: #f1f5f9;        
+    --text-main: #334155;
+    --text-muted: #64748b;
+    
+    /* Gradientes */
+    --grad-primary: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
+    
+    /* Sombras mejoradas */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+    /* Dimensiones */
     --sidebar-width: 80px;
     --sidebar-expanded: 260px;
-    --header-height: 80px;
+    --header-height: 70px; /* Reducido ligeramente para elegancia */
+}
+
+/* =========================================
+    BASE & TYPOGRAPHY
+========================================= */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    margin: 0;
+    -webkit-font-smoothing: antialiased; /* Texto más nítido */
+}
+
+/* LOGO & BRANDING */
+.brand-logo {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800; /* Extra bold para el logo */
+    font-size: 1.4rem;
+    letter-spacing: -0.5px; /* Kerning moderno apretado */
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: opacity 0.3s ease;
+}
+
+/* Logo en el Sidebar (Fondo Oscuro) */
+.brand-logo.sidebar-mode {
+    color: #ffffff;
+    justify-content: center;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 0 10px;
+}
+.brand-logo.sidebar-mode .brand-highlight {
+    color: var(--secondary); /* Cian brillante para contraste oscuro */
+}
+
+/* Logo en el Header (Fondo Claro) */
+.brand-logo.header-mode {
+    color: var(--dark);
+}
+.brand-logo.header-mode .brand-highlight {
+    color: var(--primary); /* Azul fuerte para fondo claro */
 }
 
 /* =========================================
     LAYOUT PRINCIPAL 
 ========================================= */
-
-
 body.app-layout {
     padding-left: var(--sidebar-width); 
     padding-top: var(--header-height);  
-    transition: padding-left 0.4s ease;
+    transition: padding-left 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-
-
-body.app-layout {
-    padding-left: var(--sidebar-width); 
-    padding-top: var(--header-height);  
-    transition: padding-left 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-    background-color: #f8fafc; /* Color de fondo base */
-}
-
 
 body.app-layout:has(.app-sidebar:hover) {
     padding-left: var(--sidebar-expanded);
 }
 
+/* =========================================
+    HEADER (Glassmorphism)
+========================================= */
 .app-header {
     position: fixed;
     top: 0;
-    left: var(--sidebar-width);
-    transition: left 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    left: var(--sidebar-width); 
+    right: 0;
+    height: var(--header-height);
+    z-index: 1000;
+    
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+    box-shadow: var(--shadow-sm);
+    
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    transition: left 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-
 
 .app-sidebar:hover ~ .app-header {
     left: var(--sidebar-expanded);
 }
 
-/* --- HEADER GLASS --- */
-.app-header {
-    position: fixed;
-    top: 0;
-    left: 80px; 
-    right: 0;
-    height: 80px;
-    z-index: 1000;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 30px;
-    transition: left 0.4s ease;
-}
-
+/* Perfil de Usuario */
 .user-profile {
     display: flex;
     align-items: center;
-    gap: 15px;
-    padding: 8px 15px;
+    gap: 12px;
+    padding: 6px 8px 6px 16px;
     background: white;
-    border-radius: 50px;
-    box-shadow: var(--shadow-soft);
-    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: 999px;
+    border: 1px solid #e2e8f0;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s;
+}
+
+.user-profile:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.user-info {
+    text-align: right;
+    line-height: 1.2;
+}
+
+.user-info small {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.user-info strong {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--dark);
+    font-weight: 700;
 }
 
 .user-avatar {
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
     background: var(--grad-primary);
     color: white;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: bold;
-    font-size: 0.9rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 5px rgba(37, 99, 235, 0.3);
 }
 
-/* --- SIDEBAR --- */
+/* =========================================
+    SIDEBAR
+========================================= */
 .app-sidebar {
     position: fixed;
     top: 0;
     left: 0;
     height: 100vh;
-    width: 80px; 
+    width: var(--sidebar-width); 
     background: var(--dark);
     z-index: 1001;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    padding: 20px 10px;
-    transition: width 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    padding: 20px 12px;
+    transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
     overflow: hidden;
-    box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+    box-shadow: 10px 0 30px rgba(0,0,0,0.1);
 }
-
 
 .app-sidebar:hover {
-    width: 260px;
+    width: var(--sidebar-expanded);
 }
 
-
-.sidebar-logo {
-    text-align: center;
-    color: white;
-    font-size: 1.5rem;
-    margin-bottom: 40px;
-    white-space: nowrap;
+.sidebar-header {
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centrado cuando colapsado */
+    margin-bottom: 20px;
     overflow: hidden;
 }
 
+.app-sidebar:hover .sidebar-header {
+    justify-content: flex-start; /* Alineado izq cuando expandido */
+    padding-left: 10px;
+}
+
+/* Menú Items */
 .nav-item-app {
     display: flex;
     align-items: center;
-    color: rgba(255,255,255,0.6);
+    color: #94a3b8; /* Slate 400 */
     text-decoration: none;
-    padding: 12px 15px;
+    padding: 14px;
     border-radius: 12px;
-    margin-bottom: 8px;
-    transition: all 0.3s;
-    white-space: nowrap;
+    margin-bottom: 6px;
+    transition: all 0.2s ease;
+    position: relative;
+    font-weight: 500;
 }
 
 .nav-item-app:hover {
     color: white;
-    background: rgba(255,255,255,0.1);
-    transform: translateX(5px);
+    background: rgba(255,255,255,0.08);
 }
 
 .nav-item-app.active {
     background: var(--primary);
     color: white;
-    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
-.nav-item-app i {
-    font-size: 1.2rem;
-    min-width: 30px; /* Para alinear iconos */
-    text-align: center;
-    margin-right: 15px;
+.menu-icon {
+    min-width: 24px;
+    height: 24px;
+    margin-right: 0; /* Margen 0 inicial para centrado */
+    transition: margin 0.3s;
 }
 
+.app-sidebar:hover .menu-icon {
+    margin-right: 16px; /* Espacio al expandir */
+}
+
+/* Texto del menú */
 .nav-text {
     opacity: 0;
+    width: 0;
+    white-space: nowrap;
     transition: opacity 0.2s;
     pointer-events: none;
 }
 
-
 .app-sidebar:hover .nav-text {
     opacity: 1;
+    width: auto;
     pointer-events: auto;
-    transition-delay: 0.1s;
+    transition-delay: 0.15s;
 }
 
 .logout-btn {
     margin-top: auto;
-    color: #ef4444 !important; 
+    color: #f87171 !important; /* Rojo suave */
 }
 .logout-btn:hover {
-    background: rgba(239, 68, 68, 0.1) !important;
+    background: rgba(239, 68, 68, 0.15) !important;
+    color: #fca5a5 !important;
 }
 
-.app-content {
-    padding: 20px;
-    min-height: calc(100vh - 80px);
+/* =========================================
+    FOOTER
+========================================= */
+.app-footer {
+    background: var(--dark); 
+    color: var(--text-light); 
+    border-top: 1px solid #e2e8f0;
+    padding: 40px 20px;
+    margin-top: 60px;
 }
 
-.app-content {
-    margin-top: 80px;
-}
-.app-sidebar:hover ~ .app-header {
-    left: 260px;
+.footer-container {
+    max-width: 1000px;
+    margin: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
+.footer-socials {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+}
+
+.footer-socials a {
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    transition: transform 0.2s, color 0.2s;
+    background: #f1f5f9;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.footer-socials a:hover {
+    color: white;
+    background: var(--primary);
+    transform: translateY(-4px);
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+}
+
+.footer-links a {
+    color: var(--text-main);
+    text-decoration: none;
+    font-weight: 500;
+    margin: 0 10px;
+    font-size: 0.9rem;
+}
+
+.footer-links a:hover {
+    color: var(--primary);
+}
+
+.footer-copy {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin-top: 10px;
+}
