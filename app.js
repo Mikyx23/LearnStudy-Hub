@@ -53,6 +53,9 @@ app.use('/api/agenda', routerAgenda);
 import {routerQualifications} from './src/routers/qualifications.js';
 app.use('/api/calificaciones', routerQualifications);
 
+import {routerHorario} from './src/routers/horario.js';
+app.use('/api/horario', routerHorario);
+
 // import { ObtenerUsuarioController } from './src/controllers/users-controller.js';
 // app.get('/api/inicio', async (req,res) => {
 //     const {user} = req.session;

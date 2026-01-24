@@ -71,6 +71,99 @@
                     <h3 class="text-3xl font-bold text-slate-800">
                         <%= user.nombre %>
                             <%= user.apellido %>
+            </div>
+        </header> -->
+
+        <div class="flex-1 overflow-y-auto p-8">
+            <div class="grid grid-cols-12 gap-6">
+
+                <div class="col-span-12 md:col-span-6 lg:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex items-center">
+                    <div class="p-3 bg-blue-100 text-blue-600 rounded-full mr-5">
+                        <i data-lucide="graduation-cap"></i>  
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-slate-500 uppercase">Bienvenido de nuevo</p>
+                        <h3 class="text-3xl font-bold text-slate-800"><%= user.nombre %> <%= user.apellido %></h3>
+                        <p class="text-xs text-green-600 font-medium mt-1">Continua aprendiendo desde donde lo dejaste</p>
+                    </div>
+                </div>
+
+                <div class="col-span-12 md:col-span-6 lg:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-red-100 flex items-center relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-2 h-full bg-red-500"></div>
+                    <div class="p-3 bg-red-100 text-red-600 rounded-full mr-5 ml-2">
+                        <i data-lucide="alert-triangle" class="w-8 h-8"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-slate-500 uppercase">Próxima Evaluación</p>
+                        <% if (typeof next_exam !== 'undefined' && Object.keys(next_exam).length > 0) { %>
+                            <h3 class="text-xl font-bold text-slate-800"> <%= next_exam.descripcion %> </h3>
+                            <p class="text-sm text-red-600 font-semibold mt-1">
+                            <%= DateTime.fromJSDate(new Date(next_exam.fecha_entrega))
+                                .setLocale('es')
+                                .toRelative({ base: DateTime.now() }) %>
+                            </p>
+                        <% } else { %>
+                            <h3 class="text-lg font-medium text-slate-400 italic">No tienes evaluaciones registradas</h3>
+                        <% } %>
+                    </div>
+                </div>
+
+                <div class="col-span-12 lg:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="text-sm font-medium text-slate-500 uppercase">Progreso de la Carrera</p>
+                        
+                        <% if (user && user.progress) { %>
+                            <span class="text-sm font-bold text-blue-600"><%= user.progress %></span>
+                        <% } else { %>
+                            <span class="text-sm font-bold text-slate-400 italic">0% (Sin registros)</span>
+                        <% } %>
+                    </div>
+                    <div class="w-full bg-slate-200 rounded-full h-4">
+                        <div class="bg-blue-600 h-4 rounded-full transition-all duration-500" 
+                            style="width: <%= (user && user.progress) ? user.progress : '0%' %>">
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-3 text-center">Estás en el <%= user.semester || 1 %> semestre de 10</p>
+                </div>
+
+                <div class="col-span-12 lg:col-span-8 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-bold text-slate-800">Clases de Hoy</h3>
+                    </div>
+                    <% if (typeof classes !== 'undefined' && classes.length > 0) { %>
+                        <div class="flex gap-4 overflow-x-auto snap-x pb-4">
+                            <% classes.forEach(clase => { %>
+                                <div class="flex-none w-64 snap-start p-4 bg-indigo-50 border-2 border-indigo-100 rounded-2xl relative overflow-hidden group">
+                                    <h4 class="text-sm font-bold text-slate-800 mb-1 truncate"> <%= clase.subject%> </h4>
+                                    <p class="text-xs text-slate-500 mb-4 flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        <%= clase.startTime || 'Hora no definida' %>
+                                    </p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[10px] px-2 py-1 bg-white text-indigo-600 rounded-md font-semibold border border-indigo-100">
+                                            <%= clase.classroom || 'Aula TBD' %>
+                                        </span>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% } else { %>
+                        <div class="h-64 bg-slate-50 rounded-lg border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mb-2 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <p class="text-sm font-medium">No tienes clases programadas para hoy</p>
+                            <p class="text-xs">¡Disfruta tu día libre!</p>
+                        </div>
+                    <% } %>
+                </div>
+
+                <div class="col-span-12 lg:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                        <i data-lucide="calendar" class="w-5 h-5 mr-2 text-blue-500"></i>
+                        Próximas Evaluaciones
                     </h3>
                     <p class="text-xs text-green-600 font-medium mt-1">
                         Continúa aprendiendo desde donde lo dejaste
