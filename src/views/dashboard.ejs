@@ -6,19 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio - LearnStudy-Hub</title>
 
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <!-- Tailwind & Lucide -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Estilos propios -->
     <link rel="stylesheet" href="/views/css/layout.css">
     <link rel="stylesheet" href="/views/css/dashboard.css">
 
     <style>
-        /* RESET COMPATIBLE CON layout.js */
         body {
             font-family: 'Inter', sans-serif;
             display: block !important;
@@ -60,288 +56,168 @@
     <main class="main-content-wrapper">
         <div class="grid grid-cols-12 gap-6">
 
-            <!-- BIENVENIDA -->
-            <div
-                class="col-span-12 md:col-span-6 lg:col-span-4 bg-white p-6 rounded-xl shadow-sm border flex items-center">
+            <div class="col-span-12 md:col-span-6 lg:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex items-center">
                 <div class="p-3 bg-blue-100 text-blue-600 rounded-full mr-5">
                     <i data-lucide="graduation-cap"></i>
                 </div>
                 <div>
                     <p class="text-sm font-medium text-slate-500 uppercase">Bienvenido de nuevo</p>
                     <h3 class="text-3xl font-bold text-slate-800">
-                        <%= user.nombre %>
-                            <%= user.apellido %>
-            </div>
-        </header> -->
-
-        <div class="flex-1 overflow-y-auto p-8">
-            <div class="grid grid-cols-12 gap-6">
-
-                <div class="col-span-12 md:col-span-6 lg:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex items-center">
-                    <div class="p-3 bg-blue-100 text-blue-600 rounded-full mr-5">
-                        <i data-lucide="graduation-cap"></i>  
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium text-slate-500 uppercase">Bienvenido de nuevo</p>
-                        <h3 class="text-3xl font-bold text-slate-800"><%= user.nombre %> <%= user.apellido %></h3>
-                        <p class="text-xs text-green-600 font-medium mt-1">Continua aprendiendo desde donde lo dejaste</p>
-                    </div>
-                </div>
-
-                <div class="col-span-12 md:col-span-6 lg:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-red-100 flex items-center relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-2 h-full bg-red-500"></div>
-                    <div class="p-3 bg-red-100 text-red-600 rounded-full mr-5 ml-2">
-                        <i data-lucide="alert-triangle" class="w-8 h-8"></i>
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium text-slate-500 uppercase">Próxima Evaluación</p>
-                        <% if (typeof next_exam !== 'undefined' && Object.keys(next_exam).length > 0) { %>
-                            <h3 class="text-xl font-bold text-slate-800"> <%= next_exam.descripcion %> </h3>
-                            <p class="text-sm text-red-600 font-semibold mt-1">
-                            <%= DateTime.fromJSDate(new Date(next_exam.fecha_entrega))
-                                .setLocale('es')
-                                .toRelative({ base: DateTime.now() }) %>
-                            </p>
-                        <% } else { %>
-                            <h3 class="text-lg font-medium text-slate-400 italic">No tienes evaluaciones registradas</h3>
-                        <% } %>
-                    </div>
-                </div>
-
-                <div class="col-span-12 lg:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                    <div class="flex justify-between items-center mb-2">
-                        <p class="text-sm font-medium text-slate-500 uppercase">Progreso de la Carrera</p>
-                        
-                        <% if (user && user.progress) { %>
-                            <span class="text-sm font-bold text-blue-600"><%= user.progress %></span>
-                        <% } else { %>
-                            <span class="text-sm font-bold text-slate-400 italic">0% (Sin registros)</span>
-                        <% } %>
-                    </div>
-                    <div class="w-full bg-slate-200 rounded-full h-4">
-                        <div class="bg-blue-600 h-4 rounded-full transition-all duration-500" 
-                            style="width: <%= (user && user.progress) ? user.progress : '0%' %>">
-                        </div>
-                    </div>
-                    <p class="text-xs text-slate-500 mt-3 text-center">Estás en el <%= user.semester || 1 %> semestre de 10</p>
-                </div>
-
-                <div class="col-span-12 lg:col-span-8 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-lg font-bold text-slate-800">Clases de Hoy</h3>
-                    </div>
-                    <% if (typeof classes !== 'undefined' && classes.length > 0) { %>
-                        <div class="flex gap-4 overflow-x-auto snap-x pb-4">
-                            <% classes.forEach(clase => { %>
-                                <div class="flex-none w-64 snap-start p-4 bg-indigo-50 border-2 border-indigo-100 rounded-2xl relative overflow-hidden group">
-                                    <h4 class="text-sm font-bold text-slate-800 mb-1 truncate"> <%= clase.subject%> </h4>
-                                    <p class="text-xs text-slate-500 mb-4 flex items-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                        <%= clase.startTime || 'Hora no definida' %>
-                                    </p>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-[10px] px-2 py-1 bg-white text-indigo-600 rounded-md font-semibold border border-indigo-100">
-                                            <%= clase.classroom || 'Aula TBD' %>
-                                        </span>
-                                    </div>
-                                </div>
-                            <% }); %>
-                        </div>
-                    <% } else { %>
-                        <div class="h-64 bg-slate-50 rounded-lg border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mb-2 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            <p class="text-sm font-medium">No tienes clases programadas para hoy</p>
-                            <p class="text-xs">¡Disfruta tu día libre!</p>
-                        </div>
-                    <% } %>
-                </div>
-
-                <div class="col-span-12 lg:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                    <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
-                        <i data-lucide="calendar" class="w-5 h-5 mr-2 text-blue-500"></i>
-                        Próximas Evaluaciones
+                        <%= user.nombre %> <%= user.apellido %>
                     </h3>
-                    <p class="text-xs text-green-600 font-medium mt-1">
-                        Continúa aprendiendo desde donde lo dejaste
-                    </p>
+                    <p class="text-xs text-green-600 font-medium mt-1">Continua aprendiendo desde donde lo dejaste</p>
                 </div>
             </div>
 
-            <!-- PRÓXIMA EVALUACIÓN -->
-            <div
-                class="col-span-12 md:col-span-6 lg:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-red-100 flex items-center relative overflow-hidden">
+            <div class="col-span-12 md:col-span-6 lg:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-red-100 flex items-center relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-2 h-full bg-red-500"></div>
                 <div class="p-3 bg-red-100 text-red-600 rounded-full mr-5 ml-2">
-                    <i data-lucide="alert-triangle"></i>
+                    <i data-lucide="alert-triangle" class="w-8 h-8"></i>
                 </div>
                 <div>
                     <p class="text-sm font-medium text-slate-500 uppercase">Próxima Evaluación</p>
-                    <% if (next_exam && next_exam.length> 0) { %>
-                        <h3 class="text-xl font-bold">
+                    <% if (typeof next_exam !== 'undefined' && next_exam && Object.keys(next_exam).length > 0) { %>
+                        <h3 class="text-xl font-bold text-slate-800">
                             <%= next_exam.descripcion %>
                         </h3>
-                        <p class="text-sm text-red-600 font-semibold mt-1">Mañana, 10:00 AM</p>
-                        <% } else { %>
-                            <h3 class="text-lg text-slate-400 italic">No tienes evaluaciones registradas</h3>
-                            <% } %>
+                        <p class="text-sm text-red-600 font-semibold mt-1">
+                            <%= new Intl.DateTimeFormat('es-ES', { dateStyle: 'full', timeStyle: 'short' }).format(new Date(next_exam.fecha_entrega)) %>
+                        </p>
+                    <% } else { %>
+                        <h3 class="text-lg font-medium text-slate-400 italic">No tienes evaluaciones registradas</h3>
+                    <% } %>
                 </div>
             </div>
 
-            <!-- PROGRESO -->
-            <div class="col-span-12 lg:col-span-4 bg-white p-6 rounded-xl shadow-sm border">
+            <div class="col-span-12 lg:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
                 <div class="flex justify-between items-center mb-2">
                     <p class="text-sm font-medium text-slate-500 uppercase">Progreso de la Carrera</p>
-                    <span class="text-sm font-bold text-blue-600">
-                        <%= user.progress || '0%' %>
-                    </span>
+                    <% if (user && user.progress) { %>
+                        <span class="text-sm font-bold text-blue-600"><%= user.progress %></span>
+                    <% } else { %>
+                        <span class="text-sm font-bold text-slate-400 italic">0%</span>
+                    <% } %>
                 </div>
                 <div class="w-full bg-slate-200 rounded-full h-4">
-                    <div class="bg-blue-600 h-4 rounded-full" style="width: <%= user.progress || '0%' %>"></div>
+                    <div class="bg-blue-600 h-4 rounded-full transition-all duration-500"
+                        style="width: <%= (user && user.progress) ? user.progress : '0%' %>">
+                    </div>
                 </div>
-                <p class="text-xs text-slate-500 mt-3 text-center">
-                    Estás en el <%= user.semester || 1 %> semestre de 10
-                </p>
+                <p class="text-xs text-slate-500 mt-3 text-center">Estás en el <%= user.semester || 1 %> semestre de 10</p>
             </div>
-        </div>
-        <div class="col-span-12 lg:col-span-8 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-lg font-bold text-slate-800">Clases de Hoy</h3>
-            </div>
-            <% if (typeof classes !=='undefined' && classes.length> 0) { %>
-                <div class="flex gap-4 overflow-x-auto snap-x pb-4">
-                    <% classes.forEach(clase=> { %>
-                        <div
-                            class="flex-none w-64 snap-start p-4 bg-indigo-50 border-2 border-indigo-100 rounded-2xl relative overflow-hidden group">
-                            <h4 class="text-sm font-bold text-slate-800 mb-1 truncate">
-                                <%= clase.asignatura_nombre %>
-                            </h4>
-                            <p class="text-xs text-slate-500 mb-4 flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <%= clase.schedule || 'Hora no definida' %>
-                            </p>
-                            <div class="flex items-center justify-between">
-                                <span
-                                    class="text-[10px] px-2 py-1 bg-white text-indigo-600 rounded-md font-semibold border border-indigo-100">
-                                    <%= clase.room || 'Aula TBD' %>
-                                </span>
+
+            <div class="col-span-12 lg:col-span-8 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-bold text-slate-800">Clases de Hoy</h3>
+                </div>
+                <% if (typeof classes !== 'undefined' && classes.length > 0) { %>
+                    <div class="flex gap-4 overflow-x-auto snap-x pb-4 custom-scrollbar-h">
+                        <% classes.forEach(clase => { %>
+                            <div class="flex-none w-64 snap-start p-4 bg-indigo-50 border-2 border-indigo-100 rounded-2xl relative overflow-hidden group">
+                                <h4 class="text-sm font-bold text-slate-800 mb-1 truncate">
+                                    <%= clase.subject || clase.asignatura_nombre %>
+                                </h4>
+                                <p class="text-xs text-slate-500 mb-4 flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <%= clase.startTime || clase.schedule || 'Hora no definida' %>
+                                </p>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[10px] px-2 py-1 bg-white text-indigo-600 rounded-md font-semibold border border-indigo-100">
+                                        <%= clase.classroom || clase.room || 'Aula TBD' %>
+                                    </span>
+                                </div>
                             </div>
-                        </div>
                         <% }); %>
-                </div>
+                    </div>
                 <% } else { %>
-                    <div
-                        class="h-64 bg-slate-50 rounded-lg border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mb-2 opacity-20" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    <div class="h-64 bg-slate-50 rounded-lg border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mb-2 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                         <p class="text-sm font-medium">No tienes clases programadas para hoy</p>
                         <p class="text-xs">¡Disfruta tu día libre!</p>
                     </div>
-                    <% } %>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
-
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
-                    <i data-lucide="calendar" class="w-5 h-5 mr-2 text-blue-500"></i>
-                    Próximas Evaluaciones
-                </h3>
-
-                <% if (typeof exams !=='undefined' && exams.length> 0) { %>
-                    <% let cont=0 %>
-                        <div class="space-y-4">
-                            <% for (const exam of exams) { %>
-                                <% if (!(cont < 3)) break; %>
-                                    <div
-                                        class="flex items-start p-3 bg-red-50 border-l-4 border-red-500 rounded-md shadow-sm">
-                                        <div class="flex-1">
-                                            <h4 class="font-semibold text-slate-800">
-                                                <%= exam.descripcion %>
-                                            </h4>
-                                            <p class="text-sm text-slate-600">
-                                                <%= new Intl.DateTimeFormat('es-ES').format(new
-                                                    Date(exam.fecha_entrega)) %>
-                                            </p>
-                                        </div>
-                                        <span
-                                            class="text-[10px] font-bold text-red-600 uppercase tracking-wider">Pendiente</span>
-                                    </div>
-                                    <% cont++; %>
-                                        <% } %>
-                        </div>
-                        <% } else { %>
-                            <div class="p-6 bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl text-center">
-                                <div
-                                    class="inline-flex items-center justify-center w-12 h-12 bg-green-100 text-green-600 rounded-full mb-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M5 13l4 4L19 7" />
-                                    </svg>
-                                </div>
-                                <p class="text-slate-600 font-medium">¡Todo al día!</p>
-                                <p class="text-xs text-slate-400">No tienes exámenes próximos registrados.</p>
-                            </div>
-                            <% } %>
-
-                                <button
-                                    class="w-full mt-4 text-sm text-blue-600 font-medium hover:text-blue-800 transition-colors">
-                                    Ver agenda completa →
-                                </button>
+                <% } %>
             </div>
 
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
-                    <i data-lucide="pen-tool" class="w-5 h-5 mr-2 text-purple-500"></i>
-                    Frase del Dia
-                </h3>
-                <div class="flex items-center justify-between bg-purple-50 p-5 rounded-lg h-full max-h-[200px]">
-                    <div>
+            <div class="col-span-12 lg:col-span-4 flex flex-col gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex-1">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                        <i data-lucide="calendar" class="w-5 h-5 mr-2 text-blue-500"></i>
+                        Evaluaciones
+                    </h3>
+
+                    <% if (typeof exams !== 'undefined' && exams.length > 0) { %>
+                        <div class="space-y-4">
+                            <% let cont = 0; %>
+                            <% for (const exam of exams) { %>
+                                <% if (cont >= 3) break; %>
+                                <div class="flex items-start p-3 bg-red-50 border-l-4 border-red-500 rounded-md shadow-sm">
+                                    <div class="flex-1">
+                                        <h4 class="font-semibold text-slate-800">
+                                            <%= exam.descripcion %>
+                                        </h4>
+                                        <p class="text-sm text-slate-600">
+                                            <%= new Intl.DateTimeFormat('es-ES').format(new Date(exam.fecha_entrega)) %>
+                                        </p>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-red-600 uppercase tracking-wider">Pendiente</span>
+                                </div>
+                                <% cont++; %>
+                            <% } %>
+                        </div>
+                        <button class="w-full mt-4 text-sm text-blue-600 font-medium hover:text-blue-800 transition-colors">
+                            Ver agenda completa →
+                        </button>
+                    <% } else { %>
+                        <div class="p-6 bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl text-center">
+                            <div class="inline-flex items-center justify-center w-12 h-12 bg-green-100 text-green-600 rounded-full mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+                            <p class="text-slate-600 font-medium">¡Todo al día!</p>
+                            <p class="text-xs text-slate-400">No tienes exámenes próximos registrados.</p>
+                        </div>
+                    <% } %>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                        <i data-lucide="pen-tool" class="w-5 h-5 mr-2 text-purple-500"></i>
+                        Frase del Dia
+                    </h3>
+                    <div class="bg-purple-50 p-5 rounded-lg">
                         <h4 class="text-xl font-bold text-purple-900">Frase</h4>
                         <p class="text-sm font-medium text-purple-700 mt-1">Algo mas</p>
                     </div>
                 </div>
             </div>
 
-        </div>
+            <div class="col-span-12 md:col-span-6 lg:col-span-8 bg-gradient-to-r from-blue-600 to-indigo-700 p-6 rounded-xl shadow-sm flex items-center justify-between text-white relative overflow-hidden">
+                <i data-lucide="timer" class="absolute -right-6 -bottom-6 w-32 h-32 text-white opacity-10"></i>
 
-        <div
-            class="col-span-12 md:col-span-6 bg-gradient-to-r from-blue-600 to-indigo-700 p-6 rounded-xl shadow-sm flex items-center justify-between text-white relative overflow-hidden">
-            <i data-lucide="timer" class="absolute -right-6 -bottom-6 w-32 h-32 text-white opacity-10"></i>
-
-            <div>
-                <h3 class="text-lg font-bold flex items-center mb-2">
-                    <i data-lucide="focus" class="w-5 h-5 mr-2"></i>
-                    Sesión de Estudio
-                </h3>
-                <p class="text-blue-100 text-sm mb-4">¿Listo para enfocarte?</p>
-                <div class="flex space-x-2">
-                    <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-medium">25 min</span>
-                    <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-medium">50 min</span>
+                <div>
+                    <h3 class="text-lg font-bold flex items-center mb-2">
+                        <i data-lucide="focus" class="w-5 h-5 mr-2"></i>
+                        Sesión de Estudio
+                    </h3>
+                    <p class="text-blue-100 text-sm mb-4">¿Listo para enfocarte?</p>
+                    <div class="flex space-x-2">
+                        <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-medium">25 min</span>
+                        <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-medium">50 min</span>
+                    </div>
                 </div>
+                <button class="bg-white text-blue-700 hover:bg-blue-50 p-4 rounded-full shadow-lg transition-transform hover:scale-105 flex items-center font-bold">
+                    <i data-lucide="play" class="w-6 h-6 mr-2 fill-current"></i>
+                    INICIAR POMODORO
+                </button>
             </div>
-            <button
-                class="bg-white text-blue-700 hover:bg-blue-50 p-4 rounded-full shadow-lg transition-transform hover:scale-105 flex items-center font-bold">
-                <i data-lucide="play" class="w-6 h-6 mr-2 fill-current"></i>
-                INICIAR POMODORO
-            </button>
-        </div>
 
-        </div>
+        </div> </main>
 
-    </main>
-    <!-- Scripts -->
     <script src="/views/javascript/layout.js"></script>
     <script src="/views/javascript/dashboard.js"></script>
     <script>
@@ -353,7 +229,5 @@
             }, 100);
         });
     </script>
-
 </body>
-
 </html>
