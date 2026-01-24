@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro - LearnStudyHub</title>
+    <link rel="stylesheet" href="/views/css/pomodoro.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍅 Pomodoro Study Hub</h1>
+            <p>Organiza tu estudio con la técnica Pomodoro</p>
+        </div>
+
+        <div class="main-card">
+            <div class="selection-section">
+                <div class="input-group">
+                    <label for="course-select">Curso</label>
+                    <select id="course-select">
+                        <option value="">Selecciona un curso</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="exam-select">Evaluación</label>
+                    <select id="exam-select" disabled>
+                        <option value="">Primero selecciona un curso</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="current-task">
+                <h3>Objetivo Actual</h3>
+                <p id="current-objective">Selecciona una evaluación para comenzar</p>
+            </div>
+
+            <div class="timer-container">
+                <div class="mode-indicator" id="mode-indicator">Modo Estudio</div>
+                <div class="timer-display" id="timer-display">25:00</div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn-primary" id="start-btn" disabled>Iniciar</button>
+                <button class="btn-secondary" id="pause-btn" disabled>Pausar</button>
+                <button class="btn-secondary" id="reset-btn">Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const studyData = {
+            courses: <%- JSON.stringify(data) %>
+        };
+    </script>
+    <script  src="/views/javascript/pomodoro.js"></script>
+</body>
+</html>

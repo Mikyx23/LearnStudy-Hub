@@ -16,8 +16,8 @@ document.addEventListener("DOMContentLoaded", () => {
             { name: "Mis Cursos", icon: "library", href: "/api/cursos" },
             { name: "Agenda", icon: "calendar-days", href: "/api/agenda" },
             { name: "Calificaciones", icon: "bar-chart-3", href: "/api/calificaciones" },
-            { name: "Pomodoro", icon: "timer", href: "/pomodoro" },
-            { name: "Horario", icon: "clock", href: "/horario" }
+            { name: "Pomodoro", icon: "timer", href: "/api/pomodoro" },
+            { name: "Horario", icon: "clock", href: "/api/horario" }
         ],
         footer: {
             socials: [
