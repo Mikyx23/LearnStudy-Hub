@@ -1,5 +1,5 @@
 import {pool} from './conexion.js';
-import { GET_USER_DATA, GET_ACADEMIC_DATA, GET_TODAY_CLASSES } from './queries.js';
+import { GET_USER_DATA, GET_ACADEMIC_DATA, GET_TODAY_CLASSES, GET_PHRASE } from './queries.js';
 
 export class Dashboard {
     static ObtenerDatosUsuario = async (id_usuario, id_lapso) => {
@@ -65,6 +65,28 @@ export class Dashboard {
         }
         catch(error){
             throw new Error('Ha ocurrido un error inesperado: No se ha podido obtener las clases del día');
+        }
+    }
+
+    static ObtenerFrase = async () => {
+        try{
+            const [rows] = await pool.execute(GET_PHRASE);
+
+            if(rows.length > 0){
+                return {
+                    success: true,
+                    frase: rows[0].frase
+                }
+            }
+            else{
+                return {
+                    success: false,
+                    message: 'No se ha podido obtener la frase'
+                }
+            }
+        }
+        catch(error){
+            throw new Error('Ha ocurrido un error inesperado: No se ha podido obtener la frase');
         }
     }
 }

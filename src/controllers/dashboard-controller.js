@@ -14,3 +14,7 @@ export const ObtenerClasesDiaActualController = async (id_usuario, id_lapso, tim
 
     return await Dashboard.ObtenerClasesDiaActual(id_usuario, id_lapso, diaActual);
 }
+
+export const ObtenerFraseController = async () => {
+    return await Dashboard.ObtenerFrase();
+}
