@@ -4,11 +4,12 @@ document.addEventListener("DOMContentLoaded", () => {
         CONFIGURACIÓN GLOBAL
     ========================== */
     const appConfig = {
-        appNameHTML: `LearnStudy<span class="brand-highlight">Hub</span>`, // Usamos HTML para el color
-        appNameRaw: "LearnStudyHub", // Texto plano para atributos alt/title
+        appNameHTML: `LearnStudy<span class="brand-highlight">Hub</span>`,
+        appNameRaw: "LearnStudyHub",
         user: {
             name: "Estudiante",
-            initials: "ES"
+            initials: "ES",
+            profileUrl: "/api/perfil"
         },
         menuItems: [
             { name: "Dashboard", icon: "layout-dashboard", href: "/api/dashboard" },
@@ -43,21 +44,20 @@ document.addEventListener("DOMContentLoaded", () => {
     sidebar.innerHTML = `
         <div>
             <div class="sidebar-header">
-                <span class="brand-logo sidebar-mode">
+                <span class="brand-logo sidebar-mode"> 
                 </span>
             </div>
 
             <nav class="sidebar-menu">
                 ${appConfig.menuItems.map(item => {
-                    const isActive = currentPath.startsWith(item.href);
-                    return `
-                        <a href="${item.href}" 
-                            class="nav-item-app ${isActive ? "active" : ""}">
+        const isActive = currentPath.startsWith(item.href);
+        return `
+                        <a href="${item.href}" class="nav-item-app ${isActive ? "active" : ""}">
                             <i data-lucide="${item.icon}" class="menu-icon"></i>
                             <span class="nav-text">${item.name}</span>
                         </a>
                     `;
-                }).join("")}
+    }).join("")}
             </nav>
         </div>
 
@@ -72,6 +72,9 @@ document.addEventListener("DOMContentLoaded", () => {
     /* =========================
         HEADER
     ========================== */
+    /* =========================
+        HEADER
+    ========================== */
     const header = document.createElement("header");
     header.className = "app-header";
 
@@ -82,15 +85,17 @@ document.addEventListener("DOMContentLoaded", () => {
             </a>
         </div>
 
-        <div class="user-profile">
-            <div class="user-info">
-                <small>Bienvenido,</small>
-                <strong>${appConfig.user.name}</strong>
+        <a href="${appConfig.user.profileUrl}" class="user-profile-link">
+            <div class="user-profile">
+                <div class="user-info">
+                    <small>Bienvenido,</small>
+                    <strong>${appConfig.user.name}</strong>
+                </div>
+                <div class="user-avatar">
+                    ${appConfig.user.initials}
+                </div>
             </div>
-            <div class="user-avatar">
-                ${appConfig.user.initials}
-            </div>
-        </div>
+        </a>
     `;
 
     sidebar.after(header);
@@ -98,10 +103,10 @@ document.addEventListener("DOMContentLoaded", () => {
     /* =========================
         FOOTER
     ========================== */
-    const footer = document.createElement("footer");
-    footer.className = "app-footer";
+    const footerElement = document.createElement("footer"); // Renamed to avoid collision with appConfig.footer
+    footerElement.className = "app-footer";
 
-    footer.innerHTML = `
+    footerElement.innerHTML = `
         <div class="footer-container">
             <div class="footer-socials">
                 ${appConfig.footer.socials.map(s => `
@@ -123,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
     `;
 
-    document.body.append(footer);
+    document.body.append(footerElement);
 
     document.getElementById("year").textContent = new Date().getFullYear();
     document.body.classList.add("app-layout");

@@ -14,6 +14,9 @@ body{
     display: flex;
     flex-direction: column;
     gap: 50px;
+    /* PATRON DE LOGO*/   
+    position: relative;
+    overflow-x: hidden;
 }
 
 /* Overlay para el fondo */
@@ -23,6 +26,24 @@ body{
     width: 100vw;
     background-color: #0004; 
     z-index: -1;
+}
+
+/* patrón derecho */
+.body-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 40%; /* Ancho de la franja del patrón */
+    height: 100%;
+    background-image: url('/images/Logo_sin_fondo.png'); 
+    background-repeat: repeat;
+    background-size: 250px; /* Tamaño de los logos */
+    opacity: 0.45;
+    z-index: 0; 
+    pointer-events: none; 
+    /* Degradado para que se desvanezca hacia la izquierda */
+    mask-image: linear-gradient(to right, rgb(127, 165, 255), rgba(0,0,0,0));
+    -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1), rgba(255, 127, 127, 0));
 }
 
 /* Titulo de la pagina */
