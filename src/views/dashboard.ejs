@@ -5,9 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio - LearnStudy-Hub</title>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -15,35 +12,51 @@
     <link rel="stylesheet" href="/views/css/dashboard.css">
 
     <style>
+        /* Ajustes específicos para el Dashboard que no interfieren con el layout global */
         body {
             font-family: 'Inter', sans-serif;
-            display: block !important;
             min-height: 100vh;
             margin: 0;
-            overflow-x: hidden;
-            overflow-y: auto;
+            background-color: #f1f5f9; 
+            position: relative;
         }
 
+        /* Patrón de logos de fondo corregido para no cubrir elementos interactivos */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('/images/Logo_sin_fondo.png');
+            background-repeat: repeat;
+            background-size: 500px;
+            opacity: 0.05; 
+            z-index: -1;
+            pointer-events: none;
+            animation: floatingPattern 20s ease-in-out infinite;
+        }
+
+        @keyframes floatingPattern {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(15px, 10px) scale(1.02); }
+        }
+
+        .glass-card {
+            background-color: rgba(255, 255, 255, 0.7) !important;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        }
         .main-content-wrapper {
             width: 100%;
-            padding: 2rem;
+            padding: 1.5rem 1rem; /* Margen superior/inferior 1.5rem, lateral 1rem  */
+            max-width: 100%; /* Permite que el contenido se extienda totalmente */
             box-sizing: border-box;
         }
-
-        .app-footer {
-            width: 100%;
-            position: relative;
-            z-index: 5;
-        }
-
-        .custom-scrollbar-h::-webkit-scrollbar {
-            height: 6px;
-        }
-
-        .custom-scrollbar-h::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-
+        .custom-scrollbar-h::-webkit-scrollbar { height: 6px; }
+        .custom-scrollbar-h::-webkit-scrollbar-track { background: #f1f5f9; }
         .custom-scrollbar-h::-webkit-scrollbar-thumb {
             background: #e2e8f0;
             border-radius: 10px;
@@ -51,7 +64,7 @@
     </style>
 </head>
 
-<body class="bg-slate-100 text-slate-800 font-sans">
+<body class="app-layout bg-slate-100 text-slate-800 font-sans">
 
     <main class="main-content-wrapper">
         <div class="grid grid-cols-12 gap-6">
@@ -62,10 +75,10 @@
                 </div>
                 <div>
                     <p class="text-sm font-medium text-slate-500 uppercase">Bienvenido de nuevo</p>
-                    <h3 class="text-3xl font-bold text-slate-800">
+                    <h3 class="text-2xl font-bold text-slate-800">
                         <%= user.nombre %> <%= user.apellido %>
                     </h3>
-                    <p class="text-xs text-green-600 font-medium mt-1">Continua aprendiendo desde donde lo dejaste</p>
+                    <p class="text-xs text-green-600 font-medium mt-1">Continúa aprendiendo hoy</p>
                 </div>
             </div>
 
@@ -77,67 +90,54 @@
                 <div>
                     <p class="text-sm font-medium text-slate-500 uppercase">Próxima Evaluación</p>
                     <% if (typeof next_exam !== 'undefined' && next_exam && Object.keys(next_exam).length > 0) { %>
-                        <h3 class="text-xl font-bold text-slate-800">
+                        <h3 class="text-lg font-bold text-slate-800 truncate max-w-[200px]">
                             <%= next_exam.descripcion %>
                         </h3>
-                        <p class="text-sm text-red-600 font-semibold mt-1">
-                            <%= new Intl.DateTimeFormat('es-ES', { dateStyle: 'full', timeStyle: 'short' }).format(new Date(next_exam.fecha_entrega)) %>
+                        <p class="text-xs text-red-600 font-semibold mt-1">
+                            <%= new Intl.DateTimeFormat('es-ES', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(next_exam.fecha_entrega)) %>
                         </p>
                     <% } else { %>
-                        <h3 class="text-lg font-medium text-slate-400 italic">No tienes evaluaciones registradas</h3>
+                        <h3 class="text-md font-medium text-slate-400 italic">Sin pendientes</h3>
                     <% } %>
                 </div>
             </div>
 
             <div class="col-span-12 lg:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
                 <div class="flex justify-between items-center mb-2">
-                    <p class="text-sm font-medium text-slate-500 uppercase">Progreso de la Carrera</p>
-                    <% if (user && user.progress) { %>
-                        <span class="text-sm font-bold text-blue-600"><%= user.progress %></span>
-                    <% } else { %>
-                        <span class="text-sm font-bold text-slate-400 italic">0%</span>
-                    <% } %>
+                    <p class="text-sm font-medium text-slate-500 uppercase">Progreso</p>
+                    <span class="text-sm font-bold text-blue-600"><%= (user && user.progress) ? user.progress : '0%' %></span>
                 </div>
-                <div class="w-full bg-slate-200 rounded-full h-4">
-                    <div class="bg-blue-600 h-4 rounded-full transition-all duration-500"
-                        style="width: <%= (user && user.progress) ? user.progress : '0%' %>">
+                <div class="w-full bg-slate-200 rounded-full h-3">
+                    <div class="bg-blue-600 h-3 rounded-full transition-all duration-500"
+                         style="width: <%= (user && user.progress) ? user.progress : '0%' %>">
                     </div>
                 </div>
-                <p class="text-xs text-slate-500 mt-3 text-center">Estás en el <%= user.semester || 1 %> semestre de 10</p>
+                <p class="text-xs text-slate-500 mt-3 text-center">Semestre <%= user.semester || 1 %> de 10</p>
             </div>
 
             <div class="col-span-12 lg:col-span-8 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-lg font-bold text-slate-800">Clases de Hoy</h3>
-                </div>
+                <h3 class="text-lg font-bold text-slate-800 mb-6">Clases de Hoy</h3>
                 <% if (typeof classes !== 'undefined' && classes.length > 0) { %>
                     <div class="flex gap-4 overflow-x-auto snap-x pb-4 custom-scrollbar-h">
                         <% classes.forEach(clase => { %>
-                            <div class="flex-none w-64 snap-start p-4 bg-indigo-50 border-2 border-indigo-100 rounded-2xl relative overflow-hidden group">
+                            <div class="flex-none w-64 snap-start p-4 bg-indigo-50 border-2 border-indigo-100 rounded-2xl relative group">
                                 <h4 class="text-sm font-bold text-slate-800 mb-1 truncate">
                                     <%= clase.subject || clase.asignatura_nombre %>
                                 </h4>
                                 <p class="text-xs text-slate-500 mb-4 flex items-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    <%= clase.startTime || clase.schedule || 'Hora no definida' %>
+                                    <i data-lucide="clock" class="w-3 h-3 mr-1"></i>
+                                    <%= clase.startTime || clase.schedule || 'Hora TBD' %>
                                 </p>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-[10px] px-2 py-1 bg-white text-indigo-600 rounded-md font-semibold border border-indigo-100">
-                                        <%= clase.classroom || clase.room || 'Aula TBD' %>
-                                    </span>
-                                </div>
+                                <span class="text-[10px] px-2 py-1 bg-white text-indigo-600 rounded-md font-semibold border border-indigo-100">
+                                    <%= clase.classroom || clase.room || 'Aula TBD' %>
+                                </span>
                             </div>
                         <% }); %>
                     </div>
                 <% } else { %>
-                    <div class="h-64 bg-slate-50 rounded-lg border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mb-2 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        <p class="text-sm font-medium">No tienes clases programadas para hoy</p>
-                        <p class="text-xs">¡Disfruta tu día libre!</p>
+                    <div class="h-48 bg-slate-50 rounded-lg border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400">
+                        <i data-lucide="calendar-off" class="w-10 h-10 mb-2 opacity-20"></i>
+                        <p class="text-sm font-medium">No hay clases programadas</p>
                     </div>
                 <% } %>
             </div>
@@ -151,85 +151,67 @@
 
                     <% if (typeof exams !== 'undefined' && exams.length > 0) { %>
                         <div class="space-y-4">
-                            <% let cont = 0; %>
-                            <% for (const exam of exams) { %>
-                                <% if (cont >= 3) break; %>
-                                <div class="flex items-start p-3 bg-red-50 border-l-4 border-red-500 rounded-md shadow-sm">
+                            <% exams.slice(0, 3).forEach(exam => { %>
+                                <div class="flex items-start p-3 bg-red-50 border-l-4 border-red-500 rounded-md">
                                     <div class="flex-1">
-                                        <h4 class="font-semibold text-slate-800">
-                                            <%= exam.descripcion %>
-                                        </h4>
-                                        <p class="text-sm text-slate-600">
+                                        <h4 class="font-semibold text-xs text-slate-800 truncate"><%= exam.descripcion %></h4>
+                                        <p class="text-[10px] text-slate-600">
                                             <%= new Intl.DateTimeFormat('es-ES').format(new Date(exam.fecha_entrega)) %>
                                         </p>
                                     </div>
-                                    <span class="text-[10px] font-bold text-red-600 uppercase tracking-wider">Pendiente</span>
+                                    <span class="text-[9px] font-bold text-red-600 uppercase">Pendiente</span>
                                 </div>
-                                <% cont++; %>
-                            <% } %>
+                            <% }); %>
                         </div>
-                        <button 
-                            onclick="window.location.href='/api/agenda'" 
-                            class="w-full mt-4 text-sm text-blue-600 font-medium hover:text-blue-800 transition-colors">
+                        <button onclick="window.location.href='/api/agenda'" class="w-full mt-4 text-sm text-blue-600 font-medium hover:underline">
                             Ver agenda completa →
                         </button>
                     <% } else { %>
-                        <div class="p-6 bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl text-center">
-                            <div class="inline-flex items-center justify-center w-12 h-12 bg-green-100 text-green-600 rounded-full mb-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                </svg>
-                            </div>
-                            <p class="text-slate-600 font-medium">¡Todo al día!</p>
-                            <p class="text-xs text-slate-400">No tienes exámenes próximos registrados.</p>
+                        <div class="p-4 bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl text-center">
+                            <p class="text-slate-600 text-sm font-medium">¡Todo al día!</p>
                         </div>
                     <% } %>
                 </div>
 
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
                     <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
-                        <i data-lucide="pen-tool" class="w-5 h-5 mr-2 text-purple-500"></i>
-                        Frase del Dia
+                        <i data-lucide="quote" class="w-5 h-5 mr-2 text-purple-500"></i>
+                        Frase del Día
                     </h3>
-                    <div class="bg-purple-50 p-5 rounded-lg">
-                        <h4 class="text-xl font-bold text-purple-900">Frase</h4>
-                        <p class="text-sm font-medium text-purple-700 mt-1">Algo mas</p>
+                    <div class="bg-purple-50 p-4 rounded-lg">
+                        <p class="text-sm italic text-purple-700">"El éxito es la suma de pequeños esfuerzos repetidos día tras día."</p>
                     </div>
                 </div>
             </div>
 
-            <div class="col-span-12 md:col-span-6 lg:col-span-8 bg-gradient-to-r from-blue-600 to-indigo-700 p-6 rounded-xl shadow-sm flex items-center justify-between text-white relative overflow-hidden">
+            <div class="col-span-12 bg-gradient-to-r from-blue-600 to-indigo-700 p-8 rounded-xl shadow-sm flex flex-wrap items-center justify-between text-white relative overflow-hidden">
                 <i data-lucide="timer" class="absolute -right-6 -bottom-6 w-32 h-32 text-white opacity-10"></i>
-
-                <div>
-                    <h3 class="text-lg font-bold flex items-center mb-2">
-                        <i data-lucide="focus" class="w-5 h-5 mr-2"></i>
-                        Sesión de Estudio
+                <div class="z-10">
+                    <h3 class="text-xl font-bold flex items-center mb-2">
+                        <i data-lucide="focus" class="w-6 h-6 mr-2"></i>
+                        ¿Listo para enfocarte?
                     </h3>
-                    <p class="text-blue-100 text-sm mb-4">¿Listo para enfocarte?</p>
-                    <div class="flex space-x-2">
-                        <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-medium">25 min</span>
-                        <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-medium">50 min</span>
-                    </div>
+                    <p class="text-blue-100 text-sm">Inicia una sesión de estudio técnica Pomodoro.</p>
                 </div>
-                <a href="/api/pomodoro" 
-                    class="bg-white text-blue-700 hover:bg-blue-50 p-4 rounded-full shadow-lg transition-transform hover:scale-105 flex items-center justify-center font-bold inline-flex">
-                    <i data-lucide="play" class="w-6 h-6 mr-2 fill-current"></i>
+                <a href="/api/pomodoro" class="z-10 mt-4 md:mt-0 bg-white text-blue-700 hover:bg-blue-50 px-8 py-3 rounded-full shadow-lg transition-transform hover:scale-105 flex items-center font-bold">
+                    <i data-lucide="play" class="w-5 h-5 mr-2 fill-current"></i>
                     INICIAR POMODORO
                 </a>
             </div>
 
-        </div> </main>
+        </div> 
+    </main>
 
     <script src="/views/javascript/layout.js"></script>
     <script src="/views/javascript/dashboard.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
+            // Pequeño delay para asegurar que layout.js terminó de inyectar el DOM
             setTimeout(() => {
                 if (typeof lucide !== "undefined") {
                     lucide.createIcons();
                 }
-            }, 100);
+            }, 150);
         });
     </script>
 </body>

@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    
+
     // 1. NAVBAR SCROLL EFFECT
     const navbar = document.querySelector(".navbar");
     window.addEventListener("scroll", () => {
@@ -29,8 +29,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // 3. EFECTO TYPEWRITER
     const textElement = document.getElementById('typewriter');
     const phrases = [
-        "Plataforma intuitiva.", 
-        "Recursos modernos.", 
+        "Plataforma intuitiva.",
+        "Recursos modernos.",
         "Aprendizaje a tu ritmo."
     ];
     let phraseIndex = 0;
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function type() {
         const currentPhrase = phrases[phraseIndex];
-        
+
         if (isDeleting) {
             textElement.textContent = currentPhrase.substring(0, charIndex - 1);
             charIndex--;
@@ -62,8 +62,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         setTimeout(type, typeSpeed);
     }
-    
-    if(textElement) type();
+
+    if (textElement) type();
 
     // 4. ANIMACIONES ON SCROLL (Intersection Observer)
     const observerOptions = {
@@ -79,6 +79,27 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }, observerOptions);
+
+    const bgLogo = document.querySelector('#hero-bg-logo');
+
+    // Animación simple de flotación usando Web Animations API
+    bgLogo.animate([
+        { transform: 'translate(-50%, -52%) rotate(0deg)' },
+        { transform: 'translate(-50%, -48%) rotate(5deg)' },
+        { transform: 'translate(-50%, -52%) rotate(0deg)' }
+    ], {
+        duration: 8000,
+        iterations: Infinity,
+        easing: 'ease-in-out'
+    });
+
+    // Opcional: Reacción ligera al movimiento del mouse
+    document.addEventListener('mousemove', (e) => {
+        const moveX = (e.clientX - window.innerWidth / 2) * 0.01;
+        const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
+        bgLogo.style.marginLeft = `${moveX}px`;
+        bgLogo.style.marginTop = `${moveY}px`;
+    });
 
     document.querySelectorAll(".scroll-reveal").forEach(el => {
         observer.observe(el);

@@ -50,14 +50,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             <nav class="sidebar-menu">
                 ${appConfig.menuItems.map(item => {
-        const isActive = currentPath.startsWith(item.href);
-        return `
+                    const isActive = currentPath.startsWith(item.href);
+                    return `
                         <a href="${item.href}" class="nav-item-app ${isActive ? "active" : ""}">
                             <i data-lucide="${item.icon}" class="menu-icon"></i>
                             <span class="nav-text">${item.name}</span>
                         </a>
                     `;
-    }).join("")}
+                }).join("")}
             </nav>
         </div>
 
@@ -72,13 +72,13 @@ document.addEventListener("DOMContentLoaded", () => {
     /* =========================
         HEADER
     ========================== */
-    /* =========================
-        HEADER
-    ========================== */
-    const header = document.createElement("header");
-    header.className = "app-header";
+/* =========================
+    HEADER
+========================== */
+const header = document.createElement("header");
+header.className = "app-header";
 
-    header.innerHTML = `
+header.innerHTML = `
         <div class="header-brand-container">
             <a href="/api/dashboard" class="brand-logo header-mode">
                 ${appConfig.appNameHTML}
@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </a>
     `;
 
-    sidebar.after(header);
+sidebar.after(header);
 
     /* =========================
         FOOTER
