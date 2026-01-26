@@ -211,7 +211,6 @@ function renderSchedule() {
                 tableHTML += `<div class="class-block" style="border-left: 4px solid ${color}; background-color: ${color}20;">`;
                 tableHTML += `<div class="class-title">${cellContent.subjectName}</div>`;
                 
-                // 2. CAMBIO CRÍTICO: Usar Disp en lugar de las originales para quitar segundos
                 tableHTML += `<div class="class-time">${cellContent.startTimeDisp} - ${cellContent.endTimeDisp}</div>`;
                 
                 tableHTML += `<div class="class-room">${cellContent.classroom}</div>`;
@@ -239,13 +238,25 @@ function addClass() {
     
     // Validación básica
     if (!id_curso || !day || !startTime || !endTime || !classroom) {
-        alert('Por favor, complete todos los campos');
+        Swal.fire({
+            icon: "warning",
+            title: "Campos incompletos",
+            text: "Por favor, rellena todos los campos obligatorios para poder registrar la asignatura.",
+            confirmButtonColor: "#f39c12",
+            confirmButtonText: "Revisar formulario"
+        });
         return;
     }
     
     // Validar que la hora de fin sea después de la hora de inicio
     if (timeToMinutes(endTime) <= timeToMinutes(startTime)) {
-        alert('La hora de finalización debe ser después de la hora de inicio');
+        Swal.fire({
+            icon: "warning",
+            title: "Horario inválido",
+            text: "La hora de finalización debe ser después de la hora de inicio.",
+            confirmButtonColor: "#f39c12", // Color naranja de advertencia
+            confirmButtonText: "Corregir horario",
+        });
         return;
     }
     
@@ -258,7 +269,13 @@ function addClass() {
     
     // Validar que la hora esté dentro del rango permitido
     if (timeToMinutes(startTime) < timeToMinutes('07:45') || timeToMinutes(endTime) > timeToMinutes('21:15')) {
-        alert('Las clases deben estar entre las 07:45 y las 21:15');
+        Swal.fire({
+            icon: "info",
+            title: "Horario institucional",
+            html: "Las clases deben programarse entre las <b>07:45</b> y las <b>21:15</b>.",
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "Ajustar horario"
+        });
         return;
     }
     
@@ -283,8 +300,6 @@ function addClass() {
     document.getElementById('start-time').value = '07:45';
     document.getElementById('end-time').value = '08:30';
     document.getElementById('classroom').value = '';
-    
-    alert('Clase agregada exitosamente al horario');
 }
 
 // Función para enviar el horario a la base de datos

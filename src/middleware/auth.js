@@ -18,7 +18,7 @@ export const authenticateUser = (req, res, next) => {
     const {user} = req.session;
 
     if (!user) {
-        return res.status(401).json({ message: 'Acceso denegado: Token no proporcionado' });
+        return res.status(401).send('<h1>Acceso denegado: Token no proporcionado</h1>');
     }
     next()
 }

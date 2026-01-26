@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/views/css/agenda.css">
 </head>
 <body>
+<main  class="main-container">
 
 <!-- Sección Agenda -->
     <div class="contenedor-angeda" id="agenda">
@@ -208,17 +209,15 @@
             </div>
         </div>
     </section>
-
+</main>
     <script>
         // Usamos un nombre único para evitar el error de "already declared"
         const DATOS_INICIALES_DEL_SERVIDOR = <%- JSON.stringify(todasLasEvaluaciones) %>;
     </script>   
 <!-- El JavaScript permanece igual -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/views/javascript/layout.js" ></script>
     <script src="/views/javascript/agenda.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>

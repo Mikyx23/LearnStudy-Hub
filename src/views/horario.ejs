@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Horario - LearnStudyHub</title>
     <link rel="stylesheet" href="/views/css/horario.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
     <% if(mensaje){ %>
@@ -22,8 +23,8 @@
     <% }else { %>
     <div class="container">
         <header>
-            <h1>Constructor de Horario Académico</h1>
-            <p class="description">Planifica tu semestre agregando tus clases. Selecciona los detalles abajo para añadir bloques a tu parrilla semanal.</p>
+            <h1>Horario Académico</h1>
+            <p class="instructions"> <i data-lucide="triangle-alert"></i> <strong>IMPORTANTE:</strong> Recuerda guardar tu horario antes de salir de la pagina</p>
         </header>
         
         <div class="app-container">
@@ -82,16 +83,20 @@
     </div>
     
     <script>
-        // Datos de materias con sus IDs (esto normalmente vendría de la base de datos)
         const materiasConIDs = <%- JSON.stringify(materias) %>;
-
-        // Vector que simula datos de una base de datos
-        // Ahora cada clase incluye el id_curso
         const initialScheduleData = <%- JSON.stringify(horarios) %>;
     </script>
-    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/views/javascript/horario.js" ></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            setTimeout(() => {
+                if (typeof lucide !== "undefined") {
+                    lucide.createIcons();
+                }
+            }, 100);
+        });
+    </script>
     <% } %>
 </body>
 </html>
