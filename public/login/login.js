@@ -213,9 +213,13 @@ formularioLogin.addEventListener('submit', async (event) => {
         }
     }
     catch(error){
-        // Es mejor un console.error para debug y un alert para el usuario
-        console.error(error);
-        alert('Ha ocurrido un error inesperado');
+        Swal.fire({
+            icon: "error",
+            title: "¡Error de conexión!",
+            text: "No se pudo establecer comunicación con el servidor. Por favor, verifica tu internet.",
+            confirmButtonText: "Reintentar",
+            confirmButtonColor: "#d33",
+        });
     }
 });
 
@@ -258,9 +262,13 @@ formularioRegistro.addEventListener('submit', async (event) => {
         }
     }
     catch(error){
-        console.error('Error en el registro:', error);
-        console.error('Mensaje: ', error.message);
-        alert('Error al registrar. Intente de nuevo');
+        Swal.fire({
+            icon: "error",
+            title: "¡Error de conexión!",
+            text: "No se pudo establecer comunicación con el servidor. Por favor, verifica tu internet.",
+            confirmButtonText: "Reintentar",
+            confirmButtonColor: "#d33",
+        });
     }
 });
 

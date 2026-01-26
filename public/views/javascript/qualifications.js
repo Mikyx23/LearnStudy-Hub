@@ -229,7 +229,13 @@ gradeForm.addEventListener('submit', async (e) => {
         const datosRespuesta = await respuesta.json();
 
         if (!respuesta.ok) {
-            alert(datosRespuesta.message || 'Error al registrar la calificación');
+            Swal.fire({
+                icon: "error",
+                title: "Error al registrar la calificacion",
+                text: "No pudimos registrar la califcacion en la base de datos. Por favor, inténtalo de nuevo en unos momentos.",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "Entendido"
+            });
             return;
         }
 
@@ -241,8 +247,13 @@ gradeForm.addEventListener('submit', async (e) => {
         }
 
     } catch (error) {
-        console.error(error);
-        alert('Ha ocurrido un error inesperado al conectar con el servidor');
+        Swal.fire({
+            icon: "error",
+            title: "¡Error de conexión!",
+            text: "No se pudo establecer comunicación con el servidor. Por favor, verifica tu internet.",
+            confirmButtonText: "Reintentar",
+            confirmButtonColor: "#d33",
+        });
     }
 });
 

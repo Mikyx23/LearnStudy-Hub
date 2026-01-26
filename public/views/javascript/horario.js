@@ -340,28 +340,40 @@ async function enviarHorarioABaseDeDatos() {
         const datosRespuesta = await respuesta.json();
         
         if (!respuesta.ok) {
-            if (datosRespuesta.message) {
-                alert(`Error al guardar: ${datosRespuesta.message}`);
-            } else {
-                alert('Error al guardar el horario en la base de datos');
-            }
+            Swal.fire({
+                    icon: "error",
+                    title: "Error al guardar el horario",
+                    text: "No pudimos registrar el horario en la base de datos. Por favor, inténtalo de nuevo en unos momentos.",
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: "Entendido"
+                });
         } else {
             // Si se guardó exitosamente, marcamos las clases como ya guardadas
             clasesNuevas.forEach(clase => {
                 clasesYaGuardadas.add(JSON.stringify(clase));
             });
             
-            alert(`¡${clasesNuevas.length} clase(s) nueva(s) guardada(s) exitosamente en la base de datos!`);
-            
-            if (datosRespuesta.redirectUrl) {
-                setTimeout(() => {
+            Swal.fire({
+                icon: "success",
+                title: "¡Guardado con éxito!",
+                text: "Presiona el botón para continuar.",
+                confirmButtonColor: "#28a745",
+                confirmButtonText: "Ok",
+                allowOutsideClick: false // Evita que cierren la alerta haciendo clic fuera
+                }).then((result) => {
+                if (result.isConfirmed) {
                     window.location.href = datosRespuesta.redirectUrl;
-                }, 1500);
-            }
+                }
+            });
         }
     } catch (error) {
-        console.error('Error:', error);
-        alert('Ha ocurrido un error inesperado al guardar el horario');
+        Swal.fire({
+            icon: "error",
+            title: "¡Error de conexión!",
+            text: "No se pudo establecer comunicación con el servidor. Por favor, verifica tu internet.",
+            confirmButtonText: "Reintentar",
+            confirmButtonColor: "#d33",
+        });
     } finally {
         // Restaurar botón
         const botonGuardar = document.getElementById('btn-guardar');

@@ -43,7 +43,7 @@ const btnVistaMes = document.getElementById('btn-vista-mes');
 const btnVistaSemana = document.getElementById('btn-vista-semana');
 
 // =========================================
-// 3. FUNCIONES DE APOYO (Lógica de Fechas y UI)
+// 3. FUNCIONES DE APOYO (Lógica de Fechas)
 // =========================================
 
 function parseLocalDate(dateString) {
@@ -73,7 +73,7 @@ function actualizarResumenCortes() {
     if (corte3Total) corte3Total.textContent = `${porcentajesUsados.corte3}%`;
 }
 
-// Modal de detalles (Creación dinámica)
+// Modal de detalles 
 const modalDetalles = document.createElement('div');
 modalDetalles.className = 'modal-detalles';
 modalDetalles.innerHTML = `
@@ -92,7 +92,7 @@ modalDetalles.innerHTML = `
 document.body.appendChild(modalDetalles);
 
 // =========================================
-// 4. FUNCIONES CORE (Calendario y Filtros)
+// 4. FUNCIONES (Calendario y Filtros)
 // =========================================
 
 function filtrarEvaluaciones() {
@@ -231,9 +231,38 @@ if (formularioEvaluaciones) {
                 headers: { 'Content-Type': 'application/json' }
             });
             const data = await res.json();
-            if (res.ok && data.redirectUrl) window.location.href = data.redirectUrl;
-            else alert('Error al insertar la evaluación');
-        } catch (e) { console.error(e); }
+            if (res.ok && data.redirectUrl) {
+                Swal.fire({
+                    icon: "success",
+                    title: "¡Guardado con éxito!",
+                    text: "Presiona el botón para continuar.",
+                    confirmButtonColor: "#28a745",
+                    confirmButtonText: "Ok",
+                    allowOutsideClick: false // Evita que cierren la alerta haciendo clic fuera
+                    }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = data.redirectUrl;
+                    }
+                });
+            }
+            else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error al agendar",
+                    text: "No pudimos registrar la evaluación en la agenda. Por favor, inténtalo de nuevo en unos momentos.",
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: "Entendido"
+                });
+            }
+        } catch (e) {
+            Swal.fire({
+            icon: "error",
+            title: "¡Error de conexión!",
+            text: "No se pudo establecer comunicación con el servidor. Por favor, verifica tu internet.",
+            confirmButtonText: "Reintentar",
+            confirmButtonColor: "#d33",
+        });
+        }
     });
 }
 
@@ -247,7 +276,7 @@ if (filtroCorte) filtroCorte.onchange = () => generarCalendario(mesSeleccionado,
 modalDetalles.querySelector('.cerrar-modal').onclick = () => modalDetalles.style.display = 'none';
 
 // =========================================
-// 6. INICIALIZACIÓN MAESTRA
+// 6. INICIALIZACIÓN
 // =========================================
 function inicializarApp(datosBrutos) {
     todasLasEvaluaciones = datosBrutos.map(ev => {
