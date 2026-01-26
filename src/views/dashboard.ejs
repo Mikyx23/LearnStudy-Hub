@@ -21,7 +21,7 @@
             position: relative;
         }
 
-        /* Patrón de logos de fondo corregido para no cubrir elementos interactivos */
+        /* Patrón de logos interactivos */
         body::before {
             content: "";
             position: fixed;
@@ -109,7 +109,7 @@
                 </div>
                 <div class="w-full bg-slate-200 rounded-full h-3">
                     <div class="bg-blue-600 h-3 rounded-full transition-all duration-500"
-                         style="width: <%= (user && user.progress) ? user.progress : '0%' %>">
+                        style="width: <%= (user && user.progress) ? user.progress : '0%' %>">
                     </div>
                 </div>
                 <p class="text-xs text-slate-500 mt-3 text-center">Semestre <%= user.semester || 1 %> de 10</p>
@@ -205,14 +205,8 @@
     <script src="/views/javascript/layout.js"></script>
     <script src="/views/javascript/dashboard.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            // Pequeño delay para asegurar que layout.js terminó de inyectar el DOM
-            setTimeout(() => {
-                if (typeof lucide !== "undefined") {
-                    lucide.createIcons();
-                }
-            }, 150);
-        });
+        // Inicializar iconos de Lucide
+        lucide.createIcons();
     </script>
 </body>
 </html>
