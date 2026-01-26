@@ -14,6 +14,9 @@ body{
     display: flex;
     flex-direction: column;
     gap: 50px;
+    /* PATRON DE LOGO*/   
+    position: relative;
+    overflow-x: hidden;
 }
 
 /* Overlay para el fondo */
@@ -21,22 +24,58 @@ body{
     position: absolute;
     height: 100vh;
     width: 100vw;
-    background-color: #0004; 
+    background: linear-gradient(135deg, rgba(20, 60, 120, 0.8), rgba(10, 30, 60, 0.7)); 
     z-index: -1;
+
 }
 
+/* patrón derecho */
+
+.body-pattern {
+    position: absolute;
+    top: -5%;
+    left: -10%;
+    width: 60%;
+    height: 110%;
+    background-image: url('/images/Logo_sin_fondo.png'); 
+    background-repeat: repeat;
+    background-size: 250px; 
+    z-index: 0; 
+    pointer-events: none; 
+
+
+    opacity: 0.6;
+    filter: brightness(0) saturate(100%) invert(85%) sepia(20%) saturate(1000%) hue-rotate(180deg);
+    
+    -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+    mask-image: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+
+    animation: floatingPattern 12s ease-in-out infinite;
+}
 /* Titulo de la pagina */
-.header-logo{
-    align-self: center;
-    margin-top: 40px;
+
+.header-logo {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 15px; 
+    margin-top: 40px;
+    align-self: center;
 }
 
+.main-logo {
+    width: 40px;
+    height: auto;      
+    object-fit: contain;
+    filter: brightness(0) invert(1); 
+}
+
+.header-logo h1 {
+    color: #fff;
+    font-size: 1.8rem;
+    margin: 0;
+}
 strong{
-    color: #44E;
+    color: rgb(69, 162, 255);
     font-weight: bold;
 }
 
@@ -248,4 +287,13 @@ label{
     font-size: 0.8rem;
     margin-top: 5px;
     margin-left: 10px;
+}
+
+@keyframes floatingPattern {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+    }
+    50% {
+        transform: translate(20px, 10px) scale(1.05);
+    }
 }
