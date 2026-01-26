@@ -211,7 +211,6 @@ function renderSchedule() {
                 tableHTML += `<div class="class-block" style="border-left: 4px solid ${color}; background-color: ${color}20;">`;
                 tableHTML += `<div class="class-title">${cellContent.subjectName}</div>`;
                 
-                // 2. CAMBIO CRÍTICO: Usar Disp en lugar de las originales para quitar segundos
                 tableHTML += `<div class="class-time">${cellContent.startTimeDisp} - ${cellContent.endTimeDisp}</div>`;
                 
                 tableHTML += `<div class="class-room">${cellContent.classroom}</div>`;
@@ -239,13 +238,25 @@ function addClass() {
     
     // Validación básica
     if (!id_curso || !day || !startTime || !endTime || !classroom) {
-        alert('Por favor, complete todos los campos');
+        Swal.fire({
+            icon: "warning",
+            title: "Campos incompletos",
+            text: "Por favor, rellena todos los campos obligatorios para poder registrar la asignatura.",
+            confirmButtonColor: "#f39c12",
+            confirmButtonText: "Revisar formulario"
+        });
         return;
     }
     
     // Validar que la hora de fin sea después de la hora de inicio
     if (timeToMinutes(endTime) <= timeToMinutes(startTime)) {
-        alert('La hora de finalización debe ser después de la hora de inicio');
+        Swal.fire({
+            icon: "warning",
+            title: "Horario inválido",
+            text: "La hora de finalización debe ser después de la hora de inicio.",
+            confirmButtonColor: "#f39c12", // Color naranja de advertencia
+            confirmButtonText: "Corregir horario",
+        });
         return;
     }
     
@@ -258,7 +269,13 @@ function addClass() {
     
     // Validar que la hora esté dentro del rango permitido
     if (timeToMinutes(startTime) < timeToMinutes('07:45') || timeToMinutes(endTime) > timeToMinutes('21:15')) {
-        alert('Las clases deben estar entre las 07:45 y las 21:15');
+        Swal.fire({
+            icon: "info",
+            title: "Horario institucional",
+            html: "Las clases deben programarse entre las <b>07:45</b> y las <b>21:15</b>.",
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "Ajustar horario"
+        });
         return;
     }
     
@@ -283,8 +300,6 @@ function addClass() {
     document.getElementById('start-time').value = '07:45';
     document.getElementById('end-time').value = '08:30';
     document.getElementById('classroom').value = '';
-    
-    alert('Clase agregada exitosamente al horario');
 }
 
 // Función para enviar el horario a la base de datos
@@ -340,28 +355,40 @@ async function enviarHorarioABaseDeDatos() {
         const datosRespuesta = await respuesta.json();
         
         if (!respuesta.ok) {
-            if (datosRespuesta.message) {
-                alert(`Error al guardar: ${datosRespuesta.message}`);
-            } else {
-                alert('Error al guardar el horario en la base de datos');
-            }
+            Swal.fire({
+                    icon: "error",
+                    title: "Error al guardar el horario",
+                    text: "No pudimos registrar el horario en la base de datos. Por favor, inténtalo de nuevo en unos momentos.",
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: "Entendido"
+                });
         } else {
             // Si se guardó exitosamente, marcamos las clases como ya guardadas
             clasesNuevas.forEach(clase => {
                 clasesYaGuardadas.add(JSON.stringify(clase));
             });
             
-            alert(`¡${clasesNuevas.length} clase(s) nueva(s) guardada(s) exitosamente en la base de datos!`);
-            
-            if (datosRespuesta.redirectUrl) {
-                setTimeout(() => {
+            Swal.fire({
+                icon: "success",
+                title: "¡Guardado con éxito!",
+                text: "Presiona el botón para continuar.",
+                confirmButtonColor: "#28a745",
+                confirmButtonText: "Ok",
+                allowOutsideClick: false // Evita que cierren la alerta haciendo clic fuera
+                }).then((result) => {
+                if (result.isConfirmed) {
                     window.location.href = datosRespuesta.redirectUrl;
-                }, 1500);
-            }
+                }
+            });
         }
     } catch (error) {
-        console.error('Error:', error);
-        alert('Ha ocurrido un error inesperado al guardar el horario');
+        Swal.fire({
+            icon: "error",
+            title: "¡Error de conexión!",
+            text: "No se pudo establecer comunicación con el servidor. Por favor, verifica tu internet.",
+            confirmButtonText: "Reintentar",
+            confirmButtonColor: "#d33",
+        });
     } finally {
         // Restaurar botón
         const botonGuardar = document.getElementById('btn-guardar');

@@ -54,8 +54,13 @@ formCedula.addEventListener('submit', async (event) =>{
         }
     }
     catch(error){
-        // throw new Error('Ha ocurrido un error inesperado');
-        console.error('Detalles del error:', error);
+        Swal.fire({
+            icon: "error",
+            title: "¡Error de conexión!",
+            text: "No se pudo establecer comunicación con el servidor. Por favor, verifica tu internet.",
+            confirmButtonText: "Reintentar",
+            confirmButtonColor: "#d33",
+        });
     }
 });
 
@@ -99,8 +104,13 @@ formRespuesta.addEventListener('submit', async (event) => {
         }
     }
     catch(error){
-        // throw new Error('Ha ocurrido un error inesperado');
-        console.error(error)
+        Swal.fire({
+            icon: "error",
+            title: "¡Error de conexión!",
+            text: "No se pudo establecer comunicación con el servidor. Por favor, verifica tu internet.",
+            confirmButtonText: "Reintentar",
+            confirmButtonColor: "#d33",
+        });
     }
 });
 
@@ -151,7 +161,13 @@ formContraseña.addEventListener('submit', async (event) => {
         }
     }
     catch(error){
-        throw new Error('Ha ocurrido un error inesperado');
+        Swal.fire({
+            icon: "error",
+            title: "¡Error de conexión!",
+            text: "No se pudo establecer comunicación con el servidor. Por favor, verifica tu internet.",
+            confirmButtonText: "Reintentar",
+            confirmButtonColor: "#d33",
+        });
     }
 });
 

@@ -120,6 +120,8 @@ AND h.dia_semana = ?  -- <--- FILTRO PARA EL DÍA ACTUAL
 ORDER BY h.hora_inicio; 
 `;
 
+export const GET_PHRASE = `SELECT frase FROM tbl_frases ORDER BY RAND() LIMIT 1;`;
+
 // ----- QUERIES USERS -----
 
 

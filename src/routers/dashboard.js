@@ -3,7 +3,8 @@ export const routerDashboard = express.Router();
 import { 
     ObtenerDatosUsuarioController,
     ObtenerDatosAcademicosController,
-    ObtenerClasesDiaActualController 
+    ObtenerClasesDiaActualController,
+    ObtenerFraseController
 } from '../controllers/dashboard-controller.js';
 import { config } from '../../config.js';
 const {lapsoActual} = config;
@@ -16,13 +17,15 @@ routerDashboard.get('/', async(req,res) => {
         const result = await ObtenerDatosUsuarioController(user.id, lapsoActual);
         const result2 = await ObtenerDatosAcademicosController(user.carrer, user.id, lapsoActual);
         const result3 = await ObtenerClasesDiaActualController(user.id, lapsoActual, user.timezone);
+        const result4 = await ObtenerFraseController();
 
         res.render('dashboard', {
             user: result?.user || {},
             classes: result3?.today || [],
             next_exam: result2?.data?.[0] || {},
             exams: result2?.data || [],
-            DateTime: DateTime
+            DateTime: DateTime,
+            frase: result4?.frase || ''
         });
     }
     catch(error){

@@ -48,17 +48,38 @@ formInscripcion.addEventListener('submit', async (event) => {
         const datosRespuesta = await respuesta.json();
 
         if(!respuesta.ok){
-            alert('Error al inscribir la asignatura');
+            Swal.fire({
+                    icon: "error",
+                    title: "Error al agendar",
+                    text: "No pudimos registrar la evaluación en la agenda. Por favor, inténtalo de nuevo en unos momentos.",
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: "Entendido"
+                });
         }
         else{
             if(datosRespuesta.redirectUrl){
-                setTimeout(() => {
-                    window.location.href = datosRespuesta.redirectUrl;
-                },1500)
+                Swal.fire({
+                    icon: "success",
+                    title: "¡Guardado con éxito!",
+                    text: "Presiona el botón para continuar.",
+                    confirmButtonColor: "#28a745",
+                    confirmButtonText: "Ok",
+                    allowOutsideClick: false // Evita que cierren la alerta haciendo clic fuera
+                    }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = datosRespuesta.redirectUrl;
+                    }
+                });
             }
         }
     }
     catch(error){
-        throw new Error('Ha ocurrido un error inesperado');
+        Swal.fire({
+            icon: "error",
+            title: "¡Error de conexión!",
+            text: "No se pudo establecer comunicación con el servidor. Por favor, verifica tu internet.",
+            confirmButtonText: "Reintentar",
+            confirmButtonColor: "#d33",
+        });
     }
 });

@@ -37,7 +37,13 @@ formRecuperar.addEventListener('submit', async (e) => {
         }
     }
     catch{
-        throw new Error('Ha ocurrido un error inesperado');
+        Swal.fire({
+            icon: "error",
+            title: "¡Error de conexión!",
+            text: "No se pudo establecer comunicación con el servidor. Por favor, verifica tu internet.",
+            confirmButtonText: "Reintentar",
+            confirmButtonColor: "#d33",
+        });
     }
 });
 
