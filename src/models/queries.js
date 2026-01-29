@@ -369,6 +369,10 @@ ORDER BY m.semestre, m.nombre_completo;
 // ----- QUERIES AGENDA -----
 export const INSERT_EXAM = `INSERT INTO tbl_agenda_evaluaciones (id_curso, descripcion, corte, ponderacion, fecha_entrega) VALUES (?, ?, ?, ?, ?)`;
 
+export const SET_STATE_EXAM = `UPDATE tbl_agenda_evaluaciones SET estado = ? WHERE id_evaluacion = ?`;
+
+export const DELETE_EXAM = `DELETE FROM tbl_agenda_evaluaciones WHERE id_evaluacion = ?`;
+
 export const GET_COURSES_AGENDA = `
 WITH AsignaturasProcesadas AS (
     SELECT 
@@ -405,11 +409,8 @@ export const GET_EXAMS = `
 WITH AsignaturasProcesadas AS (
     SELECT 
         ac.id_asignatura_carrera,
-        ac.codigo_asignatura,
-        ac.uc_asignatura,
         ac.id_carrera,
         a.nombre_asignatura,
-        -- Calculamos la secuencia y el total antes para evitar conflictos en el CASE
         ROW_NUMBER() OVER (PARTITION BY a.nombre_asignatura, ac.id_carrera ORDER BY ac.semestre) AS secuencia,
         COUNT(*) OVER (PARTITION BY a.nombre_asignatura, ac.id_carrera) AS total_repeticiones
     FROM tbl_asignaturas_carreras ac
@@ -432,16 +433,17 @@ MallaConNombres AS (
     FROM AsignaturasProcesadas
 )
 SELECT
-    ca.id_curso AS id,
+    ae.id_evaluacion AS id,           -- El ID único de la evaluación
+    ca.id_curso AS curso_id,         -- Mantenemos el curso por si lo necesitas
     ap.nombre_romano AS asignatura_nombre,
     ae.descripcion AS nombre,
     ae.corte AS corte,
     ae.ponderacion AS porcentaje,
-    ae.fecha_entrega AS fecha
+    ae.fecha_entrega AS fecha,
+    ae.estado AS estado
 FROM tbl_cursos_academicos ca
 INNER JOIN MallaConNombres ap 
     ON ca.id_asignatura_carrera = ap.id_asignatura_carrera
--- Cambia a LEFT JOIN si quieres ver cursos aunque no tengan evaluaciones cargadas
 INNER JOIN tbl_agenda_evaluaciones ae 
     ON ca.id_curso = ae.id_curso
 WHERE ca.id_usuario = ? 
