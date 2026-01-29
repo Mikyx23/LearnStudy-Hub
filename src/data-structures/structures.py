@@ -2,11 +2,6 @@
 Estas estructuras de datos las hice con un video de 5 horas en Youtube sobre POO en Python.
 Al momento de realizar este codigo solo Dios y yo sabiamos como funciona, Ahora solo Dios sabe
 
-Si tu, futuro programador que deseas colaborar en el proyecto, deseas saber como funciona, te deseo mucha suerte.
-
-Puedes actualizar este contador en caso de que lo intentes
-HORAS DESPERDICIADAS AQUI: 0 HRS
-CAMBIOS EXITOSOS: 0
 """
 import os 
 

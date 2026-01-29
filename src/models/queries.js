@@ -8,7 +8,7 @@ SELECT
         FROM tbl_cursos_academicos ca2
         INNER JOIN tbl_asignaturas_carreras ac2 ON ca2.id_asignatura_carrera = ac2.id_asignatura_carrera
         WHERE ca2.id_usuario = u.id_usuario 
-        AND ca2.id_lapso = ? -- Parámetro: ID Lapso Actual
+        AND ca2.id_lapso = 1 -- Parámetro: ID Lapso Actual
         GROUP BY ac2.semestre
         ORDER BY COUNT(*) DESC, ac2.semestre DESC
         LIMIT 1
@@ -18,16 +18,16 @@ SELECT
         FROM tbl_cursos_academicos ca3
         INNER JOIN tbl_asignaturas_carreras ac3 ON ca3.id_asignatura_carrera = ac3.id_asignatura_carrera
         INNER JOIN (
-            -- Subconsulta para sumar notas por materia
+            -- Ahora sumamos las notas directamente desde la tabla de agenda
             SELECT id_curso, SUM(calificacion) as nota_final 
-            FROM tbl_calificaciones 
+            FROM tbl_agenda_evaluaciones 
             GROUP BY id_curso
         ) cal ON ca3.id_curso = cal.id_curso
         WHERE ca3.id_usuario = u.id_usuario 
-        AND cal.nota_final >= 10 -- Ajustar según nota mínima aprobatoria
+        AND cal.nota_final >= 10 -- Nota mínima aprobatoria
     ), 0) AS uca
 FROM tbl_usuarios u
-WHERE u.id_usuario = ?; -- Parámetro: ID Usuario
+WHERE u.id_usuario = 1; -- Parámetro: ID Usuario
 `;
 
 export const GET_ACADEMIC_DATA =`
@@ -215,17 +215,15 @@ SELECT
 FROM tbl_usuarios u
 INNER JOIN tbl_inscripciones_carreras ic ON u.id_usuario = ic.id_usuario
 INNER JOIN tbl_carreras c ON ic.id_carrera = c.id_carrera
--- Traemos la malla curricular de la carrera
 INNER JOIN tbl_asignaturas_carreras ac ON c.id_carrera = ac.id_carrera
 INNER JOIN tbl_asignaturas a ON ac.id_asignatura = a.id_asignatura
--- Unión con las notas calculadas ponderadamente
+-- Unión con las notas calculadas ponderadamente (Modificado)
 LEFT JOIN (
     SELECT 
         ca.id_asignatura_carrera,
-        SUM(cal.calificacion * (ae.ponderacion / 100)) AS nota_final
+        SUM(ae.calificacion * (ae.ponderacion / 100)) AS nota_final
     FROM tbl_cursos_academicos ca
-    INNER JOIN tbl_calificaciones cal ON ca.id_curso = cal.id_curso
-    INNER JOIN tbl_agenda_evaluaciones ae ON cal.id_evaluacion = ae.id_evaluacion
+    INNER JOIN tbl_agenda_evaluaciones ae ON ca.id_curso = ae.id_curso
     WHERE ca.id_usuario = ? AND ca.id_lapso = ?
     GROUP BY ca.id_asignatura_carrera
 ) AS nota_estudiante ON ac.id_asignatura_carrera = nota_estudiante.id_asignatura_carrera
@@ -283,17 +281,15 @@ WITH MateriasAprobadas AS (
         ac.semestre
     FROM tbl_cursos_academicos ca
     JOIN tbl_asignaturas_carreras ac ON ca.id_asignatura_carrera = ac.id_asignatura_carrera
-    -- Unimos con la agenda para obtener el peso de cada evaluación
+    -- Ahora obtenemos calificacion y ponderacion directamente de la agenda
     JOIN tbl_agenda_evaluaciones age ON ca.id_curso = age.id_curso
-    -- Unimos con calificaciones para obtener la nota del alumno
-    JOIN tbl_calificaciones cal ON age.id_evaluacion = cal.id_evaluacion
     WHERE ca.id_usuario = ? 
     GROUP BY ca.id_curso, ac.id_asignatura_carrera, ac.uc_asignatura, ac.semestre
-    -- El cálculo ahora usa la ponderación desde 'age' (tbl_agenda_evaluaciones)
-    HAVING SUM(cal.calificacion * (age.ponderacion / 100)) >= 9.5
+    -- El cálculo usa calificacion y ponderación de la misma tabla 'age'
+    HAVING SUM(age.calificacion * (age.ponderacion / 100)) >= 9.5
 ),
 ResumenInscripcionActual AS (
-    -- 2. UC inscritas en el lapso vigente
+    -- 2. UC inscritas en el lapso vigente (Sin cambios)
     SELECT 
         ac.id_asignatura_carrera, 
         SUM(ac.uc_asignatura) OVER() as total_uc_inscritas
@@ -302,14 +298,14 @@ ResumenInscripcionActual AS (
     WHERE ca.id_usuario = ? AND ca.id_lapso = ?
 ),
 ResumenEstudiante AS (
-    -- 3. Totales históricos
+    -- 3. Totales históricos (Sin cambios)
     SELECT 
         COALESCE(SUM(uc_asignatura), 0) AS total_uca,
         COALESCE(MAX(semestre), 0) AS max_semestre_aprobado
     FROM MateriasAprobadas
 ),
 MallaBaseFormateada AS (
-    -- 4. Malla curricular con formato de nombres
+    -- 4. Malla curricular con formato de nombres (Sin cambios)
     SELECT 
         t.id_asignatura_carrera,
         t.codigo,
@@ -350,24 +346,15 @@ FROM MallaBaseFormateada m
 CROSS JOIN ResumenEstudiante re
 LEFT JOIN (SELECT DISTINCT total_uc_inscritas FROM ResumenInscripcionActual) curr ON 1=1
 WHERE 
-    -- REGLA 1: No haberla aprobado ya
     m.id_asignatura_carrera NOT IN (SELECT id_asignatura_carrera FROM MateriasAprobadas)
-    
-    -- REGLA 2: No tenerla inscrita en el lapso actual
     AND m.id_asignatura_carrera NOT IN (SELECT id_asignatura_carrera FROM ResumenInscripcionActual)
-
-    -- REGLA DE LAS 21 UC
     AND (COALESCE(curr.total_uc_inscritas, 0) + m.uc_asignatura) <= 21
-
-    -- REGLA 3: Prelaciones de materias
     AND NOT EXISTS (
         SELECT 1 FROM tbl_prelaciones_materias pm
         WHERE pm.id_asignatura_carrera = m.id_asignatura_carrera
         AND pm.tipo_prelacion = 'REQUISITO'
         AND pm.id_asignatura_prelacion NOT IN (SELECT id_asignatura_carrera FROM MateriasAprobadas)
     )
-
-    -- REGLA 4: Prelaciones académicas
     AND NOT EXISTS (
         SELECT 1 FROM tbl_prelaciones_academicas pa
         WHERE pa.id_asignatura_carrera = m.id_asignatura_carrera
@@ -463,7 +450,12 @@ ORDER BY ap.nombre_romano, ae.fecha_entrega;
 `;
 
 // ----- QUERIES CALIFICACIONES -----
-export const INSERT_QUALIFICATIONS = 'INSERT INTO tbl_calificaciones (id_curso, id_evaluacion, calificacion) VALUES (?, ?, ?)';
+export const INSERT_QUALIFICATIONS = `
+UPDATE tbl_agenda_evaluaciones 
+SET calificacion = ?, 
+    estado = 'CALIFICADA' 
+WHERE id_evaluacion = ? AND id_curso = ?;
+`;
 
 export const GET_COURSES_QUALIFICATIONS = `
 WITH AsignaturasProcesadas AS (
@@ -491,19 +483,16 @@ SELECT
     ap.nombre_romano,
     ap.codigo_asignatura,
     ap.uc_asignatura,
-    -- Cálculo: Sumatoria de (Nota * (Ponderacion / 100))
-    SUM(COALESCE(cal.calificacion, 0) * (ev.ponderacion / 100.0)) AS promedio
+    -- Cálculo directo desde 'ev' (tbl_agenda_evaluaciones)
+    SUM(COALESCE(ev.calificacion, 0) * (ev.ponderacion / 100.0)) AS promedio
 FROM tbl_cursos_academicos ca
 INNER JOIN tbl_inscripciones_carreras ic ON ca.id_usuario = ic.id_usuario
 INNER JOIN AsignaturasProcesadas ap ON (
     ap.id_asignatura_carrera = ca.id_asignatura_carrera 
     AND ap.id_carrera = ic.id_carrera
 )
+-- La tabla de agenda ahora contiene todo lo necesario para el cálculo
 INNER JOIN tbl_agenda_evaluaciones ev ON ca.id_curso = ev.id_curso
-LEFT JOIN tbl_calificaciones cal ON (
-    ev.id_evaluacion = cal.id_evaluacion 
-    AND ca.id_curso = cal.id_curso
-)
 WHERE ca.id_usuario = ? AND ca.id_lapso = ?
 GROUP BY 
     ca.id_curso, 
@@ -539,7 +528,8 @@ SELECT
     ev.descripcion AS evaluacion,
     ev.ponderacion AS porcentaje,
     ev.corte,
-    cal.calificacion AS nota
+    -- La nota ahora viene directamente de la tabla de agenda
+    ev.calificacion AS nota
 FROM tbl_cursos_academicos ca
 INNER JOIN tbl_usuarios u ON u.id_usuario = ca.id_usuario
 INNER JOIN tbl_inscripciones_carreras ic ON u.id_usuario = ic.id_usuario
@@ -547,13 +537,8 @@ INNER JOIN AsignaturasProcesadas ap ON (
     ap.id_asignatura_carrera = ca.id_asignatura_carrera 
     AND ap.id_carrera = ic.id_carrera
 )
--- 1. Unimos con la agenda para saber qué evaluaciones existen en el curso
+-- Ahora solo necesitamos esta tabla para obtener descripción, ponderación y nota
 INNER JOIN tbl_agenda_evaluaciones ev ON ca.id_curso = ev.id_curso
--- 2. Unimos con calificaciones para ver la nota de esa evaluación específica
-LEFT JOIN tbl_calificaciones cal ON (
-    ev.id_evaluacion = cal.id_evaluacion 
-    AND ca.id_curso = cal.id_curso
-)
 WHERE ca.id_usuario = ? AND ca.id_lapso = ?
 ORDER BY ap.nombre_romano, ev.corte, ev.fecha_entrega;
 `;
@@ -591,14 +576,14 @@ SELECT
     ae.descripcion,
     ae.ponderacion AS porcentaje,
     ae.corte,
-    cal.calificacion
+    -- Acceso directo a la calificación ahora en tbl_agenda_evaluaciones
+    ae.calificacion
 FROM tbl_cursos_academicos ca
 INNER JOIN MallaConNombres ap 
     ON ca.id_asignatura_carrera = ap.id_asignatura_carrera
 INNER JOIN tbl_agenda_evaluaciones ae 
     ON ca.id_curso = ae.id_curso
-LEFT JOIN tbl_calificaciones cal 
-    ON (ae.id_evaluacion = cal.id_evaluacion AND ca.id_curso = cal.id_curso)
+-- Se eliminó el LEFT JOIN con tbl_calificaciones
 WHERE ca.id_usuario = ? 
     AND ca.id_lapso = ?
 ORDER BY ca.id_curso, ae.corte, ae.fecha_entrega;
