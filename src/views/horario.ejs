@@ -21,85 +21,138 @@
                 <div class="card-footer-line"></div>
             </div>
     <% }else { %>
-    <div class="container">
-        <header>
-            <h1>Horario Académico</h1>
-            <p class="instructions"> <i data-lucide="triangle-alert"></i> <strong>IMPORTANTE:</strong> Recuerda guardar tu horario antes de salir de la pagina</p>
-        </header>
-        
-        <div class="app-container">
-            <div class="form-container">
-                <h2>Agregar Nueva Clase</h2>
-                <div class="form-group">
-                    <label for="subject">MATERIA</label>
-                    <select id="subject">
-                        <option value="" disabled selected>Seleccionar materia...</option>
-                        <!-- Las opciones se generarán dinámicamente con JavaScript -->
-                    </select>
-                </div>
+        <div class="container main-layout">
+            <div class="sidebar-container">
+                <header>
+                    <h1>Horario Academico</h1>
+                    <div class="warning-banner">
+                        <i data-lucide="alert-triangle"></i>
+                        <div class="warning-content">
+                            <strong>IMPORTANTE:</strong>
+                            <p>Recuerda guardar tu horario antes de salir de la página</p>
+                        </div>
+                    </div>
+                </header>
                 
-                <div class="form-group">
-                    <label for="day">DÍA</label>
-                    <select id="day">
-                        <option value="lunes">Lunes</option>
-                        <option value="martes">Martes</option>
-                        <option value="miércoles">Miércoles</option>
-                        <option value="jueves">Jueves</option>
-                        <option value="viernes">Viernes</option>
-                        <option value="sábado">Sábado</option>
-                    </select>
+                <div class="form-container">
+                    <h2>Agregar Cursos</h2>
+                    <p class="form-description">Ingresa los detalles del curso para actualizar tu horario.</p>
+                    
+                    <div class="form-group">
+                        <label for="subject">Asignatura</label>
+                        <div class="select-wrapper">
+                            <select id="subject">
+                                <option value="" disabled selected>Seleccionar asignatura...</option>
+                                </select>
+                            <i data-lucide="chevron-down" class="select-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="day">Dia</label>
+                            <div class="select-wrapper">
+                                <select id="day">
+                                    <option value="lunes">Lunes</option>
+                                    <option value="martes">Martes</option>
+                                    <option value="miércoles">Miércoles</option>
+                                    <option value="jueves">Jueves</option>
+                                    <option value="viernes">Viernes</option>
+                                    <option value="sábado">Sábado</option>
+                                </select>
+                                <i data-lucide="chevron-down" class="select-icon"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="classroom">Aula</label>
+                            <input type="text" id="classroom" placeholder="Ej. I-10">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="start-time">Hora Inicio</label>
+                            <div class="select-wrapper">
+                                <select id="start-time">
+                                    </select>
+                                <i data-lucide="clock" class="select-icon"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="end-time">Hora Final</label>
+                            <div class="select-wrapper">
+                                <select id="end-time">
+                                    </select>
+                                <i data-lucide="clock" class="select-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-add" id="add-btn">+ Agregar</button>
+                    <button class="btn-guardar" id="btn-guardar" type="button">
+                        <i data-lucide="save"></i>Guardar Horario</button>
+                    <button class="btn-danger" id="btn-delete-all" type="button">
+                        <i data-lucide="trash-2"></i>Borrar Horario
+                    </button>
                 </div>
-                
-                <div class="form-group">
-                    <label for="start-time">HORA DE INICIO</label>
-                    <select id="start-time">
-                        <!-- Las horas se generarán dinámicamente con JavaScript -->
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="end-time">HORA DE FINALIZACIÓN</label>
-                    <select id="end-time">
-                        <!-- Las horas se generarán dinámicamente con JavaScript -->
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="classroom">AULA</label>
-                    <input type="text" id="classroom" placeholder="Ej. A-204">
-                </div>
-                
-                <button class="btn-add" id="add-btn">+ Agregar</button>
-                <button class="btn-guardar" id="btn-guardar" type="button">Guardar Horario</button>
             </div>
             
-            <div class="schedule-container">
-                <h2>Horario Semanal</h2>
-                <div id="schedule-table">
-                    <!-- La tabla se generará dinámicamente con JavaScript -->
+            <div class="schedule-container main-schedule-area">
+                <h2>Mi Horario</h2>
+                <p class="schedule-subtitle">Gestiona tus clases semanales.</p>
+                
+                <div class="schedule-grid">
+                    <div class="day-column">
+                        <h3 class="day-header">LUNES</h3>
+                        <div class="day-classes-container" id="col-lunes">
+                            </div>
+                    </div>
+
+                    <div class="day-column">
+                        <h3 class="day-header">MARTES</h3>
+                        <div class="day-classes-container" id="col-martes"></div>
+                    </div>
+
+                    <div class="day-column">
+                        <h3 class="day-header">MIERCOLES</h3>
+                        <div class="day-classes-container" id="col-miércoles"></div>
+                    </div>
+
+                    <div class="day-column">
+                        <h3 class="day-header">JUEVES</h3>
+                        <div class="day-classes-container" id="col-jueves"></div>
+                    </div>
+
+                    <div class="day-column">
+                        <h3 class="day-header">VIERNES</h3>
+                        <div class="day-classes-container" id="col-viernes"></div>
+                    </div>
+                    <div class="day-column">
+                        <h3 class="day-header">SABADO</h3>
+                        <div class="day-classes-container" id="col-sábado"></div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    
-    <script>
-        const materiasConIDs = <%- JSON.stringify(materias) %>;
-        const initialScheduleData = <%- JSON.stringify(horarios) %>;
-    </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="/views/javascript/layout.js" ></script>
-    <script src="/views/javascript/horario.js" ></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            setTimeout(() => {
+        <script>
+            const materiasConIDs = <%- JSON.stringify(materias) %>;
+            const initialScheduleData = <%- JSON.stringify(horarios) %>;
+        </script>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://unpkg.com/lucide@latest"></script>
+        <script src="/views/javascript/layout.js" ></script>
+        <script src="/views/javascript/horario.js" ></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                // Inicializar iconos de Lucide
                 if (typeof lucide !== "undefined") {
                     lucide.createIcons();
                 }
-            }, 100);
-        });
-    </script>
+            });
+        </script>
     <% } %>
 </body>
 </html>

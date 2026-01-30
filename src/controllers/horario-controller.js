@@ -12,6 +12,10 @@ export const CrearHorarioController = async (datos) => {
     return await Horario.CrearHorario(horario);
 }
 
+export const EliminarHorarioController = async (id_usuario,id_lapso) => {
+    return await Horario.EliminarHorario(id_usuario,id_lapso);
+}
+
 export const ObtenerCursosHorarioController = async (id_usuario,id_lapso) => {
     return await Horario.ObtenerCursosHorario(id_usuario,id_lapso);
 }

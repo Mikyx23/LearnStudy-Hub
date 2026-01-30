@@ -597,6 +597,13 @@ ORDER BY ca.id_curso, ae.corte, ae.fecha_entrega;
 // ----- QUERIES HORARIO -----
 export const INSERT_SCHEDULE = `INSERT INTO tbl_horarios (id_curso, dia_semana, hora_inicio, hora_final, aula) VALUES ?`;
 
+export const DELETE_SCHEDULE = `
+DELETE h 
+FROM tbl_horarios h
+INNER JOIN tbl_cursos_academicos c ON h.id_curso = c.id_curso
+WHERE c.id_usuario = ? AND c.id_lapso = ?;
+`;
+
 export const GET_COURSES_SCHEDULE = `
 WITH AsignaturasProcesadas AS (
     SELECT 
