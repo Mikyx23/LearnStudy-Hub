@@ -1,6 +1,15 @@
 """
-Estas estructuras de datos las hice con un video de 5 horas en Youtube sobre POO en Python.
-Al momento de realizar este codigo solo Dios y yo sabiamos como funciona, Ahora solo Dios sabe
+Querido programador:
+Cuando escribi este codigo, solo Dios
+y yo sabiamos como funcionaba.
+Ahora, solo Dios lo sabe!
+
+Por lo tanto, si estas intentando optimizar 
+este script y falla (seguramente).
+Por favor incrementa este contador como una
+advertencia para la siguiente persona.
+
+total_horas_desperdiciadas_aqui = 17
 
 """
 import os 

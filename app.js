@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
     const {user} = req.session;
 
     if(user){
-        res.redirect('/api/dashboard');
+        return res.redirect('/api/dashboard');
     }
     res.sendFile(path.join(__dirname, '/public/index/index.html'));
 });
@@ -63,34 +63,7 @@ app.use('/api/horario', routerHorario);
 import {routerPomodoro} from './src/routers/pomodoro.js';
 app.use('/api/pomodoro', routerPomodoro);
 
-// import { ObtenerUsuarioController } from './src/controllers/users-controller.js';
-// app.get('/api/inicio', async (req,res) => {
-//     const {user} = req.session;
-//     // PAGINA DE INICIO CON LOGUEAR 
-
-//     const usuario = await ObtenerUsuarioController(user.id);
-
-//     if(!usuario){
-//         res.send('Usuario no encontrado');
-//     }
-//     else{
-//         res.send(`Bienvenido a LearnStudy Hub ${usuario.nombre} ${usuario.apellido}`);
-//     }
-// });
-
-import { ObtenerCarreras } from './src/models/carrers-model.js';
-app.get('/api/carreras', async (req, res) => {
-    try{
-        const carreras = await ObtenerCarreras();
-        console.log(carreras)
-        return res.json(carreras);
-    }catch(error){
-        console.error(error);
-        res.send('Error al obtener las carreras').status(500);
-        throw error;
-    }
-});
-
+//CERRAR SESION
 app.get('/logout', (req, res) =>{
     res.clearCookie('access_token').redirect('/');
 });
