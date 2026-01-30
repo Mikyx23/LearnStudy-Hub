@@ -59,16 +59,19 @@ MallaNombres AS (
     FROM AsignaturasProcesadas
 )
 SELECT
+    ae.id_evaluacion AS id, -- Importante para identificar la evaluación
     mn.asignatura_nombre,
     ae.descripcion,
     ae.fecha_entrega,
     ae.ponderacion,
-    ae.corte
+    ae.corte,
+    ae.estado
 FROM tbl_cursos_academicos ca
 INNER JOIN MallaNombres mn ON ca.id_asignatura_carrera = mn.id_asignatura_carrera
 INNER JOIN tbl_agenda_evaluaciones ae ON ca.id_curso = ae.id_curso
-WHERE ca.id_usuario = ?  -- Parámetro: ID Usuario
-    AND ca.id_lapso = ?    -- Parámetro: ID Lapso Actual
+WHERE ca.id_usuario = ?       -- Parámetro: ID Usuario
+    AND ca.id_lapso = ?       -- Parámetro: ID Lapso Actual
+    AND ae.estado = 'PENDIENTE' -- Filtro de estado
 ORDER BY ae.fecha_entrega ASC;
 `;
 
