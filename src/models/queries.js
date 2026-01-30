@@ -683,6 +683,8 @@ ORDER BY h.dia_semana, h.hora_inicio;
 `;
 
 // ----- QUERIES POMODORO -----
+export const INSERT_POMODORO_SESSION = `INSERT INTO tbl_pomodoro (id_evaluacion, descripcion_sesion, hora_inicio, hora_final, ciclos) VALUES  (?, ?, ?, ?, ?)`;
+
 export const GET_POMODORO_DATA = `
 WITH AsignaturasProcesadas AS (
     -- 1. Obtenemos los nombres y calculamos la secuencia romana por carrera
@@ -712,27 +714,29 @@ MallaConNombres AS (
         END AS nombre_formateado
     FROM AsignaturasProcesadas
 )
--- 3. Consulta final agrupando evaluaciones en JSON
+-- 3. Consulta final agrupando SOLO evaluaciones PENDIENTES
 SELECT
     ca.id_curso AS id,
     mn.nombre_formateado AS name,
     COALESCE(
         JSON_ARRAYAGG(
-        IF(ae.id_evaluacion IS NOT NULL, 
-            JSON_OBJECT(
-                'id', ae.id_evaluacion,
-                'name', ae.descripcion
-            ), 
-            NULL)
+            IF(ae.id_evaluacion IS NOT NULL, 
+                JSON_OBJECT(
+                    'id', ae.id_evaluacion,
+                    'name', ae.descripcion,
+                    'status', ae.estado -- Opcional, para confirmar en el front
+                ), 
+                NULL)
         ), 
         JSON_ARRAY()
     ) AS exams
 FROM tbl_cursos_academicos ca
 INNER JOIN MallaConNombres mn 
     ON ca.id_asignatura_carrera = mn.id_asignatura_carrera
--- LEFT JOIN para no perder cursos que aún no tengan evaluaciones cargadas
+-- Filtrar el estado directamente en el JOIN para mantener los cursos vacíos si es necesario
 LEFT JOIN tbl_agenda_evaluaciones ae 
-    ON ca.id_curso = ae.id_curso
+    ON ca.id_curso = ae.id_curso 
+    AND ae.estado = 'PENDIENTE' 
 WHERE ca.id_usuario = ? 
     AND ca.id_lapso = ?
 GROUP BY ca.id_curso, mn.nombre_formateado
