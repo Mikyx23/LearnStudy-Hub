@@ -18,9 +18,8 @@
 body {
     background: var(--bg-light);
     min-height: 100vh;
-    color: var(--text-dark);
-    line-height: 1.5;
-    padding: 20px;
+    color: #333;
+    line-height: 1.6;
 }
 
 /* Layout Principal */
@@ -338,7 +337,7 @@ input:focus, select:focus {
     }
     /* En móviles, la grid debe tener scroll horizontal */
     .schedule-grid {
-         padding-bottom: 30px;
+        padding-bottom: 30px;
     }
     .day-column {
         min-width: 220px; /* Tarjetas más anchas en móvil para leer mejor */
