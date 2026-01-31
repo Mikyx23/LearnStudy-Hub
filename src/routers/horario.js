@@ -1,6 +1,6 @@
 import express from 'express';
 export const routerHorario = express.Router();
-import { ObtenerCursosHorarioController, ObtenerHorarioController, CrearHorarioController } from '../controllers/horario-controller.js';
+import { ObtenerCursosHorarioController, ObtenerHorarioController, CrearHorarioController, EliminarHorarioController} from '../controllers/horario-controller.js';
 import { config } from '../../config.js';
 const {lapsoActual} = config;
 
@@ -47,4 +47,22 @@ routerHorario.post('/guardar', async (req,res) => {
     catch(error){
         throw new Error('No se ha podido guardar el horario');
     }
-})
+});
+
+routerHorario.delete('/eliminar', async (req,res) => {
+    try{
+        const {user} = req.session;
+
+        const result = await EliminarHorarioController(user.id, lapsoActual);
+
+        if(result.success){
+            res.status(200).json({redirectUrl: '/api/horario'})
+        }
+        else{
+            res.status(500).json({message: result.message});
+        }
+    }
+    catch(error){
+        throw new Error('No se ha podido eliminar el horario');
+    }
+});

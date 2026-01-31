@@ -1,5 +1,5 @@
 import {pool} from './conexion.js';
-import { GET_COURSES_SCHEDULE, GET_SCHEDULE, INSERT_SCHEDULE } from './queries.js';
+import { GET_COURSES_SCHEDULE, GET_SCHEDULE, INSERT_SCHEDULE, DELETE_SCHEDULE } from './queries.js';
 
 export class Horario {
     static CrearHorario = async (horario) => {
@@ -20,6 +20,27 @@ export class Horario {
         }
         catch(error){
             throw new Error('Ha ocurrido un error inesperado: No se ha podido crear el horario');
+        }
+    }
+
+    static EliminarHorario = async (id_usuario,id_lapso) => {
+        try{
+            const [resultado] = await pool.execute(DELETE_SCHEDULE,[id_usuario,id_lapso]);
+
+            if(resultado.affectedRows > 0){
+                return {
+                    success: true,
+                }
+            }
+            else{
+                return {
+                    success: false,
+                    message: 'No se ha podido eliminar el horario'
+                }
+            }
+        }
+        catch(error){
+            throw new Error('Ha ocurrido un error inesperado: No se ha podido eliminar el horario')
         }
     }
 

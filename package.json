@@ -22,6 +22,9 @@
     "mysql2": "^3.15.3"
   },
   "devDependencies": {
-    "nodemon": "^3.1.11"
+    "autoprefixer": "^10.4.24",
+    "nodemon": "^3.1.11",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.19"
   }
 }

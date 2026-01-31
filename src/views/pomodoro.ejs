@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pomodoro - LearnStudyHub</title>
+    <title>Pomodoro Study Hub</title>
     <link rel="stylesheet" href="/views/css/layout.css">
     <link rel="stylesheet" href="/views/css/pomodoro.css">
-</head>
 <body>
     <div class="container">
         <div class="header">
@@ -14,40 +13,78 @@
             <p>Organiza tu estudio con la técnica Pomodoro</p>
         </div>
 
+        <div class="tab-container">
+            <button class="tab-btn active" data-tab="timer">⏱️ Temporizador</button>
+            <button class="tab-btn" data-tab="history">📊 Historial</button>
+        </div>
+
         <div class="main-card">
-            <div class="selection-section">
-                <div class="input-group">
-                    <label for="course-select">Curso</label>
-                    <select id="course-select">
-                        <option value="">Selecciona un curso</option>
-                    </select>
+            <!-- Tab: Temporizador -->
+            <div class="tab-content active" id="timer-tab">
+                <div class="selection-section">
+                    <div class="input-group">
+                        <label for="course-select">Curso</label>
+                        <select id="course-select">
+                            <option value="">Selecciona un curso</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="exam-select">Evaluación</label>
+                        <select id="exam-select" disabled>
+                            <option value="">Primero selecciona un curso</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div class="input-group">
-                    <label for="exam-select">Evaluación</label>
-                    <select id="exam-select" disabled>
-                        <option value="">Primero selecciona un curso</option>
-                    </select>
+                <div class="current-task">
+                    <h3>Objetivo Actual</h3>
+                    <p id="current-objective">Selecciona una evaluación para comenzar</p>
+                </div>
+
+                <div class="timer-container">
+                    <div class="mode-indicator" id="mode-indicator">Modo Estudio</div>
+                    <div class="timer-display" id="timer-display">25:00</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn-primary" id="start-btn" disabled>Iniciar</button>
+                    <button class="btn-secondary" id="pause-btn" disabled>Pausar</button>
+                    <button class="btn-secondary" id="reset-btn">Reiniciar</button>
                 </div>
             </div>
 
-            <div class="current-task">
-                <h3>Objetivo Actual</h3>
-                <p id="current-objective">Selecciona una evaluación para comenzar</p>
-            </div>
-
-            <div class="timer-container">
-                <div class="mode-indicator" id="mode-indicator">Modo Estudio</div>
-                <div class="timer-display" id="timer-display">25:00</div>
-                <div class="progress-bar-container">
-                    <div class="progress-bar" id="progress-bar"></div>
+            <!-- Tab: Historial -->
+            <div class="tab-content" id="history-tab">
+                <div class="stats-summary" id="stats-summary">
+                    <div class="summary-card">
+                        <span class="summary-value" id="total-sessions">0</span>
+                        <span class="summary-label">Sesiones Totales</span>
+                    </div>
+                    <div class="summary-card">
+                        <span class="summary-value" id="total-minutes">0</span>
+                        <span class="summary-label">Minutos Estudiados</span>
+                    </div>
+                    <div class="summary-card">
+                        <span class="summary-value" id="total-breaks">0</span>
+                        <span class="summary-label">Descansos Tomados</span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="controls">
-                <button class="btn-primary" id="start-btn" disabled>Iniciar</button>
-                <button class="btn-secondary" id="pause-btn" disabled>Pausar</button>
-                <button class="btn-secondary" id="reset-btn">Reiniciar</button>
+                <div class="history-header">
+                    <h2>Sesiones Anteriores</h2>
+                    <button class="clear-history-btn" id="clear-history-btn">🗑️ Limpiar Historial</button>
+                </div>
+
+                <div class="history-section" id="history-section">
+                    <div class="empty-history">
+                        <div class="empty-history-icon">📋</div>
+                        <p>No hay sesiones registradas aún</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -57,8 +94,17 @@
             courses: <%- JSON.stringify(data) %>
         };
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="/views/javascript/layout.js" ></script>
-    <script  src="/views/javascript/pomodoro.js"></script>
+    <script src="/views/javascript/pomodoro.js" ></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Inicializar iconos de Lucide
+            if (typeof lucide !== "undefined") {
+                lucide.createIcons();
+            }
+        });
+    </script>
 </body>
 </html>

@@ -5,7 +5,7 @@ import { GET_COURSES_QUALIFICATIONS, GET_EXAMS_QUALIFICATIONS, INSERT_QUALIFICAT
 export class Calificaciones {
     static InsertarCalificacion = async (id_curso, id_evaluacion, calificacion) => {
         try{
-            const [result] = await pool.execute(INSERT_QUALIFICATIONS,[id_curso, id_evaluacion, calificacion]);
+            const [result] = await pool.execute(INSERT_QUALIFICATIONS,[calificacion,id_evaluacion,id_curso]);
 
             if(result.affectedRows > 0){
                 return {
