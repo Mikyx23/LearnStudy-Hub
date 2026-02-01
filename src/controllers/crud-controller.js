@@ -28,6 +28,38 @@ export const InsertarPrelacionAcademicaController = async (id_asignatura_carrera
     return await Crud.InsertarPrelacionAcademica(id_asignatura_carrera, tipo_prelacion, valor_requerido);
 }
 
+export const EliminarUsuarioController = async (id_usuario) => {
+    return await Crud.EliminarUsuario(id_usuario)
+}
+
+export const EliminarCarreraController = async (id_carrera) => {
+    return await Crud.EliminarCarrera(id_carrera)
+}
+
+export const EliminarAsignaturaController = async (id_asignatura) => {
+    return await Crud.EliminarAsignatura(id_asignatura)
+}
+
+export const EliminarLapsosController = async (id_lapso) => {
+    return await Crud.EliminarLapsos(id_lapso)
+}
+
+export const EliminarFrasesController = async (id_frase) => {
+    return await Crud.EliminarFrases(id_frase)
+}
+
+export const EliminarMallaController = async (id_malla) => {
+    return await Crud.EliminarMalla(id_malla)
+}
+
+export const EliminarPrelacionMateriaController = async (id_prelacion_materia) => {
+    return await Crud.EliminarPrelacionMateria(id_prelacion_materia)
+}
+
+export const EliminarPrelacionAcademicaController = async (id_prelacion_academica) => {
+    return await Crud.EliminarPrelacionAcademica(id_prelacion_academica)
+}
+
 export const ObtenerEstudiantesController = async () => {
     const estudiantes = await Crud.ObtenerEstudiantes()
 

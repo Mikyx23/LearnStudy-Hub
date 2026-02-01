@@ -95,14 +95,9 @@ function cargarUsuarios() {
             <td>${u.apellido}</td>
             <td>${u.correo}</td>
             <td>
-                <span class="badge ${u.estado_usuario ? 'active' : 'inactive'}">
-                    ${u.estado_usuario ? 'Activo' : 'Inactivo'}
-                </span>
-            </td>
-            <td>
-                <button class="btn-action edit" onclick="editar('usuario', ${u.id_usuario})" 
-                        title="Editar">
-                    <i class="fas fa-edit"></i>
+                <button class="btn-action delete" onclick="confirmarEliminacion('usuario', ${u.id_usuario})" 
+                        title="Eliminar">
+                    <i class="fas fa-trash"></i>
                 </button>
             </td>
         </tr>
@@ -122,14 +117,9 @@ function cargarCarreras() {
             <td>${c.id_carrera}</td>
             <td>${c.nombre_carrera}</td>
             <td>
-                <span class="badge ${c.estado_carrera ? 'active' : 'inactive'}">
-                    ${c.estado_carrera ? 'Activa' : 'Inactiva'}
-                </span>
-            </td>
-            <td>
-                <button class="btn-action edit" onclick="editar('carrera', ${c.id_carrera})" 
-                        title="Editar">
-                    <i class="fas fa-edit"></i>
+                <button class="btn-action delete" onclick="confirmarEliminacion('carrera', ${c.id_carrera})" 
+                        title="Eliminar">
+                    <i class="fas fa-trash"></i>
                 </button>
             </td>
         </tr>
@@ -149,14 +139,9 @@ function cargarAsignaturas() {
             <td>${a.id_asignatura}</td>
             <td>${a.nombre_asignatura}</td>
             <td>
-                <span class="badge ${a.estado_asignatura ? 'active' : 'inactive'}">
-                    ${a.estado_asignatura ? 'Activa' : 'Inactiva'}
-                </span>
-            </td>
-            <td>
-                <button class="btn-action edit" onclick="editar('asignatura', ${a.id_asignatura})" 
-                        title="Editar">
-                    <i class="fas fa-edit"></i>
+                <button class="btn-action delete" onclick="confirmarEliminacion('asignatura', ${a.id_asignatura})" 
+                        title="Eliminar">
+                    <i class="fas fa-trash"></i>
                 </button>
             </td>
         </tr>
@@ -234,15 +219,10 @@ function cargarMalla() {
                 <td>${m.uc_asignatura}</td>
                 <td>${m.total_horas}</td>
                 <td>
-                    <span class="badge ${m.estado_asignatura_carrera ? 'active' : 'inactive'}">
-                        ${m.estado_asignatura_carrera ? 'Activa' : 'Inactiva'}
-                    </span>
-                </td>
-                <td>
-                    <button class="btn-action edit" 
-                            onclick="editar('malla', ${m.id_asignatura_carrera})" 
-                            title="Editar">
-                        <i class="fas fa-edit"></i>
+                    <button class="btn-action delete" 
+                            onclick="confirmarEliminacion('malla', ${m.id_asignatura_carrera})" 
+                            title="Eliminar">
+                        <i class="fas fa-trash"></i>
                     </button>
                 </td>
             </tr>
@@ -263,9 +243,9 @@ function cargarLapsos() {
             <td>${l.periodo}</td>
             <td>${l.año}</td>
             <td>
-                <button class="btn-action edit" onclick="editar('lapso', ${l.id_lapso})" 
-                        title="Editar">
-                    <i class="fas fa-edit"></i>
+                <button class="btn-action delete" onclick="confirmarEliminacion('lapso', ${l.id_lapso})" 
+                        title="Eliminar">
+                    <i class="fas fa-trash"></i>
                 </button>
             </td>
         </tr>
@@ -285,9 +265,9 @@ function cargarFrases() {
             <td>${f.id_frase}</td>
             <td>"${f.frase}"</td>
             <td>
-                <button class="btn-action edit" onclick="editar('frase', ${f.id_frase})" 
-                        title="Editar">
-                    <i class="fas fa-edit"></i>
+                <button class="btn-action delete" onclick="confirmarEliminacion('frase', ${f.id_frase})" 
+                        title="Eliminar">
+                    <i class="fas fa-trash"></i>
                 </button>
             </td>
         </tr>
@@ -377,11 +357,6 @@ function cargarPrelacionesMaterias() {
                 <td>${p.asignatura_prelacion || 'N/A'}</td>
                 <td>${p.nombre_carrera || 'N/A'}</td>
                 <td>
-                    <button class="btn-action edit" 
-                            onclick="editar('prelacion_materia', ${p.id_prelacion_materia})" 
-                            title="Editar">
-                        <i class="fas fa-edit"></i>
-                    </button>
                     <button class="btn-action delete" 
                             onclick="confirmarEliminacion('prelacion_materia', ${p.id_prelacion_materia}, 'Prelación')" 
                             title="Eliminar">
@@ -441,11 +416,6 @@ function cargarPrelacionesAcademicas() {
                 <td>${p.valor_requerido} ${p.tipo_prelacion === 'UC_APROBADAS' ? 'UC' : 'Semestre'}</td>
                 <td>${p.nombre_carrera || 'N/A'}</td>
                 <td>
-                    <button class="btn-action edit" 
-                            onclick="editar('prelacion_academica', ${p.id_prelacion_academica})" 
-                            title="Editar">
-                        <i class="fas fa-edit"></i>
-                    </button>
                     <button class="btn-action delete" 
                             onclick="confirmarEliminacion('prelacion_academica', ${p.id_prelacion_academica}, 'Prelación')" 
                             title="Eliminar">
@@ -716,15 +686,94 @@ async function confirmarEliminacion(tipo, id, nombre) {
     }
 }
 
-// Función placeholder para eliminar
+// Función para eliminar registro con fetch
 async function eliminarRegistro(tipo, id) {
-    console.log('Eliminando:', tipo, id);
-    // Implementar cuando se necesite
+    // Determinar la URL según el tipo
+    let url;
+    
+    switch(tipo) {
+        case 'usuario':
+            url = `/api/crud/usuarios/${id}`;
+            break;
+        case 'carrera':
+            url = `/api/crud/carreras/${id}`;
+            break;
+        case 'asignatura':
+            url = `/api/crud/asignaturas/${id}`;
+            break;
+        case 'malla':
+            url = `/api/crud/malla/${id}`;
+            break;
+        case 'lapso':
+            url = `/api/crud/lapsos/${id}`;
+            break;
+        case 'frase':
+            url = `/api/crud/frases/${id}`;
+            break;
+        case 'prelacion_materia':
+            url = `/api/crud/prelaciones/materias/${id}`;
+            break;
+        case 'prelacion_academica':
+            url = `/api/crud/prelaciones/academicas/${id}`;
+            break;
+        default:
+            console.error('Tipo de entidad no reconocido:', tipo);
+            return;
+    }
+    
+    // Mostrar indicador de carga
     Swal.fire({
-        icon: 'info',
-        title: 'Funcionalidad no implementada',
-        text: 'La eliminación de registros se implementará en el backend',
-        confirmButtonColor: '#2563eb'
+        title: 'Eliminando...',
+        text: 'Por favor espera',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+    
+    // Enviar solicitud DELETE al servidor
+    fetch(url, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => {
+                throw new Error(err.message || 'Error al eliminar');
+            });
+        }
+        return response.json();
+    })
+    .then(datosRespuesta => {
+        console.log('Respuesta del servidor:', datosRespuesta);
+        
+        // Mostrar mensaje de éxito
+        Swal.fire({
+            icon: "success",
+            title: "¡Eliminado con éxito!",
+            text: "El registro ha sido eliminado correctamente.",
+            confirmButtonColor: "#28a745",
+            confirmButtonText: "Ok",
+            allowOutsideClick: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Recargar la página para actualizar los datos
+                window.location.reload();
+            }
+        });
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.message || 'No se pudo eliminar el registro',
+            confirmButtonColor: '#2563eb'
+        });
     });
 }
 
@@ -765,13 +814,6 @@ function obtenerFormularioUsuario(id) {
             <input type="password" name="contraseña" class="form-control" required>
         </div>
         ` : ''}
-        <div class="form-group">
-            <label>Estado</label>
-            <select name="estado_usuario" class="form-control">
-                <option value="1" ${usuario && usuario.estado_usuario ? 'selected' : ''}>Activo</option>
-                <option value="0" ${usuario && !usuario.estado_usuario ? 'selected' : ''}>Inactivo</option>
-            </select>
-        </div>
     `;
 }
 
@@ -787,13 +829,6 @@ function obtenerFormularioCarrera(id) {
             <input type="text" name="nombre_carrera" class="form-control" 
                    value="${carrera ? carrera.nombre_carrera : ''}" required>
         </div>
-        <div class="form-group">
-            <label>Estado</label>
-            <select name="estado_carrera" class="form-control">
-                <option value="1" ${carrera && carrera.estado_carrera ? 'selected' : ''}>Activa</option>
-                <option value="0" ${carrera && !carrera.estado_carrera ? 'selected' : ''}>Inactiva</option>
-            </select>
-        </div>
     `;
 }
 
@@ -808,13 +843,6 @@ function obtenerFormularioAsignatura(id) {
             <label>Nombre de la Asignatura *</label>
             <input type="text" name="nombre_asignatura" class="form-control" 
                    value="${asignatura ? asignatura.nombre_asignatura : ''}" required>
-        </div>
-        <div class="form-group">
-            <label>Estado</label>
-            <select name="estado_asignatura" class="form-control">
-                <option value="1" ${asignatura && asignatura.estado_asignatura ? 'selected' : ''}>Activa</option>
-                <option value="0" ${asignatura && !asignatura.estado_asignatura ? 'selected' : ''}>Inactiva</option>
-            </select>
         </div>
     `;
 }
@@ -867,13 +895,6 @@ function obtenerFormularioMalla(id) {
             <label>Total de Horas *</label>
             <input type="number" name="total_horas" class="form-control" min="1"
                    value="${malla ? malla.total_horas : ''}" required>
-        </div>
-        <div class="form-group">
-            <label>Estado</label>
-            <select name="estado_asignatura_carrera" class="form-control">
-                <option value="1" ${malla && malla.estado_asignatura_carrera ? 'selected' : ''}>Activa</option>
-                <option value="0" ${malla && !malla.estado_asignatura_carrera ? 'selected' : ''}>Inactiva</option>
-            </select>
         </div>
     `;
 }
@@ -1019,7 +1040,7 @@ function obtenerFormularioPrelacionAcademica(id) {
         <div class="form-group">
             <label>Valor Requerido *</label>
             <input type="number" name="valor_requerido" class="form-control" min="1" max="200"
-                   value="${prelacion ? prelacion.valor_requerido : '1'}" required>
+                value="${prelacion ? prelacion.valor_requerido : '1'}" required>
             <small style="color: var(--text-body); font-size: 0.85rem;">
                 Para "UC Aprobadas": número mínimo de unidades de crédito aprobadas requeridas<br>
                 Para "Semestre Aprobado": semestre mínimo aprobado requerido
@@ -1050,12 +1071,6 @@ function guardarFormulario(e) {
             return;
         }
     }
-    
-    // Convertir valores booleanos de strings a números
-    if (data.estado_usuario !== undefined) data.estado_usuario = parseInt(data.estado_usuario);
-    if (data.estado_carrera !== undefined) data.estado_carrera = parseInt(data.estado_carrera);
-    if (data.estado_asignatura !== undefined) data.estado_asignatura = parseInt(data.estado_asignatura);
-    if (data.estado_asignatura_carrera !== undefined) data.estado_asignatura_carrera = parseInt(data.estado_asignatura_carrera);
     
     // Convertir números de strings a integers donde sea necesario
     if (data.id_carrera) data.id_carrera = parseInt(data.id_carrera);

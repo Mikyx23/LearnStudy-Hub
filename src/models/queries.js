@@ -760,6 +760,22 @@ export const INSERT_PRELACION_ACADEMICA_CRUD = `INSERT INTO tbl_prelaciones_acad
 
 export const INSERT_PRELACION_MATERIA_CRUD = `INSERT INTO tbl_prelaciones_materias (id_asignatura_carrera, id_asignatura_prelacion, tipo_prelacion) VALUES (?, ?, ?)`;
 
+export const DELETE_USER_CRUD = `DELETE FROM usuarios WHERE id_usuario = ?`;
+
+export const DELETE_CARRER_CRUD = `DELETE FROM tbl_carreras WHERE id_carrera = ?`;
+
+export const DELETE_SUBJECT_CRUD = `DELETE FROM tbl_asignaturas WHERE id_asignatura = ?`;
+
+export const DELETE_LAPSO_CRUD = `DELETE FROM tbl_lapsos_academicos WHERE id_lapso = ?`;
+
+export const DELETE_PHRASE_CRUD = `DELETE FROM tbl_frases WHERE id_frase = ?`;
+
+export const DELETE_MALLA_CRUD = `DELETE FROM tbl_asignaturas_carreras WHERE id_asignatura_carrera = ?`;
+
+export const DELETE_PRELACION_ACADEMICA_CRUD = `DELETE FROM tbl_prelaciones_academicas WHERE id_prelacion_academica = ?`;
+
+export const DELETE_PRELACION_MATERIA_CRUD = `DELETE FROM tbl_prelaciones_materias WHERE id_prelacion_materia = ?`;
+
 export const GET_USERS_CRUD = `
 SELECT 
     u.cedula, 

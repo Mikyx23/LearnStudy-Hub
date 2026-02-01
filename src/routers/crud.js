@@ -15,7 +15,14 @@ import {
     InsertarFrasesController,
     InsertarMallaController,
     InsertarPrelacionMateriaController,
-    InsertarPrelacionAcademicaController
+    InsertarPrelacionAcademicaController,
+    EliminarCarreraController,
+    EliminarAsignaturaController,
+    EliminarLapsosController,
+    EliminarFrasesController,
+    EliminarMallaController,
+    EliminarPrelacionMateriaController,
+    EliminarPrelacionAcademicaController
 }from '../controllers/crud-controller.js'
 
 routerCrud.get('/', async (req, res) => {
@@ -204,6 +211,120 @@ routerCrud.post('/prelaciones/academicas', async (req, res) =>{
         res.status(500).json({ 
             success: false, 
             message: 'Error al crear la prelacion academica' 
+        });
+    }
+});
+
+routerCrud.delete('/:tabla/:id', async (req, res) => {
+    try{
+        const { tabla, id } = req.params;
+
+        switch(tabla){
+            case 'usuario':
+                const result = await EliminarCarreraController(id);
+                if(result.success){
+                    res.json({
+                        success: true,
+                        redirectUrl: '/api/crud'
+                    })
+                }
+            break;
+            
+            case 'carreras':
+                const result2 = await EliminarCarreraController(id);
+                if(result2.success){
+                    res.json({
+                        success: true,
+                        redirectUrl: '/api/crud'
+                    })
+                }
+            break;
+
+            case 'asignaturas':
+                const result3 = await EliminarAsignaturaController(id);
+                if(result3.success){
+                    res.json({
+                        success: true,
+                        redirectUrl: '/api/crud'
+                    })
+                }
+            break;
+
+            case 'lapsos':
+                const result4 = await EliminarLapsosController(id);
+                if(result4.success){
+                    res.json({
+                        success: true,
+                        redirectUrl: '/api/crud'
+                    })
+                }
+            break;
+
+            case 'frases':
+                const result5 = await EliminarFrasesController(id);
+                if(result5.success){
+                    res.json({
+                        success: true,
+                        redirectUrl: '/api/crud'
+                    })
+                }
+            break;
+            
+            case 'malla':
+                const result6 = await EliminarMallaController(id);
+                if(result6.success){
+                    res.json({
+                        success: true,
+                        redirectUrl: '/api/crud'
+                    })
+                }
+            break;
+
+            default: break;
+        }
+    }
+    catch(error){
+        res.status(500).json({ 
+            success: false, 
+            message: 'Error al eliminar el registro'
+        });
+    }
+});
+
+routerCrud.delete('/prelaciones/materias/:id', async (req, res) => {
+    try{
+        const { id } = req.params;
+        const result = await EliminarPrelacionMateriaController(id);
+        if(result.success){
+            res.json({
+                success: true,
+                redirectUrl: '/api/crud'
+            })
+        }
+    }
+    catch(error){
+        res.status(500).json({ 
+            success: false, 
+            message: 'Error al eliminar la prelacion materia' 
+        });
+    }
+});
+
+routerCrud.delete('/prelaciones/academicas/:id', async (req, res) => {
+    try{
+        const { id } = req.params;
+        const result = await EliminarPrelacionAcademicaController(id);
+        if(result.success){
+            res.json({
+                success: true,
+                redirectUrl: '/api/crud'
+            })
+        }
+    }
+    catch(error){
+        res.status(500).json({ 
+            success: false, 
+            message: 'Error al eliminar la prelacion academica' 
         });
     }
 });
