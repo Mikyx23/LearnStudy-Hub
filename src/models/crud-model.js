@@ -26,9 +26,9 @@ import {
 } from './queries.js'
 
 export class Crud {
-    static InsertarCarrera = async (nombre_carrera, estado_carrera) => {
+    static InsertarCarrera = async (nombre_carrera) => {
         try{
-            const [result] = await pool.execute(INSERT_CARRER_CRUD, [nombre_carrera, estado_carrera]);
+            const [result] = await pool.execute(INSERT_CARRER_CRUD, [nombre_carrera]);
 
             if(result.affectedRows > 0){
                 return {
@@ -48,9 +48,9 @@ export class Crud {
         }
     }
 
-    static InsertarAsignatura = async (nombre_asignatura, estado_asignatura) => {
+    static InsertarAsignatura = async (nombre_asignatura) => {
         try{
-            const [result] = await pool.execute(INSERT_SUBJECT_CRUD, [nombre_asignatura, estado_asignatura]);
+            const [result] = await pool.execute(INSERT_SUBJECT_CRUD, [nombre_asignatura]);
 
             if(result.affectedRows > 0){
                 return {
@@ -115,9 +115,9 @@ export class Crud {
         }
     }
 
-    static InsertarMalla = async (id_carrera, codigo, nombre, semestre, UC, TH, estado) => {
+    static InsertarMalla = async (id_carrera, codigo, nombre, semestre, UC, TH) => {
         try{
-            const [result] = await pool.execute(INSERT_MALLA_CRUD, [id_carrera, codigo, nombre, semestre, UC, TH, estado]);
+            const [result] = await pool.execute(INSERT_MALLA_CRUD, [id_carrera, codigo, nombre, semestre, UC, TH]);
 
             if(result.affectedRows > 0){
                 return {

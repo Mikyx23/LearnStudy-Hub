@@ -336,7 +336,7 @@ MallaBaseFormateada AS (
             COUNT(*) OVER (PARTITION BY a.nombre_asignatura) AS total_repeticiones
         FROM tbl_asignaturas_carreras ac
         INNER JOIN tbl_asignaturas a ON ac.id_asignatura = a.id_asignatura
-        WHERE ac.id_carrera = ? AND ac.estado_asignatura_carrera = TRUE
+        WHERE ac.id_carrera = ?
     ) t
 )
 SELECT 
@@ -744,13 +744,13 @@ ORDER BY mn.nombre_formateado;
 `;
 
 // ----- QUERIES CRUD -----
-export const INSERT_CARRER_CRUD = `INSERT INTO tbl_carreras (nombre_carrera, estado_carrera) VALUES (?, ?)`;
+export const INSERT_CARRER_CRUD = `INSERT INTO tbl_carreras (nombre_carrera) VALUES (?)`;
 
-export const INSERT_SUBJECT_CRUD = `INSERT INTO tbl_asignaturas (nombre_asignatura, estado_asignatura) VALUES (?, ?)`;
+export const INSERT_SUBJECT_CRUD = `INSERT INTO tbl_asignaturas (nombre_asignatura) VALUES (?)`;
 
 export const INSERT_MALLA_CRUD = `
-INSERT INTO tbl_asignaturas_carreras (id_carrera, id_asignatura, codigo_asignatura, semestre, uc_asignatura, total_horas, estado_asignatura_carrera)
-VALUES (?, ?, ?, ?, ?, ?, ?)`;
+INSERT INTO tbl_asignaturas_carreras (id_carrera, id_asignatura, codigo_asignatura, semestre, uc_asignatura, total_horas)
+VALUES (?, ?, ?, ?, ?, ?)`;
 
 export const INSERT_LAPSO_CRUD = `INSERT INTO tbl_lapsos_academicos (periodo, año) VALUES (?, ?)`;
 
@@ -783,7 +783,6 @@ SELECT
     u.apellido, 
     u.correo, 
     GROUP_CONCAT(ic.id_carrera), -- Esto devuelve "47,45"
-    u.estado_usuario,
     -- Promedios y UC aprobadas (Asumiendo lógica de notas si existen)
     0 AS unidades_credito_aprobadas, 
     0.0 AS promedio_actual, 
@@ -797,8 +796,7 @@ GROUP BY u.id_usuario;
 export const GET_CARRERS_CRUD = `
 SELECT 
     id_carrera, 
-    nombre_carrera, 
-    estado_carrera
+    nombre_carrera
 FROM tbl_carreras c
 ORDER BY id_carrera;
 `;
@@ -806,8 +804,7 @@ ORDER BY id_carrera;
 export const GET_SUBJECTS_CRUD = `
 SELECT 
     id_asignatura, 
-    nombre_asignatura, 
-    estado_asignatura 
+    nombre_asignatura
 FROM tbl_asignaturas;
 `;
 
@@ -815,8 +812,7 @@ export const GET_SEMESTERS_CRUD = `
 SELECT 
     id_lapso, 
     periodo, 
-    año, 
-    TRUE AS estado_lapso 
+    año
 FROM tbl_lapsos_academicos;
 `;
 
@@ -849,7 +845,6 @@ SELECT
     t.semestre,
     t.uc_asignatura,
     t.total_horas,
-    t.estado_asignatura_carrera,
     -- Concatenamos los IDs de las materias que son prelación (para tu JS)
     GROUP_CONCAT(DISTINCT pm.id_asignatura_prelacion) AS prelaciones,
     -- Extras por si los necesitas en el UI
@@ -866,7 +861,6 @@ FROM (
         ac.semestre,
         ac.uc_asignatura,
         ac.total_horas,
-        ac.estado_asignatura_carrera,
         -- IMPORTANTE: Particionamos por id_carrera para que el conteo sea independiente
         ROW_NUMBER() OVER (PARTITION BY ac.id_carrera, a.nombre_asignatura ORDER BY ac.semestre) AS secuencia,
         COUNT(*) OVER (PARTITION BY ac.id_carrera, a.nombre_asignatura) AS total_repeticiones
@@ -885,7 +879,6 @@ GROUP BY
     t.semestre, 
     t.uc_asignatura, 
     t.total_horas, 
-    t.estado_asignatura_carrera,
     t.secuencia, 
     t.total_repeticiones
 ORDER BY t.id_carrera, t.semestre;
