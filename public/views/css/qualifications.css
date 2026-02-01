@@ -377,12 +377,11 @@ body {
 .no-courses-card {
     max-width: 500px;
     margin: 50px auto;
-    padding: 40px 30px;
-    background: #ffffff;
-    border-radius: 15px;
+    padding: 50px 40px;
+    background: white;
+    border-radius: 24px;
     text-align: center;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e0e6ed;
+    box-shadow: var(--card-shadow);
 }
 
 .card-icon {
@@ -396,6 +395,14 @@ body {
     justify-content: center;
     margin: 0 auto 20px;
     font-size: 2.5rem;
+}
+
+/* Seleccionamos el SVG que Lucide generó dentro de ese contenedor */
+.card-icon svg {
+    width: 60px; 
+    height: 60px;
+    stroke-width: 1.5; /* Grosor de la línea, puedes ajustarlo */
+    color: #3b82f6;    /* Color azul (cámbialo a tu gusto) */
 }
 
 .card-title {

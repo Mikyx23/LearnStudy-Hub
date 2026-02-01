@@ -1,11 +1,10 @@
 import express from 'express';
 export const routerLogin = express.Router();
 import path from 'path';
-// VARIABLES GLOBALES
 import { fileURLToPath } from 'url';
-import { CrearUsuarioController, VerificarCorreoController, VerificarCedulaController, VerificarUsuario, ObtenerIdUsuarioController, ActualizarContraseñaController } from '../controllers/users-controller.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+import { CrearUsuarioController, VerificarCorreoController, VerificarCedulaController, VerificarUsuario, ObtenerIdUsuarioController, ActualizarContraseñaController } from '../controllers/users-controller.js';
 import jwt from 'jsonwebtoken';
 import { config } from '../../config.js';
 const { jwtSecret } = config;
@@ -27,9 +26,9 @@ routerLogin.post('/', async (req, res) => {
     const { cedula, password, timezone } = req.body;
     
     const result = await VerificarUsuario(cedula,password);
-
+    console.log(result.rol);
     if(result.success){
-        const token = jwt.sign({id: result.id, carrer: result.carrers[0], name: result.name, lastname: result.lastname, timezone: timezone}, jwtSecret, {
+        const token = jwt.sign({id: result.id, carrer: result.carrers[0], name: result.name, lastname: result.lastname, timezone: timezone, rol: result.rol}, jwtSecret, {
             expiresIn: '1h'
         });
 

@@ -63,6 +63,9 @@ app.use('/api/horario', routerHorario);
 import {routerPomodoro} from './src/routers/pomodoro.js';
 app.use('/api/pomodoro', routerPomodoro);
 
+import {routerCrud} from './src/routers/crud.js';
+app.use('/api/crud', routerCrud);
+
 //CERRAR SESION
 app.get('/logout', (req, res) =>{
     res.clearCookie('access_token').redirect('/');

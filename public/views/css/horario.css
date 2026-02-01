@@ -354,4 +354,52 @@ input:focus, select:focus {
     text-align: center;
     box-shadow: var(--card-shadow);
 }
-/* ... (resto de estilos de no-courses-card del original si los necesitas) ... */
+
+.card-icon {
+    width: 80px;
+    height: 80px;
+    background: #f0f7ff;
+    color: #3b82f6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 2.5rem;
+}
+
+/* Seleccionamos el SVG que Lucide generó dentro de ese contenedor */
+.card-icon svg {
+    width: 60px; 
+    height: 60px;
+    stroke-width: 1.5; /* Grosor de la línea, puedes ajustarlo */
+    color: #3b82f6;    /* Color azul (cámbialo a tu gusto) */
+}
+
+.card-title {
+    color: #1f2937;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.card-text {
+    color: #6b7280;
+    line-height: 1.6;
+    margin-bottom: 25px;
+    font-size: 1.1rem;
+}
+
+.card-text strong {
+    color: #374151;
+    display: block;
+    margin-top: 10px;
+}
+
+.card-footer-line {
+    width: 60px;
+    height: 4px;
+    background: #3b82f6;
+    margin: 0 auto;
+    border-radius: 2px;
+}

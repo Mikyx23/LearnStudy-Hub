@@ -122,7 +122,8 @@ export class Usuarios{
                     u.nombre, 
                     u.apellido, 
                     u.contraseña, 
-                    ic.id_carrera AS inscripcion 
+                    ic.id_carrera AS inscripcion,
+                    u.rol 
                 FROM tbl_usuarios u 
                 INNER JOIN tbl_inscripciones_carreras ic ON u.id_usuario = ic.id_usuario  
                 WHERE cedula = ?`
@@ -136,7 +137,8 @@ export class Usuarios{
                     id: rows[0].id_usuario,
                     name: rows[0].nombre,
                     lastname: rows[0].apellido,
-                    carrers: inscripciones
+                    carrers: inscripciones,
+                    rol: rows[0].rol
                 };
             }
             else{

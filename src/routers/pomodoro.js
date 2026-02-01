@@ -10,14 +10,9 @@ routerPomodoro.get('/', async (req,res) => {
 
         const result = await ObtenerDatosPomodoroController(user.id, lapsoActual);
 
-        if(result.success){
-            res.render('pomodoro', {
-                data: result.data
-            })
-        }
-        else{
-            res.status(500).send(result.message);
-        }
+        res.render('pomodoro', {
+            data: result.data || []
+        })
     }
     catch(error){
         // throw new Error('Error al obtener el pomodoro');
