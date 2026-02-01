@@ -1,5 +1,5 @@
 /* =========================================
-   VARIABLES & SETUP
+    VARIABLES & SETUP
 ========================================= */
 :root {
     /* Paleta Tech */
@@ -93,6 +93,34 @@ h1, h2, h3, h4, h5 { font-family: var(--font-heading); color: var(--dark); }
     overflow: hidden;
     background: radial-gradient(circle at top right, #e0f2fe 0%, transparent 40%),
                 radial-gradient(circle at bottom left, #eff6ff 0%, transparent 40%);
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 15px; 
+    margin-top: 20px; 
+    align-self: center;
+}
+
+.header-logo h1 {
+    color: #07002d;      
+    font-size: 1.5rem;
+    font-weight: bold; 
+    margin: 0;
+
+    transform: translateY(-0.5px); 
+}
+
+.header-logo h1 strong {
+    color: rgb(69, 162, 255); 
+    font-weight: inherit;    
+}
+
+.main-logo {
+    width: 30px;
+    height: auto;      
+    object-fit: contain;
 }
 
 .text-gradient {
@@ -264,6 +292,15 @@ h1, h2, h3, h4, h5 { font-family: var(--font-heading); color: var(--dark); }
     transition: color 0.2s;
 }
 .socials a:hover { color: var(--primary); }
+
+.brand-highlight {
+    color: rgb(69, 162, 255); 
+    font-weight: bold; 
+}
+
+.col-md-6 h3 {
+    color: #b8deff !important; 
+}
 
 /* =========================================
     ANIMACIONES SCROLL
