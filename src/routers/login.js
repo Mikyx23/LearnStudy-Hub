@@ -26,9 +26,9 @@ routerLogin.post('/', async (req, res) => {
     const { cedula, password, timezone } = req.body;
     
     const result = await VerificarUsuario(cedula,password);
-
+    console.log(result.rol);
     if(result.success){
-        const token = jwt.sign({id: result.id, carrer: result.carrers[0], name: result.name, lastname: result.lastname, timezone: timezone}, jwtSecret, {
+        const token = jwt.sign({id: result.id, carrer: result.carrers[0], name: result.name, lastname: result.lastname, timezone: timezone, rol: result.rol}, jwtSecret, {
             expiresIn: '1h'
         });
 

@@ -27,6 +27,12 @@ import {
 
 routerCrud.get('/', async (req, res) => {
     try{
+        const {user} = req.session;
+
+        if(user.rol !== 'ADMINISTRADOR'){
+            return res.status(403).send('<h1>No tienes permisos para acceder a esta página</h1>');
+        }
+
         const estudiantes = await ObtenerEstudiantesController();
         const carreras = await ObtenerCarrerasController();
         const asignaturas = await ObtenerAsignaturasController();
