@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración Universitaria - LearnStudy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/views/css/crud.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="admin-header">
+            <h1><i class="fas fa-university"></i> Panel de Administración - LearnStudy</h1>
+            <div class="user-info">
+                <span>Administrador</span>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Salir
+                </button>
+            </div>
+        </header>
+
+        <!-- Estadísticas -->
+        <div class="dashboard">
+            <div class="stat-card estudiantes">
+                <i class="fas fa-users"></i>
+                <div class="stat-value" id="totalEstudiantes">0</div>
+                <p>Estudiantes Registrados</p>
+            </div>
+            <div class="stat-card carreras">
+                <i class="fas fa-graduation-cap"></i>
+                <div class="stat-value" id="totalCarreras">0</div>
+                <p>Carreras Activas</p>
+            </div>
+            <div class="stat-card asignaturas">
+                <i class="fas fa-book"></i>
+                <div class="stat-value" id="totalAsignaturas">0</div>
+                <p>Asignaturas Totales</p>
+            </div>
+            <div class="stat-card lapsos">
+                <i class="fas fa-calendar-alt"></i>
+                <div class="stat-value" id="totalLapsos">0</div>
+                <p>Lapsos Académicos</p>
+            </div>
+        </div>
+
+        <!-- Tabs de Administración -->
+        <div class="tabs-container">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="estudiantes">
+                    <i class="fas fa-users"></i> Estudiantes
+                </button>
+                <button class="tab-btn" data-tab="carreras">
+                    <i class="fas fa-graduation-cap"></i> Carreras
+                </button>
+                <button class="tab-btn" data-tab="asignaturas">
+                    <i class="fas fa-book"></i> Asignaturas
+                </button>
+                <button class="tab-btn" data-tab="malla">
+                    <i class="fas fa-sitemap"></i> Malla Curricular
+                </button>
+                <button class="tab-btn" data-tab="prelaciones">
+                    <i class="fas fa-link"></i> Prelaciones
+                </button>
+                <button class="tab-btn" data-tab="lapsos">
+                    <i class="fas fa-calendar-alt"></i> Lapsos Académicos
+                </button>
+                <button class="tab-btn" data-tab="frases">
+                    <i class="fas fa-quote-left"></i> Frases del Día
+                </button>
+            </div>
+
+            <!-- Tab Estudiantes -->
+            <div id="estudiantes" class="tab-content active">
+                <div class="crud-header">
+                    <h2>Gestión de Estudiantes</h2>
+                    <button class="btn btn-primary" onclick="abrirModal('usuario')">
+                        <i class="fas fa-plus"></i> Nuevo Estudiante
+                    </button>
+                </div>
+                <div class="search-box">
+                    <input type="text" id="searchEstudiante" placeholder="Buscar por cédula, nombre o correo...">
+                    <button class="btn btn-primary" onclick="buscar('usuarios')">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                </div>
+                <table id="tableEstudiantes">
+                    <thead>
+                        <tr>
+                            <th>Cédula</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Correo</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Datos se cargarán dinámicamente -->
+                    </tbody>
+                </table>
+                <div id="pagination-estudiantes" class="pagination-container"></div>
+            </div>
+
+            <!-- Tab Carreras -->
+            <div id="carreras" class="tab-content">
+                <div class="crud-header">
+                    <h2>Gestión de Carreras</h2>
+                    <button class="btn btn-primary" onclick="abrirModal('carrera')">
+                        <i class="fas fa-plus"></i> Nueva Carrera
+                    </button>
+                </div>
+                <table id="tableCarreras">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Datos se cargarán dinámicamente -->
+                    </tbody>
+                </table>
+                <div id="pagination-carreras" class="pagination-container"></div>
+            </div>
+
+            <!-- Tab Asignaturas -->
+            <div id="asignaturas" class="tab-content">
+                <div class="crud-header">
+                    <h2>Gestión de Asignaturas</h2>
+                    <button class="btn btn-primary" onclick="abrirModal('asignatura')">
+                        <i class="fas fa-plus"></i> Nueva Asignatura
+                    </button>
+                </div>
+                <table id="tableAsignaturas">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Datos se cargarán dinámicamente -->
+                    </tbody>
+                </table>
+                <div id="pagination-asignaturas" class="pagination-container"></div>
+            </div>
+
+            <!-- Tab Malla Curricular -->
+            <div id="malla" class="tab-content">
+                <div class="crud-header">
+                    <h2>Malla Curricular</h2>
+                    <button class="btn btn-primary" onclick="abrirModal('malla')">
+                        <i class="fas fa-plus"></i> Asignar Asignatura a Malla
+                    </button>
+                </div>
+                <div class="form-group">
+                    <label>Seleccionar Carrera:</label>
+                    <select id="selectCarreraMalla" class="form-control">
+                        <option value="">-- Seleccione una carrera --</option>
+                    </select>
+                </div>
+                <table id="tableMalla">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Asignatura</th>
+                            <th>Semestre</th>
+                            <th>UC</th>
+                            <th>Total Horas</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Datos se cargarán dinámicamente -->
+                    </tbody>
+                </table>
+                <div id="pagination-malla" class="pagination-container"></div>
+            </div>
+
+            <!-- Tab Prelaciones -->
+            <div id="prelaciones" class="tab-content">
+                <div class="crud-header">
+                    <h2>Gestión de Prelaciones</h2>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" onclick="abrirModal('prelacion_materia')">
+                            <i class="fas fa-plus"></i> Nueva Prelación de Materia
+                        </button>
+                        <button class="btn btn-success" onclick="abrirModal('prelacion_academica')">
+                            <i class="fas fa-plus"></i> Nueva Prelación Académica
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Tabs internas para los dos tipos de prelaciones -->
+                <div style="margin-bottom: 20px;">
+                    <button class="btn btn-outline" onclick="mostrarTipoPrelacion('materias')" id="btnPrelacionMaterias" style="border: 1px solid var(--primary); color: var(--primary);">
+                        <i class="fas fa-book"></i> Prelaciones de Materias
+                    </button>
+                    <button class="btn btn-outline" onclick="mostrarTipoPrelacion('academicas')" id="btnPrelacionAcademicas" style="border: 1px solid #ccc; color: var(--text-body);">
+                        <i class="fas fa-graduation-cap"></i> Prelaciones Académicas
+                    </button>
+                </div>
+                
+                <!-- Tabla para Prelaciones de Materias -->
+                <div id="tablaPrelacionMaterias">
+                    <div class="form-group">
+                        <label>Filtrar por Carrera:</label>
+                        <select id="selectCarreraPrelacion" class="form-control" onchange="filtrarPrelacionesMaterias()">
+                            <option value="">-- Todas las carreras --</option>
+                        </select>
+                    </div>
+                    <table id="tablePrelacionesMaterias">
+                        <thead>
+                            <tr>
+                                <th>Asignatura</th>
+                                <th>Tipo</th>
+                                <th>Prelación</th>
+                                <th>Carrera</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Datos se cargarán dinámicamente -->
+                        </tbody>
+                    </table>
+                    <div id="pagination-prelaciones-materias" class="pagination-container"></div>
+                </div>
+                
+                <!-- Tabla para Prelaciones Académicas -->
+                <div id="tablaPrelacionAcademicas" style="display: none;">
+                    <div class="form-group">
+                        <label>Filtrar por Carrera:</label>
+                        <select id="selectCarreraPrelacionAcad" class="form-control" onchange="filtrarPrelacionesAcademicas()">
+                            <option value="">-- Todas las carreras --</option>
+                        </select>
+                    </div>
+                    <table id="tablePrelacionesAcademicas">
+                        <thead>
+                            <tr>
+                                <th>Asignatura</th>
+                                <th>Tipo Prelación</th>
+                                <th>Valor Requerido</th>
+                                <th>Carrera</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Datos se cargarán dinámicamente -->
+                        </tbody>
+                    </table>
+                    <div id="pagination-prelaciones-academicas" class="pagination-container"></div>
+                </div>
+            </div>
+
+            <!-- Tab Lapsos Académicos -->
+            <div id="lapsos" class="tab-content">
+                <div class="crud-header">
+                    <h2>Gestión de Lapsos Académicos</h2>
+                    <button class="btn btn-primary" onclick="abrirModal('lapso')">
+                        <i class="fas fa-plus"></i> Nuevo Lapso
+                    </button>
+                </div>
+                <table id="tableLapsos">
+                    <thead>
+                        <tr>
+                            <th>Periodo</th>
+                            <th>Año</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Datos se cargarán dinámicamente -->
+                    </tbody>
+                </table>
+                <div id="pagination-lapsos" class="pagination-container"></div>
+            </div>
+
+            <!-- Tab Frases del Día -->
+            <div id="frases" class="tab-content">
+                <div class="crud-header">
+                    <h2>Gestión de Frases del Día</h2>
+                    <button class="btn btn-primary" onclick="abrirModal('frase')">
+                        <i class="fas fa-plus"></i> Nueva Frase
+                    </button>
+                </div>
+
+                <table id="tableFrases">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Frase</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Datos se cargarán dinámicamente -->
+                    </tbody>
+                </table>
+                <div id="pagination-frases" class="pagination-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para formularios -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle"></h3>
+                <button class="close-modal" onclick="cerrarModal()">&times;</button>
+            </div>
+            <form id="modalForm">
+                <div id="modalBody">
+                    <!-- Contenido dinámico del formulario -->
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Guardar
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="cerrarModal()">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Datos del servidor (variables globales)
+        let datos = {
+            estudiantes: <%- JSON.stringify(students) %>,
+            carreras: <%- JSON.stringify(carrers) %>,
+            asignaturas: <%- JSON.stringify(subjects) %>,
+            malla: <%- JSON.stringify(mallas) %>,
+            lapsos: <%- JSON.stringify(lapsosAcademicos) %>,
+            frases: <%- JSON.stringify(frasesDelDia) %>,
+            prelaciones_materias: <%- JSON.stringify(prelacionesMaterias) %>,
+            prelaciones_academicas: <%- JSON.stringify(prelacionesAcademicas) %>
+        };
+    </script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/views/javascript/crud.js"></script>
+</body>
+</html>

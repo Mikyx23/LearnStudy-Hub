@@ -1,11 +1,10 @@
 import express from 'express';
 export const routerLogin = express.Router();
 import path from 'path';
-// VARIABLES GLOBALES
 import { fileURLToPath } from 'url';
-import { CrearUsuarioController, VerificarCorreoController, VerificarCedulaController, VerificarUsuario, ObtenerIdUsuarioController, ActualizarContraseñaController } from '../controllers/users-controller.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+import { CrearUsuarioController, VerificarCorreoController, VerificarCedulaController, VerificarUsuario, ObtenerIdUsuarioController, ActualizarContraseñaController } from '../controllers/users-controller.js';
 import jwt from 'jsonwebtoken';
 import { config } from '../../config.js';
 const { jwtSecret } = config;
