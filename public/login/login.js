@@ -180,8 +180,7 @@ numeroCarreras.addEventListener('keydown', (event) =>{
 
 formularioLogin.addEventListener('submit', async (event) => {
     event.preventDefault();
-
-    OcultarElemento(mensajeLogin);
+    if (typeof OcultarElemento === 'function') OcultarElemento(mensajeLogin);
 
     const datos = new FormData(event.target);
     const datosJSON = Object.fromEntries(datos.entries());
@@ -191,34 +190,82 @@ formularioLogin.addEventListener('submit', async (event) => {
         const respuesta = await fetch('/api/login', {
             method: 'POST',
             body: JSON.stringify(datosJSON),
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            headers: { 'Content-Type': 'application/json' }
         });
 
         const datosRespuesta = await respuesta.json();
-        
-        if(!respuesta.ok && datosRespuesta.message === 'Cedula o contrasena invalida'){
-            MostrarElemento(mensajeLogin);
+
+        if (!respuesta.ok) {
+            if (typeof MostrarElemento === 'function') MostrarElemento(mensajeLogin);
+            return;
         }
-        else if(!respuesta.ok){
-            alert('Error al iniciar sesion');
-        }
-        else {
-            if(datosRespuesta.redirectUrl){
-                setTimeout(() => {
-                    window.location.href = datosRespuesta.redirectUrl;
-                }, 1500);
+
+        // CASO A: Múltiples carreras (Usando botones nativos de la modal)
+        if (datosRespuesta.requiereSeleccion) {
+            // Generamos botones usando las clases internas de SweetAlert2 (swal2-confirm)
+            // para que hereden el estilo de la librería automáticamente
+            let botonesHTML = '<div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">';
+            
+            datosRespuesta.carreras.forEach(c => {
+                botonesHTML += `
+                    <button type="button" 
+                        class="swal2-confirm swal2-styled" 
+                        style="margin: 0; padding: 15px; font-size: 1.1em; border-radius: 10px;"
+                        data-id="${c.id}">
+                        ${c.nombre}
+                    </button>`;
+            });
+            botonesHTML += '</div>';
+
+            const { value: carreraId } = await Swal.fire({
+                title: 'Selecciona tu carrera',
+                text: 'Se encontraron varias carreras asociadas a tu cuenta',
+                html: botonesHTML,
+                showConfirmButton: false, // Quitamos el botón de abajo para usar los de arriba
+                allowOutsideClick: false,
+                didOpen: () => {
+                    const btns = Swal.getHtmlContainer().querySelectorAll('button[data-id]');
+                    btns.forEach(btn => {
+                        btn.onclick = () => {
+                            btn.focus(); // Marcamos como activo para capturarlo
+                            Swal.clickConfirm();
+                        };
+                    });
+                },
+                preConfirm: () => {
+                    const activo = document.activeElement;
+                    return activo ? activo.getAttribute('data-id') : null;
+                }
+            });
+
+            if (carreraId) {
+                Swal.showLoading();
+                const respuestaFinal = await fetch('/api/login/finalizar-login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        ...datosJSON, 
+                        carreraId: carreraId 
+                    })
+                });
+                
+                const resFinal = await respuestaFinal.json();
+                if (resFinal.redirectUrl) {
+                    window.location.href = resFinal.redirectUrl;
+                }
             }
+        } 
+        // CASO B: Una sola carrera
+        else if (datosRespuesta.redirectUrl) {
+            window.location.href = datosRespuesta.redirectUrl;
         }
-    }
-    catch(error){
+
+    } catch (error) {
+        console.error(error);
         Swal.fire({
             icon: "error",
-            title: "¡Error de conexión!",
-            text: "No se pudo establecer comunicación con el servidor. Por favor, verifica tu internet.",
-            confirmButtonText: "Reintentar",
-            confirmButtonColor: "#d33",
+            title: "Error",
+            text: "No se pudo conectar con el servidor.",
         });
     }
 });

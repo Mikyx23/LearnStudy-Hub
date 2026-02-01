@@ -15,10 +15,19 @@ export const getToken = (req, res, next) =>{
 };
 
 export const authenticateUser = (req, res, next) => {
-    const {user} = req.session;
+    // Si la petición es para login, la dejamos pasar sin preguntar
+    if (req.path.startsWith('/api/login') || req.path === '/') {
+        return next();
+    }
+
+    const user = req.session?.user;
 
     if (!user) {
+        // Importante: Si es una petición API (AJAX/Fetch), responde con JSON, no con HTML
+        if (req.path.startsWith('/api/')) {
+            return res.status(401).json({ message: 'No autorizado: Inicie sesión' });
+        }
         return res.status(401).send('<h1>Acceso denegado: Token no proporcionado</h1>');
     }
-    next()
+    next();
 }
