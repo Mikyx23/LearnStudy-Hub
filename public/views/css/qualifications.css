@@ -444,3 +444,8 @@ body {
         justify-content: center;
     }
 }
+
+body > .container {
+    grid-column: 1 / -1;
+    width: 100%;
+}

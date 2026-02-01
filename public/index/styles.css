@@ -159,7 +159,7 @@ h1, h2, h3, h4, h5 { font-family: var(--font-heading); color: var(--dark); }
 }
 
 /* =========================================
-   CARDS (Visión / Misión)
+    CARDS (Visión / Misión)
 ========================================= */
 .info-card {
     background: white;
@@ -203,7 +203,7 @@ h1, h2, h3, h4, h5 { font-family: var(--font-heading); color: var(--dark); }
 .gradient-3 { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
 
 /* =========================================
-   MEMBER CARDS (Sin Fotos)
+    MEMBER CARDS (Sin Fotos)
 ========================================= */
 .member-card {
     background: white;

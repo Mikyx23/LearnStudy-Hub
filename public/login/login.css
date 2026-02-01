@@ -211,9 +211,13 @@ input{
 
 .link-recuperar{
     font-size: 0.8rem;
-    color: #48e;
+    color: #fffd;
     text-decoration: none;
     cursor: pointer;
+}
+
+.link-recuperar:hover{
+    text-decoration: underline;
 }
 
 /* REGISTRO */
@@ -250,7 +254,7 @@ h2{
 }
 
 label{
-    color: #0007;
+    color: #fffd;
     font-weight: bold;
     font-size: 0.7rem;
     text-transform: uppercase;
