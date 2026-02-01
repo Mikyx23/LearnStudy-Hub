@@ -9,12 +9,13 @@
     <script src="/views/javascript/layout.js" ></script>
 </head>
 <body>
-<main  class="main-container">
+<main class="main-container">
 
 <!-- Sección Agenda -->
     <div class="contenedor-angeda" id="agenda">
         <h1>Recordatorio de Evaluaciones</h1>
-        <form  id="formulario-evaluaciones" method="POST" action="/api/agenda/registrar"> 
+        
+        <form id="formulario-evaluaciones" method="POST" action="/api/agenda/registrar"> 
             <!-- Campos generales -->
             <div class="form-row">
                 <div class="form-group">
@@ -38,13 +39,14 @@
                 </div>
             </div>
             
-            <!-- Contenedor de evaluaciones lado a lado -->
+            <!-- Contenedor de evaluación -->
             <div class="evaluaciones-container">
                 <div class="evaluacion-group evaluacion-unica">
                     <h3><i class="fas fa-edit"></i> Nueva Evaluación</h3>
                     <div class="form-group">
-                        <label for="descripcion_evaluacion">Descripción:</label>
-                        <textarea id="descripcion_evaluacion" name="descripcion" placeholder="Detalles de la evaluación..." rows="2"></textarea>
+                        <label for="descripcion_evaluacion">Nombre/Descripción:</label>
+                        <textarea id="descripcion_evaluacion" name="descripcion" placeholder="Nombre o detalles de la evaluación..." rows="2" required maxlength="30" oninput="contarCaracteres(this)"></textarea>
+                        <small id="contador-caracteres" style="color: #666; display: block; text-align: right; margin-top: 5px;">0/30 caracteres</small>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
@@ -59,39 +61,30 @@
                 </div>
             </div>
             
-            <button id="agregar">Agregar Evaluaciones</button>
+            <button id="agregar">Agregar Evaluación</button>
         </form>
         
         <!-- Encabezados de la lista -->
         <div class="encabezados-lista">
             <span>Asignatura</span>
             <span>Corte</span>
-            <span>Evaluación</span>
+            <span>Estado</span>
             <span>Nombre</span>
             <span>Porcentaje</span>
             <span>Fecha</span>
         </div>
-        
+
+        <!-- Lista de evaluaciones (se renderiza dinámicamente) -->
         <ul id="lista-examenes">
-            <% if (evaluaciones && evaluaciones.length > 0) { %>
-                <% evaluaciones.forEach(function(eval) { %>
-                    <li class="examen-item" data-id="<%= eval.id %>">
-                        <span><%= eval.asignatura_nombre %></span>
-                        <span>Corte <%= eval.corte %></span>
-                        <span><i class="fas fa-file-alt"></i></span>
-                        <span><%= eval.nombre %></span>
-                        <span><%= eval.porcentaje %>%</span>
-                        <span><%= new Date(eval.fecha).toLocaleDateString() %></span>
-                        <span>
-                            </span>
-                    </li>
-                <% }); %>
-            <% } else { %>
-                <li class="sin-evaluaciones">
-                    <p>No existen evaluaciones registradas actualmente.</p>
-                </li>
-            <% } %>
-            </ul>
+            <!-- Las evaluaciones se cargan dinámicamente con JavaScript -->
+        </ul>
+
+        <!-- Paginación -->
+        <div id="paginacion" class="paginacion-container">
+            <button id="btn-prev-pag" class="btn-pag">Anterior</button>
+            <div id="numeros-paginas" class="numeros-paginas"></div>
+            <button id="btn-next-pag" class="btn-pag">Siguiente</button>
+        </div>
     </div>
 
     <!-- Sección Calendario -->
@@ -148,12 +141,6 @@
                     <button id="btn-next-mes" class="btn-calendario">
                         <i class="fas fa-chevron-right"></i>
                     </button>
-                    <button id="btn-vista-mes" class="btn-calendario active">
-                        <i class="fas fa-calendar"></i> Mes
-                    </button>
-                    <button id="btn-vista-semana" class="btn-calendario">
-                        <i class="fas fa-calendar-week"></i> Semana
-                    </button>
                 </div>
             </div>
             
@@ -177,30 +164,25 @@
             <!-- Leyenda -->
             <div class="calendario-leyenda">
                 <div class="leyenda-item">
-                    <span class="leyenda-color" style="background-color: #3b82f6;"></span>
-                    <span>Evaluación 1</span>
-                </div>
-                <div class="leyenda-item">
-                    <span class="leyenda-color" style="background-color: #10b981;"></span>
-                    <span>Evaluación 2</span>
-                </div>
-                <div class="leyenda-item">
-                    <span class="leyenda-color corte1"></span>
+                    <span class="leyenda-color" style="background-color: #3b82f6; width: 16px; height: 16px;"></span>
                     <span>Corte 1</span>
                 </div>
                 <div class="leyenda-item">
-                    <span class="leyenda-color corte2"></span>
+                    <span class="leyenda-color" style="background-color: #f59e0b; width: 16px; height: 16px;"></span>
                     <span>Corte 2</span>
                 </div>
                 <div class="leyenda-item">
-                    <span class="leyenda-color corte3"></span>
+                    <span class="leyenda-color" style="background-color: #8b5cf6; width: 16px; height: 16px;"></span>
                     <span>Corte 3</span>
+                </div>
+                <div class="leyenda-item">
+                    <small>💡 Click en los cuadros para ver detalles</small>
                 </div>
             </div>
             
             <!-- Próximas evaluaciones -->
             <div class="proximas-evaluaciones">
-                <h3><i class="fas fa-clock"></i> Próximas Evaluaciones</h3>
+                <h3><i class="fas fa-clock"></i> Próximas Evaluaciones Pendientes</h3>
                 <div id="lista-proximas" class="lista-proximas">
                     <!-- Las próximas evaluaciones se cargarán aquí -->
                 </div>
@@ -208,12 +190,13 @@
         </div>
     </section>
 </main>
-    <script>
-        // Usamos un nombre único para evitar el error de "already declared"
-        const DATOS_INICIALES_DEL_SERVIDOR = <%- JSON.stringify(todasLasEvaluaciones) %>;
-    </script>   
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="/views/javascript/agenda.js"></script>
+
+<script>
+    const DATOS_INICIALES_DEL_SERVIDOR = <%- JSON.stringify(todasLasEvaluaciones || []) %>;
+</script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/views/javascript/agenda.js"></script>
 </body>
 </html>

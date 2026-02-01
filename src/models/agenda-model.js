@@ -1,5 +1,5 @@
 import {pool} from './conexion.js';
-import { GET_COURSES_AGENDA, INSERT_EXAM, GET_EXAMS } from './queries.js';
+import { GET_COURSES_AGENDA, INSERT_EXAM, GET_EXAMS, SET_STATE_EXAM, DELETE_EXAM } from './queries.js';
 
 
 export class Agenda {
@@ -21,6 +21,49 @@ export class Agenda {
         }
         catch(error){
             throw new Error('Ha ocurrido un error inesperado: No se ha podido crear la evaluación');
+        }
+    }
+
+    static EliminarEvaluacion = async (id_evaluacion) => {
+        try{
+            const [result] = await pool.query(DELETE_EXAM, [id_evaluacion]);
+
+            if(result.affectedRows > 0){
+                return {
+                    sucess:true,
+                }
+            }
+            else{
+                return {
+                    sucess:false,
+                    message: 'No se ha podido eliminar la evaluación'
+                }
+            }
+        }
+        catch(error){
+            throw new Error('Ha ocurrido un error inesperado: No se ha podido eliminar la evaluación');
+        }
+    }
+        
+
+    static ActualizarEstadoEvaluacion = async (id_evaluacion, estado) => {
+        try{
+            const [result] = await pool.query(SET_STATE_EXAM, [estado, id_evaluacion]);
+
+            if(result.affectedRows > 0){
+                return {
+                    sucess:true,
+                }
+            }
+            else{
+                return {
+                    sucess:false,
+                    message: 'No se ha podido actualizar el estado de la evaluación'
+                }
+            }
+        }
+        catch(error){
+            throw new Error('Ha ocurrido un error inesperado: No se ha podido actualizar el estado de la evaluación')
         }
     }
     
