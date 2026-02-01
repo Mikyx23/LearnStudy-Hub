@@ -33,15 +33,19 @@ body {
     background-color: var(--bg-body);
     color: var(--text-main);
     margin: 0;
-    -webkit-font-smoothing: antialiased; /* Texto más nítido */
+    -webkit-font-smoothing: antialiased; 
+    display: grid; 
+    min-height: 110dvh;
+    grid-template-rows: 
+    auto 1fr auto;
 }
 
 /* LOGO & BRANDING */
 .brand-logo {
     font-family: 'Inter', sans-serif;
-    font-weight: 800; /* Extra bold para el logo */
+    font-weight: 800;
     font-size: 1.4rem;
-    letter-spacing: -0.5px; /* Kerning moderno apretado */
+    letter-spacing: -0.5px;
     text-decoration: none;
     display: flex;
     align-items: center;
@@ -266,7 +270,7 @@ body.app-layout:has(.app-sidebar:hover) {
     color: var(--text-light); 
     border-top: 1px solid #e2e8f0;
     padding: 40px 20px;
-    margin-top: 60px;
+    margin-top: auto;
 }
 
 .footer-container {
