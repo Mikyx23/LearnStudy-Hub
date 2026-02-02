@@ -84,6 +84,7 @@
                         <thead>
                             <tr>
                                 <th>Materia</th>
+                                <th>Semestre</th>
                                 <th>UC</th>
                                 <th>Calificación</th>
                                 <th>Estado</th>
@@ -96,6 +97,9 @@
                                         <td data-label="Materia">
                                             <%= materia.subject_name %>
                                         </td>
+                                        <td>
+                                            <%= materia.subject_semester %>
+                                        </td>
                                         <td data-label="UC">
                                             <%= materia.uc %>
                                         </td>
@@ -107,24 +111,22 @@
                                         <td data-label="Estado">
                                             <% if (materia.nota>= 10) { %>
                                                 <span class="status passed">Aprobado</span>
-                                                <% } else { %>
-                                                    <span class="status failed">Reprobado</span>
-                                                    <% } %>
+                                            <% } else { %>
+                                                <span class="status failed">Reprobado</span>
+                                            <% } %>
                                         </td>
                                     </tr>
-                                    <% } %>
-                                        <% }); %>
+                                <% } %>
+                            <% }); %>
                         </tbody>
                     </table>
                 </div>
-                <% } else { %>
-                    <div class="no-data-message">
-                        <p>No se encontraron calificaciones registradas</p>
-                    </div>
-                    <% } %>
+            <% } else { %>
+                <div class="no-data-message">
+                    <p>No se encontraron calificaciones registradas</p>
+                </div>
+            <% } %>
     </div>
-    </div>
-    
     <script src="https://unpkg.com/lucide@latest"></script>
 </body>
 

@@ -6,13 +6,25 @@ export const CalculateAverage = async (notas) => {
         return 0;
     }
 
-    // 2. Sumar las notas usando reduce
-    const suma = notas.reduce((acumulado, materia) => {
-        return acumulado + parseFloat(materia.nota || 0);
+    // 2. Filtrar solo materias que tengan una nota mayor a 0
+    // (Asumiendo que 0 significa "no cursada" o "sin nota cargada")
+    const materiasCursadas = notas.filter(materia => parseFloat(materia.nota) > 0);
+
+    // 3. Si no hay materias con nota, evitar división por cero
+    if (materiasCursadas.length === 0) {
+        return 0;
+    }
+
+    // 4. Sumar las notas de las materias filtradas
+    const suma = materiasCursadas.reduce((acumulado, materia) => {
+        return acumulado + parseFloat(materia.nota);
     }, 0);
 
-    // 3. Calcular y retornar el promedio
-    return suma / notas.length;
+    // 5. Calcular promedio real
+    const promedio = suma / materiasCursadas.length;
+
+    // Retornar con 2 decimales para precisión académica
+    return parseFloat(promedio.toFixed(2));
 };
 
 export const CalculateCredits = async (materia) => {

@@ -8,7 +8,7 @@ import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs'; 
-
+import { spawn } from 'child_process';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -26,27 +26,46 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage }); // Añade esta línea justo después del storage
 
-routerProfile.get('/', async (req,res) => {
-    try{
-        const {user} = req.session;
+routerProfile.get('/', async (req, res) => {
+    try {
+        const { user } = req.session;
         let average = 0;
 
-        const result = await ObtenerPerfilUsuarioController(user.id,user.carrer,lapsoActual);
+        const result = await ObtenerPerfilUsuarioController(user.id, user.carrer, lapsoActual);
+    
+        if (result && result.success && result.user) {
+            const subjectsArray = JSON.parse(result.user[0].subjects);
+            
+            // --- LLAMADA AL SCRIPT DE PYTHON ---
+            const scriptPath = path.join(__dirname, '../data-structures/cola.py');
+            const pythonProcess = spawn('python', [scriptPath]);
+            
+            let pythonData = "";
 
-        const subjectsArray = JSON.parse(result.user[0].subjects);
+            // Enviamos el JSON al script
+            pythonProcess.stdin.write(JSON.stringify(subjectsArray));
+            pythonProcess.stdin.end();
 
-        if(result && result.success && result.user) {
-            average = await CalculateAverage(subjectsArray);
-        }
+            // Recibimos la respuesta
+            for await (const chunk of pythonProcess.stdout) {
+                pythonData += chunk;
+            }
 
-        if(result.success){
-            res.render('profile', {user: result.user[0], subject: subjectsArray, average: average});
-        }else {
+            const subjectsProcessed = JSON.parse(pythonData);
+            // ------------------------------------
+            average = await CalculateAverage(subjectsProcessed);
+
+            res.render('profile', { 
+                user: result.user[0], 
+                subject: subjectsProcessed, // Usamos los datos procesados por la cola
+                average: average 
+            });
+        } else {
             return res.status(404).send(result.message);
         }
-    }
-    catch(error){
-        throw new Error('Error al obtener el perfil');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error al obtener el perfil');
     }
 });
 
