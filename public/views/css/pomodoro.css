@@ -11,8 +11,35 @@
     --p-success: #16a34a;
 }
 
-/* 1. Ajuste del Contenedor Principal */
-/* Eliminamos el centrado absoluto para que fluya dentro del layout de la app */
+/* Patrón de logos interactivos */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/images/Logo_sin_fondo.png');
+    background-repeat: repeat;
+    background-size: 500px;
+    opacity: 0.05;
+    z-index: -1;
+    pointer-events: none;
+    animation: floatingPattern 20s ease-in-out infinite;
+}
+
+@keyframes floatingPattern {
+
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    50% {
+        transform: translate(15px, 10px) scale(1.02);
+    }
+}
+
 .container {
     max-width: 900px;
     width: 100%;
@@ -383,6 +410,45 @@ button:disabled {
     cursor: not-allowed;
 }
 
+
+/* ==========================================
+    ALINEACIÓN DE ICONOS LUCIDE
+   ========================================== */
+
+.tab-btn, 
+.clear-history-btn, 
+.btn-primary, 
+.btn-secondary {
+    display: inline-flex; 
+    align-items: center;  
+    justify-content: center;
+    gap: 8px;           
+}
+
+.tab-btn svg, 
+.clear-history-btn svg,
+.btn-primary svg,
+.btn-secondary svg {
+    width: 18px;         
+    height: 18px;
+    stroke-width: 2.5px; 
+    display: block;      
+}
+
+.empty-history-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.empty-history-icon svg {
+    width: 48px;
+    height: 48px;
+    opacity: 0.3;
+    color: var(--p-text-muted);
+}
 /* Animaciones */
 @keyframes fadeInDown {
     from { opacity: 0; transform: translateY(-20px); }

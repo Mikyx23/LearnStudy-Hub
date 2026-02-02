@@ -42,7 +42,7 @@
             <!-- Contenedor de evaluación -->
             <div class="evaluaciones-container">
                 <div class="evaluacion-group evaluacion-unica">
-                    <h3><i class="fas fa-edit"></i> Nueva Evaluación</h3>
+                    <h3><i data-lucide="pen-line"></i> Nueva Evaluación</h3>
                     <div class="form-group">
                         <label for="descripcion_evaluacion">Nombre/Descripción:</label>
                         <textarea id="descripcion_evaluacion" name="descripcion" placeholder="Nombre o detalles de la evaluación..." rows="2" required maxlength="30" oninput="contarCaracteres(this)"></textarea>
@@ -90,7 +90,7 @@
     <!-- Sección Calendario -->
     <section class="calendario-section" id="calendario">
         <div class="calendario-container">
-            <h2><i class="fas fa-calendar-alt"></i> Calendario de Evaluaciones</h2>
+            <h2><i data-lucide="calendar"></i> Calendario de Evaluaciones</h2>
             
             <!-- Filtros y controles -->
             <div class="calendario-controls">
@@ -132,14 +132,14 @@
                 
                 <div class="calendario-nav">
                     <button id="btn-hoy" class="btn-calendario">
-                        <i class="fas fa-calendar-day"></i> Hoy
+                        <i data-lucide="calendar-days"></i> Hoy
                     </button>
                     <button id="btn-prev-mes" class="btn-calendario">
-                        <i class="fas fa-chevron-left"></i>
+                        <i data-lucide="chevron-left"></i>
                     </button>
-                    <span id="mes-actual" class="mes-actual">Enero 2024</span>
+                    <span id="mes-actual" class="mes-actual">Febrero 2026</span>
                     <button id="btn-next-mes" class="btn-calendario">
-                        <i class="fas fa-chevron-right"></i>
+                        <i data-lucide="chevron-right"></i>
                     </button>
                 </div>
             </div>
@@ -176,13 +176,13 @@
                     <span>Corte 3</span>
                 </div>
                 <div class="leyenda-item">
-                    <small>💡 Click en los cuadros para ver detalles</small>
+                    <strong>Click en los cuadros para ver detalles</strong>
                 </div>
             </div>
             
             <!-- Próximas evaluaciones -->
             <div class="proximas-evaluaciones">
-                <h3><i class="fas fa-clock"></i> Próximas Evaluaciones Pendientes</h3>
+                <h3><i data-lucide="clock"></i> Próximas Evaluaciones Pendientes</h3>
                 <div id="lista-proximas" class="lista-proximas">
                     <!-- Las próximas evaluaciones se cargarán aquí -->
                 </div>

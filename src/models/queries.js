@@ -8,7 +8,7 @@ SELECT
         FROM tbl_cursos_academicos ca2
         INNER JOIN tbl_asignaturas_carreras ac2 ON ca2.id_asignatura_carrera = ac2.id_asignatura_carrera
         WHERE ca2.id_usuario = u.id_usuario 
-        AND ca2.id_lapso = 1 -- Parámetro: ID Lapso Actual
+        AND ca2.id_lapso = ? -- Parámetro: ID Lapso Actual
         GROUP BY ac2.semestre
         ORDER BY COUNT(*) DESC, ac2.semestre DESC
         LIMIT 1
@@ -27,7 +27,7 @@ SELECT
         AND cal.nota_final >= 10 -- Nota mínima aprobatoria
     ), 0) AS uca
 FROM tbl_usuarios u
-WHERE u.id_usuario = 1; -- Parámetro: ID Usuario
+WHERE u.id_usuario = ?; -- Parámetro: ID Usuario
 `;
 
 export const GET_ACADEMIC_DATA =`

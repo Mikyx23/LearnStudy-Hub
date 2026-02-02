@@ -1,76 +1,86 @@
-// VARIABLES GLOBALES
-import { config } from './config.js';
-import path from 'path';
-import { fileURLToPath } from 'url';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const { port } = config;
+// ----------- CONFIGURACIÓN DE ENTORNO Y RUTAS -----------
+import { config } from './config.js'; // Importa variables de entorno y configuración global
+import path from 'path'; // Módulo nativo para manejar rutas de archivos
+import { fileURLToPath } from 'url'; // Utilidad para convertir URLs de módulos en rutas de sistema
+
+// Configuración de __dirname para entornos ESM (ECMAScript Modules)
+const __filename = fileURLToPath(import.meta.url); // Obtiene la ruta absoluta del archivo actual
+const __dirname = path.dirname(__filename); // Obtiene el directorio base del proyecto
+const { port } = config; // Desestructura el puerto definido en la configuración
 
 // ----------- MODULOS IMPORTADOS -----------
-import express from 'express';
-import cookieParser from 'cookie-parser';
-import { getToken, authenticateUser } from './src/middleware/auth.js';
-const app = express();
+import express from 'express'; // Framework principal para el servidor web
+import cookieParser from 'cookie-parser'; // Middleware para gestionar y leer cookies del navegador
+import { getToken, authenticateUser } from './src/middleware/auth.js'; // Middlewares personalizados de seguridad
+const app = express(); // Inicialización de la aplicación Express
 
+// Seguridad: Oculta la cabecera 'x-powered-by' para no revelar que se usa Express
 app.disable('x-powered-by');
 
-// ----------- MIDDLEWARES -----------
-app.set('view engine', 'ejs');
-app.set('views', './src/views');
-app.use(express.urlencoded({ extended: true }));    // Lee datos de entrada en formularios
-app.use(express.static(path.join(__dirname, '/public')));   // SERVIR ARCHIVOS ESTÁTICOS desde la carpeta public
-app.use(express.json());
-app.use(cookieParser());
-app.use(getToken);
+// ----------- CONFIGURACIÓN DE MIDDLEWARES Y VISTAS -----------
+app.set('view engine', 'ejs'); // Define EJS como el motor de plantillas dinámicas
+app.set('views', './src/views'); // Establece la ubicación de las vistas/plantillas
+app.use(express.urlencoded({ extended: true })); // Procesa datos de formularios (application/x-www-form-urlencoded)
+app.use(express.static(path.join(__dirname, '/public'))); // Sirve archivos estáticos (CSS, JS, imágenes) desde /public
+app.use(express.json()); // Permite recibir y entender cuerpos de peticiones en formato JSON
+app.use(cookieParser()); // Habilita el análisis de cookies en las solicitudes entrantes
+app.use(getToken); // Middleware global para extraer o verificar el token en cada petición
 
-// ----------- ROUTING -----------
+// ----------- ENRUTAMIENTO BASE -----------
 app.get('/', (req, res) => {
-    const {user} = req.session;
+    const {user} = req.session; // Intenta recuperar los datos del usuario de la sesión
 
+    // Si el usuario ya está autenticado, lo redirige al panel principal
     if(user){
         return res.redirect('/api/dashboard');
     }
+    // Si no hay sesión, sirve el archivo HTML estático de la página de inicio
     res.sendFile(path.join(__dirname, '/public/index/index.html'));
 });
 
-// ----------- ROUTERS -----------
+// ----------- ROUTERS PÚBLICOS -----------
 import {routerLogin} from './src/routers/login.js';
-app.use('/api/login', routerLogin);
+app.use('/api/login', routerLogin); // Rutas relacionadas con el inicio de sesión
 
-app.use(authenticateUser);
+// ----------- BARRERA DE SEGURIDAD -----------
+// A partir de aquí, todas las rutas requieren autenticación obligatoria
+app.use(authenticateUser); 
 
+// ----------- ROUTERS PRIVADOS (PROTEGIDOS) -----------
 import {routerDashboard} from './src/routers/dashboard.js';
-app.use('/api/dashboard', routerDashboard);
+app.use('/api/dashboard', routerDashboard); // Panel principal del usuario
 
 import {routerMalla} from './src/routers/malla.js';
-app.use('/api/malla', routerMalla);
+app.use('/api/malla', routerMalla); // Gestión de malla curricular
 
 import {routerProfile} from './src/routers/profile.js';
-app.use('/api/perfil', routerProfile);
+app.use('/api/perfil', routerProfile); // Gestión de perfil de usuario
 
 import {routerCourses} from './src/routers/courses.js';
-app.use('/api/cursos', routerCourses);
+app.use('/api/cursos', routerCourses); // Gestión de cursos y materias
 
 import {routerAgenda} from './src/routers/agenda.js';
-app.use('/api/agenda', routerAgenda);
+app.use('/api/agenda', routerAgenda); // Gestión de agenda y eventos
 
 import {routerQualifications} from './src/routers/qualifications.js';
-app.use('/api/calificaciones', routerQualifications);
+app.use('/api/calificaciones', routerQualifications); // Gestión de notas y promedios
 
 import {routerHorario} from './src/routers/horario.js';
-app.use('/api/horario', routerHorario);
+app.use('/api/horario', routerHorario); // Gestión del horario semanal
 
 import {routerPomodoro} from './src/routers/pomodoro.js';
-app.use('/api/pomodoro', routerPomodoro);
+app.use('/api/pomodoro', routerPomodoro); // Herramienta de productividad Pomodoro
 
 import {routerCrud} from './src/routers/crud.js';
-app.use('/api/crud', routerCrud);
+app.use('/api/crud', routerCrud); // Operaciones generales de Base de Datos
 
-//CERRAR SESION
+// ----------- CIERRE DE SESIÓN -----------
 app.get('/logout', (req, res) =>{
+    // Limpia la cookie del token y redirige al inicio
     res.clearCookie('access_token').redirect('/');
 });
 
+// ----------- INICIO DEL SERVIDOR -----------
 app.listen(port, () => {
-    console.log(`Servidor escuchando en  http://localhost:${port}`);
+    console.log(`Servidor escuchando en http://localhost:${port}`);
 });
