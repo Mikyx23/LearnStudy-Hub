@@ -1,11 +1,11 @@
 import { Crud } from "../models/crud-model.js";
 
-export const InsertarCarreraController = async (nombre_carrera, estado_carrera) => {
-    return await Crud.InsertarCarrera(nombre_carrera, estado_carrera)
+export const InsertarCarreraController = async (nombre_carrera) => {
+    return await Crud.InsertarCarrera(nombre_carrera)
 }
 
-export const InsertarAsignaturaController = async (nombre_asignatura, estado_asignatura) => {
-    return await Crud.InsertarAsignatura(nombre_asignatura, estado_asignatura)
+export const InsertarAsignaturaController = async (nombre_asignatura) => {
+    return await Crud.InsertarAsignatura(nombre_asignatura)
 }
 
 export const InsertarLapsosController = async (periodo, año) => {
@@ -16,8 +16,8 @@ export const InsertarFrasesController = async (frase) => {
     return await Crud.InsertarFrases(frase)
 }
 
-export const InsertarMallaController = async (id_carrera,codigo, nombre, semestre, UC, TH, estado) => {
-    return await Crud.InsertarMalla(id_carrera, codigo, nombre, semestre, UC, TH, estado)
+export const InsertarMallaController = async (id_carrera,codigo, nombre, semestre, UC, TH) => {
+    return await Crud.InsertarMalla(id_carrera, codigo, nombre, semestre, UC, TH)
 }
 
 export const InsertarPrelacionMateriaController = async (id_asignatura_carrera, id_asignatura_prelacion, tipo_prelacion) => {
@@ -66,8 +66,7 @@ export const ObtenerEstudiantesController = async () => {
     const estudiantesProcesados = estudiantes.data.map(estudiante => ({
         ...estudiante,
         // Convertimos "41,42" -> [41, 42]
-        carreras: estudiante.carreras ? estudiante.carreras.split(',').map(Number) : [],
-        estado_usuario: Boolean(estudiante.estado_usuario)
+        carreras: estudiante.carreras ? estudiante.carreras.split(',').map(Number) : []
     }));
 
     return estudiantesProcesados;

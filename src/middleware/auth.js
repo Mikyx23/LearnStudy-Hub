@@ -24,9 +24,9 @@ export const authenticateUser = (req, res, next) => {
 
     if (!user) {
         // Importante: Si es una petición API (AJAX/Fetch), responde con JSON, no con HTML
-        if (req.path.startsWith('/api/')) {
-            return res.status(401).json({ message: 'No autorizado: Inicie sesión' });
-        }
+        // if (req.path.startsWith('/api/')) {
+        //     return res.status(401).json({ message: 'No autorizado: Inicie sesión' });
+        // }
         return res.status(401).send('<h1>Acceso denegado: Token no proporcionado</h1>');
     }
     next();

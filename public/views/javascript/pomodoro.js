@@ -7,430 +7,293 @@ const progressBar = document.getElementById('progress-bar');
 const startBtn = document.getElementById('start-btn');
 const pauseBtn = document.getElementById('pause-btn');
 const resetBtn = document.getElementById('reset-btn');
+const clearHistoryBtn = document.getElementById('clear-history-btn');
+
+// --- CONFIGURACIÓN POMODORO (25/5) ---
+const STUDY_TIME = 25 * 60; 
+const BREAK_TIME = 5 * 60;  
 
 let timerInterval = null;
-let timeRemaining = 1500;
-let totalTime = 1500;
+let timeRemaining = STUDY_TIME; 
+let totalTime = STUDY_TIME;
 let isWorkMode = true;
-let isPaused = false;
+
+// --- PAGINACIÓN ---
+let currentPage = 1;
+const itemsPerPage = 5;
+
 let currentSession = {
     courseName: '',
     examName: '',
     workSessions: 0,
-    breakSessions: 0,
     startTime: null
 };
 
-// Cargar historial del storage persistente
-async function loadHistory() {
-    try {
-        const result = await window.storage.get('pomodoro-history');
-        return result ? JSON.parse(result.value) : [];
-    } catch (error) {
-        return [];
-    }
-}
-
-// Guardar historial en storage persistente
-async function saveHistory(history) {
-    try {
-        await window.storage.set('pomodoro-history', JSON.stringify(history));
-    } catch (error) {
-        console.error('Error saving history:', error);
-    }
-}
-
-// Agregar sesión al historial
-async function addSessionToHistory() {
-    if (currentSession.workSessions === 0) return;
-
-    const history = await loadHistory();
-    const session = {
-        id: Date.now(),
-        courseName: currentSession.courseName,
-        examName: currentSession.examName,
-        workSessions: currentSession.workSessions,
-        breakSessions: currentSession.breakSessions,
-        totalMinutes: currentSession.workSessions * 25,
-        date: new Date().toISOString()
-    };
-
-    history.unshift(session);
-    await saveHistory(history);
-    renderHistory();
-}
-
-// Renderizar historial
-async function renderHistory() {
-    const history = await loadHistory();
+// --- RENDERIZADO DE HISTORIAL ---
+function renderHistory() {
     const historySection = document.getElementById('history-section');
+    const history = studyData.history || [];
     
     if (history.length === 0) {
         historySection.innerHTML = `
             <div class="empty-history">
                 <div class="empty-history-icon">📋</div>
                 <p>No hay sesiones registradas aún</p>
-            </div>
-        `;
-    } else {
-        historySection.innerHTML = history.map(session => {
-            const date = new Date(session.date);
-            const dateStr = date.toLocaleDateString('es-ES', { 
-                day: '2-digit', 
-                month: 'short', 
-                year: 'numeric' 
-            });
-            const timeStr = date.toLocaleTimeString('es-ES', { 
-                hour: '2-digit', 
-                minute: '2-digit' 
-            });
-
-            return `
-                <div class="session-card">
-                    <div class="session-header">
-                        <div>
-                            <div class="session-title">${session.examName}</div>
-                            <div class="session-course">${session.courseName}</div>
-                        </div>
-                        <div class="session-date">
-                            ${dateStr}<br>${timeStr}
-                        </div>
-                    </div>
-                    <div class="session-stats">
-                        <div class="stat-item">
-                            <span class="stat-value">${session.workSessions}</span>
-                            <span class="stat-label">Pomodoros</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-value">${session.totalMinutes}</span>
-                            <span class="stat-label">Minutos</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-value">${session.breakSessions}</span>
-                            <span class="stat-label">Descansos</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }).join('');
+            </div>`;
+        updateStatsSummary([]);
+        return;
     }
 
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const paginatedItems = history.slice(startIndex, startIndex + itemsPerPage);
+    const totalPages = Math.ceil(history.length / itemsPerPage);
+
+    historySection.innerHTML = paginatedItems.map((session, index) => {
+        const date = new Date(session.date);
+        const dateStr = date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
+        const timeStr = date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+        
+        return `
+            <div class="session-card ${index % 2 === 0 ? 'card-even' : 'card-odd'}">
+                <button class="delete-single-btn" onclick="deleteSession(${session.id})" title="Eliminar sesión">×</button>
+                <div class="session-header">
+                    <div>
+                        <div class="session-title">${session.examName}</div>
+                        <div class="session-course">${session.courseName}</div>
+                    </div>
+                    <div class="session-date">${dateStr}<br>${timeStr}</div>
+                </div>
+                <div class="session-stats">
+                    <div class="stat-item">
+                        <span class="stat-value">${session.workSessions}</span>
+                        <span class="stat-label">Ciclos</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">${session.totalMinutes || 0}</span>
+                        <span class="stat-label">Minutos</span>
+                    </div>
+                </div>
+            </div>`;
+    }).join('');
+
+    renderPagination(totalPages);
     updateStatsSummary(history);
 }
 
-// Actualizar resumen de estadísticas
-function updateStatsSummary(history) {
-    const totalSessions = history.reduce((sum, s) => sum + s.workSessions, 0);
-    const totalMinutes = history.reduce((sum, s) => sum + s.totalMinutes, 0);
-    const totalBreaks = history.reduce((sum, s) => sum + s.breakSessions, 0);
-
-    document.getElementById('total-sessions').textContent = totalSessions;
-    document.getElementById('total-minutes').textContent = totalMinutes;
-    document.getElementById('total-breaks').textContent = totalBreaks;
-}
-
-// Limpiar historial
-async function clearHistory() {
-    if (confirm('¿Estás seguro de que quieres eliminar todo el historial?')) {
-        await window.storage.delete('pomodoro-history');
-        renderHistory();
+function renderPagination(totalPages) {
+    let container = document.getElementById('pagination-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'pagination-container';
+        document.getElementById('history-tab').appendChild(container);
     }
+    if (totalPages <= 1) { container.innerHTML = ''; return; }
+
+    container.innerHTML = `
+        <div class="pagination">
+            <button ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">←</button>
+            <span>Página ${currentPage} de ${totalPages}</span>
+            <button ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">→</button>
+        </div>`;
 }
 
-// Sistema de pestañas
-document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const tabName = btn.dataset.tab;
-        
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        
-        btn.classList.add('active');
-        document.getElementById(`${tabName}-tab`).classList.add('active');
-        
-        if (tabName === 'history') {
-            renderHistory();
-        }
+window.changePage = (p) => { currentPage = p; renderHistory(); };
+
+// --- ACCIONES FETCH (ELIMINAR Y LIMPIAR) ---
+
+// Eliminar una sola sesión
+window.deleteSession = async (id) => {
+    const { isConfirmed } = await Swal.fire({
+        title: '¿Eliminar sesión?',
+        text: "Esta acción no se puede deshacer.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        confirmButtonText: 'Sí, eliminar'
     });
-});
 
-document.getElementById('clear-history-btn').addEventListener('click', clearHistory);
-
-studyData.courses.forEach(course => {
-    const option = document.createElement('option');
-    option.value = course.id;
-    option.textContent = course.name;
-    courseSelect.appendChild(option);
-});
-
-courseSelect.addEventListener('change', (e) => {
-    const courseId = parseInt(e.target.value);
-    examSelect.innerHTML = '<option value="">Selecciona una evaluación</option>';
-    examSelect.disabled = true;
-    startBtn.disabled = true;
-    currentObjective.textContent = 'Selecciona una evaluación para comenzar';
-
-    if (courseId && !isNaN(courseId)) {
-        const course = studyData.courses.find(c => c.id === courseId);
-        if (course) {
-            let exams = course.exams;
-            
-            // Si exams es un string (viene de MySQL JSON_ARRAYAGG), parsearlo
-            if (typeof exams === 'string') {
-                try {
-                    exams = JSON.parse(exams);
-                } catch (error) {
-                    console.error('Error parsing exams:', error);
-                    exams = [];
-                }
-            }
-            
-            // Verificar que sea un array válido
-            if (Array.isArray(exams) && exams.length > 0) {
-                exams.forEach(exam => {
-                    const option = document.createElement('option');
-                    option.value = exam.id;
-                    option.textContent = exam.name;
-                    examSelect.appendChild(option);
+    if (isConfirmed) {
+        try {
+            const res = await fetch(`/api/pomodoro/eliminar/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                Swal.fire({
+                icon: "success", // Cambiado de "Limpio" a "success" para que se vea el check verde
+                title: "Sesión Eliminada",
+                text: "Se ha eliminado correctamente. La página se actualizará ahora.",
+                confirmButtonColor: "#28a745",
+                confirmButtonText: "Entendido",
+                allowOutsideClick: false,
+                allowEscapeKey: false // También evita que cierren con la tecla Esc
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.reload();
+                    }
                 });
-                examSelect.disabled = false;
             }
-        }
+        } catch (e) { Swal.fire('Error', 'No se pudo eliminar.', 'error'); }
+    }
+};
+
+// Limpiar todo el historial
+clearHistoryBtn.addEventListener('click', async () => {
+    const { isConfirmed } = await Swal.fire({
+        title: '¿Limpiar todo?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444'
+    });
+
+    if (isConfirmed) {
+        try {
+            const res = await fetch('/api/pomodoro/limpiar', { method: 'DELETE' });
+            if (res.ok) {
+                Swal.fire({
+                    icon: "success", // Cambiado de "Limpio" a "success" para que se vea el check verde
+                    title: "Historial Vaciado",
+                    text: "Se ha limpiado correctamente. La página se actualizará ahora.",
+                    confirmButtonColor: "#28a745",
+                    confirmButtonText: "Entendido",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false // También evita que cierren con la tecla Esc
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.reload();
+                    }
+                });
+            }
+        } catch (e) { console.error(e); }
     }
 });
 
-examSelect.addEventListener('change', (e) => {
-    if (e.target.value) {
-        const examName = e.target.options[e.target.selectedIndex].text;
-        const courseName = courseSelect.options[courseSelect.selectedIndex].text;
-        currentObjective.textContent = examName;
-        currentSession.examName = examName;
-        currentSession.courseName = courseName;
-        currentSession.workSessions = 0;
-        currentSession.breakSessions = 0;
-        currentSession.startTime = null;
-        startBtn.disabled = false;
-    } else {
-        currentObjective.textContent = 'Selecciona una evaluación para comenzar';
-        startBtn.disabled = true;
-    }
-});
+// --- TEMPORIZADOR Y DEMÁS LÓGICA ---
 
 function updateDisplay() {
-    const minutes = Math.floor(timeRemaining / 60);
-    const seconds = timeRemaining % 60;
-    timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    
-    const progress = ((totalTime - timeRemaining) / totalTime) * 100;
-    progressBar.style.width = `${progress}%`;
+    const m = Math.floor(timeRemaining / 60);
+    const s = timeRemaining % 60;
+    timerDisplay.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    progressBar.style.width = `${((totalTime - timeRemaining) / totalTime) * 100}%`;
 }
 
 function startTimer() {
     if (timerInterval) return;
-
-    if (!currentSession.startTime) {
-        currentSession.startTime = new Date();
-    }
+    if (!currentSession.startTime) currentSession.startTime = new Date();
     
-    startBtn.textContent = 'En progreso';
     startBtn.disabled = true;
     pauseBtn.disabled = false;
-    timerDisplay.classList.add('active');
+    const endTime = Date.now() + (timeRemaining * 1000);
 
-    // --- NUEVO CÓDIGO: Calcular la hora exacta en que debe terminar ---
-    const now = Date.now();
-    const endTime = now + (timeRemaining * 1000);
-
-        timerInterval = setInterval(() => {
-            // En lugar de restar 1, calculamos cuánto falta para llegar a endTime
-            const secondsLeft = Math.round((endTime - Date.now()) / 1000);
-            
-            // Actualizamos la variable global con el tiempo real restante
-            timeRemaining = secondsLeft;
-            
-            // Aseguramos que no baje de 0 visualmente antes de detenerse
-            if (timeRemaining < 0) timeRemaining = 0;
-
-            updateDisplay();
-
-            if (timeRemaining <= 0) {
+    timerInterval = setInterval(() => {
+        timeRemaining = Math.round((endTime - Date.now()) / 1000);
+        if (timeRemaining <= 0) {
             clearInterval(timerInterval);
             timerInterval = null;
-            
-            // Reproducir sonido
-            const alarm = document.getElementById('alarm-sound');
-            if (alarm) alarm.play();
-
-            // Alerta visual
-            Swal.fire({
-                title: isWorkMode ? '¡Tiempo de descanso!' : '¡A estudiar!',
-                text: isWorkMode ? 'Buen trabajo, tómate un respiro.' : 'Es hora de volver a enfocarse.',
-                icon: 'info',
-                confirmButtonText: 'Entendido',
-                confirmButtonColor: '#a78bfa'
-            });
-
+            document.getElementById('alarm-sound').play();
+            Swal.fire({ title: isWorkMode ? '¡Descanso!' : '¡A estudiar!', icon: 'info' })
+                .then(() => { 
+                    const a = document.getElementById('alarm-sound');
+                    a.pause(); a.currentTime = 0;
+                });
             if (isWorkMode) currentSession.workSessions++;
-            else currentSession.breakSessions++;
-            
             switchMode();
         }
-    }, 1000); // El intervalo sigue siendo 1 segundo para actualizar la UI
-}
-
-function pauseTimer() {
-    if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-        pauseBtn.textContent = 'Reanudar';
-        startBtn.textContent = 'Iniciar';
-        startBtn.disabled = false;
-        timerDisplay.classList.remove('active');
-    } else {
-        startTimer();
-        pauseBtn.textContent = 'Pausar';
-    }
-}
-
-function formatMySQLDate(date) {
-    if (!date) return new Date().toISOString().slice(0, 19).replace('T', ' ');
-    
-    const pad = (n) => n < 10 ? '0' + n : n;
-    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
-        `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
-}
-
-async function resetTimer() {
-    // Si el temporizador está corriendo, lo pausamos para la validación
-    clearInterval(timerInterval);
-    timerInterval = null;
-
-    // VALIDACIÓN: Solo guardar si se completó al menos 1 ciclo (Pomodoro)
-    if (currentSession.workSessions > 0) {
-        const { value: confirmSave } = await Swal.fire({
-            title: '¿Terminar sesión?',
-            text: `Has completado ${currentSession.workSessions} ciclos. ¿Deseas guardar el progreso en tu historial?`,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#a78bfa',
-            cancelButtonColor: '#f87171',
-            confirmButtonText: 'Sí, guardar',
-            cancelButtonText: 'No, solo reiniciar'
-        });
-
-        if (confirmSave) {
-            // Mostramos un loader mientras se envía el fetch
-            Swal.fire({
-                title: 'Guardando...',
-                didOpen: () => { Swal.showLoading(); }
-            });
-
-            const endTime = new Date();
-            const sessionData = {
-                id_evaluacion: document.getElementById('exam-select').value,
-                descripcion_sesion: `Estudio para ${currentSession.examName}`,
-                hora_inicio: formatMySQLDate(currentSession.startTime),
-                hora_final: formatMySQLDate(endTime),
-                ciclos: currentSession.workSessions
-            };
-
-            try {
-                const response = await fetch('/api/guardar-pomodoro', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(sessionData)
-                });
-
-                if (response.ok) {
-                    addSessionToHistory(); // Actualizar lista visual
-                    Swal.fire({
-                        title: '¡Guardado!',
-                        text: 'Tu sesión ha sido registrada correctamente.',
-                        icon: 'success',
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                } else {
-                    throw new Error();
-                }
-            } catch (error) {
-                Swal.fire('Error', 'No se pudo conectar con el servidor', 'error');
-            }
-        }
-    } else {
-        // Si no completó ni un pomodoro, preguntamos si está seguro de reiniciar sin guardar
-        const { isConfirmed } = await Swal.fire({
-            title: '¿Reiniciar cronómetro?',
-            text: "No has completado ningún ciclo todavía.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, reiniciar',
-            cancelButtonText: 'Cancelar'
-        });
-        
-        if (!isConfirmed) return; // Si cancela, no hace nada
-    }
-
-    // --- Lógica de reseteo de la interfaz (se ejecuta después de guardar o si no hubo ciclos) ---
-    aplicarResetVisual();
-}
-
-// Función auxiliar para limpiar la interfaz y variables
-function aplicarResetVisual() {
-    isWorkMode = true;
-    timeRemaining = 1500;
-    totalTime = 1500;
-    updateDisplay();
-    
-    document.body.classList.remove('break-mode');
-    timerDisplay.classList.remove('break', 'active');
-    progressBar.classList.remove('break');
-    modeIndicator.classList.remove('break');
-    modeIndicator.textContent = 'Modo Estudio';
-    
-    startBtn.textContent = 'Iniciar';
-    const examSelect = document.getElementById('exam-select');
-    startBtn.disabled = examSelect.value === '';
-    
-    pauseBtn.textContent = 'Pausar';
-    pauseBtn.disabled = true;
-
-    currentSession.workSessions = 0;
-    currentSession.breakSessions = 0;
-    currentSession.startTime = null;
+        updateDisplay();
+    }, 1000);
 }
 
 function switchMode() {
     isWorkMode = !isWorkMode;
-    
-    if (isWorkMode) {
-        timeRemaining = 1500;
-        totalTime = 1500;
-        document.body.classList.remove('break-mode');
-        timerDisplay.classList.remove('break');
-        progressBar.classList.remove('break');
-        modeIndicator.classList.remove('break');
-        modeIndicator.textContent = 'Modo Estudio';
-    } else {
-        timeRemaining = 300;
-        totalTime = 300;
-        document.body.classList.add('break-mode');
-        timerDisplay.classList.add('break');
-        progressBar.classList.add('break');
-        modeIndicator.classList.add('break');
-        modeIndicator.textContent = 'Modo Descanso';
-    }
-    
+    timeRemaining = isWorkMode ? STUDY_TIME : BREAK_TIME;
+    totalTime = timeRemaining;
+    modeIndicator.textContent = isWorkMode ? 'Modo Estudio' : 'Modo Descanso';
+    document.body.classList.toggle('break-mode', !isWorkMode);
     updateDisplay();
     startBtn.disabled = false;
-    startBtn.textContent = 'Iniciar';
-    pauseBtn.textContent = 'Pausar';
     pauseBtn.disabled = true;
-    timerDisplay.classList.remove('active');
 }
 
+async function resetTimer() {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    if (currentSession.workSessions > 0) {
+        const { value: save } = await Swal.fire({
+            title: '¿Terminar?',
+            text: `Ciclos: ${currentSession.workSessions}`,
+            showCancelButton: true,
+            confirmButtonText: 'Guardar y Salir'
+        });
+        if (save) {
+            const data = {
+                id_evaluacion: examSelect.value,
+                descripcion_sesion: `Estudio: ${currentSession.examName}`,
+                hora_inicio: currentSession.startTime.toISOString().slice(0, 19).replace('T', ' '),
+                hora_final: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                ciclos: currentSession.workSessions
+            };
+            await fetch('/api/pomodoro/guardar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            Swal.fire({
+                icon: "success",
+                title: "¡Guardado con éxito!",
+                text: "Presiona el botón para continuar.",
+                confirmButtonColor: "#28a745",
+                confirmButtonText: "Ok",
+                allowOutsideClick: false // Evita que cierren la alerta haciendo clic fuera
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.reload();
+                }
+            });
+            
+        }
+    }
+}
+
+function updateStatsSummary(h) {
+    document.getElementById('total-sessions').textContent = h.reduce((s, x) => s + parseInt(x.workSessions || 0), 0);
+    document.getElementById('total-minutes').textContent = h.reduce((s, x) => s + parseInt(x.totalMinutes || 0), 0);
+    document.getElementById('total-breaks').textContent = h.length;
+}
+
+// Tabs y Selects
+document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn, .tab-content').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    document.getElementById(`${b.dataset.tab}-tab`).classList.add('active');
+    if (b.dataset.tab === 'history') renderHistory();
+}));
+
+studyData.courses.forEach(c => {
+    const o = document.createElement('option');
+    o.value = c.id; o.textContent = c.name;
+    courseSelect.appendChild(o);
+});
+
+courseSelect.addEventListener('change', (e) => {
+    const c = studyData.courses.find(x => x.id == e.target.value);
+    examSelect.innerHTML = '<option value="">Selecciona evaluación</option>';
+    if (c) {
+        JSON.parse(c.exams).forEach(ex => {
+            const o = document.createElement('option');
+            o.value = ex.id; o.textContent = ex.name;
+            examSelect.appendChild(o);
+        });
+        examSelect.disabled = false;
+    }
+});
+
+examSelect.addEventListener('change', (e) => {
+    startBtn.disabled = !e.target.value;
+    currentSession.examName = e.target.options[e.target.selectedIndex]?.text;
+    currentObjective.textContent = currentSession.examName || 'Selecciona evaluación';
+});
+
 startBtn.addEventListener('click', startTimer);
-pauseBtn.addEventListener('click', pauseTimer);
+pauseBtn.addEventListener('click', () => {
+    clearInterval(timerInterval); timerInterval = null; startBtn.disabled = false;
+});
 resetBtn.addEventListener('click', resetTimer);
 
 updateDisplay();

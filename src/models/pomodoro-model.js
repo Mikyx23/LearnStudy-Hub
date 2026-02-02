@@ -1,5 +1,11 @@
 import {pool} from './conexion.js';
-import { GET_POMODORO_DATA, INSERT_POMODORO_SESSION } from './queries.js';
+import { 
+    GET_POMODORO_DATA, 
+    INSERT_POMODORO_SESSION, 
+    GET_SESSIONS_DATA,
+    DELETE_POMODORO_SESSION,
+    DELETE_POMODORO_HISTORY
+} from './queries.js';
 
 export class Pomodoro {
     static CrearSesionPomodoro = async (id_evaluacion, descripcion_sesion, hora_inicio, hora_final, ciclos) => {
@@ -23,6 +29,48 @@ export class Pomodoro {
         }
     }
 
+    static LimpiarPomodoro = async (id_usuario, id_lapso) => {
+        try{
+            const [result] = await pool.execute(DELETE_POMODORO_HISTORY, [id_usuario, id_lapso]);
+
+            if(result.affectedRows > 0){
+                return {
+                    success: true,
+                }
+            }
+            else{
+                return {
+                    success: false,
+                    message: 'No se ha podido limpiar el pomodoro'
+                }
+            }
+        }
+        catch(error){
+            throw new Error('Error al limpiar el pomodoro');
+        }   
+    }
+
+    static LimpiarSesionPomodoro = async (id_sesion) => {
+        try{
+            const [result] = await pool.execute(DELETE_POMODORO_SESSION, [id_sesion]);
+
+            if(result.affectedRows > 0){
+                return {
+                    success: true,
+                }
+            }
+            else{
+                return {
+                    success: false,
+                    message: 'No se ha podido limpiar la sesión del pomodoro'
+                }
+            }
+        }
+        catch(error){
+            throw new Error('Error al limpiar la sesión del pomodoro');
+        }
+    }
+
     static ObtenerDatosPomodoro = async (id_usuario, id_lapso) => {
         try{
             const [rows] = await pool.query(GET_POMODORO_DATA, [id_usuario, id_lapso]);
@@ -42,6 +90,28 @@ export class Pomodoro {
         }
         catch(error){
             throw new Error('Error al obtener los datos del pomodoro');
+        }
+    }
+
+    static ObtenerDatosSesiones = async (id_usuario, id_lapso) => {
+        try{
+            const [rows] = await pool.query(GET_SESSIONS_DATA, [id_usuario, id_lapso]);
+
+            if(rows.length > 0){
+                return {
+                    success: true,
+                    data: rows
+                }
+            }
+            else{
+                return {
+                    success: false,
+                    message: 'No se encontraron datos de las sesiones'
+                }
+            }
+        }
+        catch(error){
+            throw new Error('Error al obtener los datos de las sesiones');
         }
     }
 }
