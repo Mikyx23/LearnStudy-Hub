@@ -98,6 +98,8 @@
                         <p>No hay sesiones registradas aún</p>
                     </div>
                 </div>
+                
+                <div id="pagination-container"></div>
             </div>
         </div>
     </div>
@@ -106,7 +108,17 @@
         preload="auto"></audio>
     <script>
         const studyData = {
-            courses: <% - JSON.stringify(data) %>
+            courses: <%- JSON.stringify(data) %>,
+            // Mapeamos los campos de la DB a los que usa tu JS original
+            history: (<%- JSON.stringify(sesiones) %>).map(s => ({
+                id: s.id_sesion,
+                courseName: s.asignatura,
+                examName: s.nombre_evaluacion,
+                workSessions: s.ciclos,
+                breakSessions: 0, // Opcional
+                totalMinutes: s.minutos_totales,
+                date: s.fecha_sesion
+            }))
         };
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

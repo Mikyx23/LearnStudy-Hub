@@ -26,9 +26,25 @@ routerLogin.post('/', async (req, res) => {
     const { cedula, password, timezone } = req.body;
     
     const result = await VerificarUsuario(cedula,password);
-    console.log(result.rol);
-    if(result.success){
-        const token = jwt.sign({id: result.id, carrer: result.carrers[0], name: result.name, lastname: result.lastname, timezone: timezone, rol: result.rol}, jwtSecret, {
+
+    if(!result.success){
+        return res.status(400).json({message: 'Cedula o contrasena invalida'});
+    }
+
+    const usuario = result.user;
+
+    const carreras = typeof usuario.carreras === 'string' 
+    ? JSON.parse(usuario.carreras) 
+    : usuario.carreras;
+
+    if (carreras.length > 1) {
+        return res.json({ 
+            requiereSeleccion: true, 
+            carreras: carreras 
+        });
+    }
+    else{
+        const token = jwt.sign({id: usuario.id_usuario, carrer: carreras[0].id, name: usuario.nombre, lastname: usuario.apellido, timezone: timezone, rol: usuario.rol}, jwtSecret, {
             expiresIn: '1h'
         });
 
@@ -42,8 +58,63 @@ routerLogin.post('/', async (req, res) => {
             redirectUrl: '/api/dashboard',
         });
     }
-    else{
-        res.status(400).json({message: 'Cedula o contrasena invalida'});
+});
+
+routerLogin.post('/finalizar-login', async (req, res) => {
+    const { cedula, password, carreraId, timezone } = req.body;
+    
+    try {
+        // 1. Re-verificamos al usuario por seguridad 
+        // (Esto asegura que nadie mande un carreraId de otra persona por consola)
+        const result = await VerificarUsuario(cedula, password);
+
+        if (!result.success) {
+            return res.status(401).json({ message: 'Sesión inválida' });
+        }
+
+        const usuario = result.user;
+
+        // 2. IMPORTANTE: Validar que el carreraId enviado esté entre sus carreras permitidas
+        // usuario.carreras viene de tu SQL con JSON_ARRAYAGG
+        const carrerasPermitidas = typeof usuario.carreras === 'string' 
+            ? JSON.parse(usuario.carreras) 
+            : usuario.carreras;
+
+        const tieneAcceso = carrerasPermitidas.some(c => c.id == carreraId);
+
+        if (!tieneAcceso) {
+            return res.status(403).json({ message: 'No tienes acceso a esta carrera' });
+        }
+
+        // 3. Si todo es correcto, buscamos el nombre de la carrera seleccionada
+        const carreraSeleccionada = carrerasPermitidas.find(c => c.id == carreraId);
+
+        // 4. Firmamos el JWT DEFINITIVO incluyendo el carreraId elegido
+        const token = jwt.sign({
+            id: usuario.id_usuario,
+            carrer: carreraId,
+            carreraNombre: carreraSeleccionada.nombre,
+            name: usuario.nombre,
+            lastname: usuario.apellido,
+            timezone: timezone,
+            rol: usuario.rol
+        }, jwtSecret, { expiresIn: '1h' });
+
+        // 5. Seteamos la cookie
+        res.cookie('access_token', token, {
+            httpOnly: true,
+            sameSite: 'strict',
+            maxAge: 1000 * 60 * 60 // 1 hora
+        });
+
+        // 6. Respondemos con la redirección
+        res.status(200).json({
+            redirectUrl: '/api/dashboard',
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error interno del servidor' });
     }
 });
 

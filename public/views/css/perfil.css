@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 :root {
     --primary-color: #4a90e2;
     --text-dark: #333;
@@ -7,6 +8,7 @@
     --white: #ffffff;
     --success: #2ecc71;
     --danger: #e74c3c;
+    --overlay-black: rgba(0, 0, 0, 0.6);
 }
 
 * {
@@ -28,6 +30,7 @@ body {
     flex: 1;
     max-width: 900px;
     margin: 0 auto;
+    padding: 0 1rem;
 }
 
 /* --- Tarjeta del Perfil --- */
@@ -43,14 +46,60 @@ body {
     margin-top: 1rem;
 }
 
+/* CONTENEDOR DE IMAGEN (MODIFICADO) */
+.profile-image {
+    position: relative; /* Necesario para posicionar el icono encima */
+    width: 120px;
+    height: 120px;
+    flex-shrink: 0;
+}
+
 .profile-image img {
     width: 120px;
     height: 120px;
     border-radius: 50%;
     object-fit: cover;
-    border: 4px solid var(--bg-color);
+    border: 4px solid var(--white);
+    display: block;
 }
 
+/* OVERLAY PARA SUBIR FOTO (NUEVO) */
+.upload-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--overlay-black);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    opacity: 0; /* Oculto por defecto */
+    transition: opacity 0.3s ease;
+    border: 4px solid transparent;
+}
+
+.profile-image:hover .upload-overlay {
+    opacity: 1; /* Aparece al pasar el mouse */
+}
+
+.upload-overlay i {
+    width: 28px;
+    height: 28px;
+    margin-bottom: 4px;
+}
+
+.upload-text {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* --- Información del Perfil --- */
 .profile-info {
     flex: 1;
 }
@@ -59,6 +108,11 @@ body {
     font-size: 1.8rem;
     margin-bottom: 0.5rem;
     color: #156ed3;
+}
+
+.profile-info p {
+    color: var(--text-light);
+    font-weight: 500;
 }
 
 .info-grid {
@@ -86,6 +140,7 @@ body {
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     padding: 2rem;
+    margin-bottom: 2rem;
 }
 
 .section-title {

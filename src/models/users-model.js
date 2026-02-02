@@ -117,28 +117,28 @@ export class Usuarios{
     static VerificarUsuario = async (cedula,password) => {
         try{
             const query = `
-                SELECT 
-                    u.id_usuario, 
-                    u.nombre, 
-                    u.apellido, 
-                    u.contraseña, 
-                    ic.id_carrera AS inscripcion,
-                    u.rol 
-                FROM tbl_usuarios u 
-                INNER JOIN tbl_inscripciones_carreras ic ON u.id_usuario = ic.id_usuario  
-                WHERE cedula = ?`
+            SELECT 
+            u.id_usuario, 
+            u.nombre, 
+            u.apellido, 
+            u.contraseña, 
+            u.rol,
+            JSON_ARRAYAGG(
+                JSON_OBJECT('id', ic.id_carrera, 'nombre', c.nombre_carrera)
+            ) AS carreras
+            FROM tbl_usuarios u 
+            INNER JOIN tbl_inscripciones_carreras ic ON u.id_usuario = ic.id_usuario
+            INNER JOIN tbl_carreras c ON ic.id_carrera = c.id_carrera
+            WHERE u.cedula = ?
+            GROUP BY u.id_usuario;`
+
             const cedulaParseada = parseInt(cedula,10);
             const [rows] = await pool.execute(query,[cedulaParseada]);
-            const inscripciones = rows.map(fila => fila.inscripcion);
-
+    
             if(rows.length > 0 && compareSync(password,rows[0].contraseña)){
                 return {
                     success: true,
-                    id: rows[0].id_usuario,
-                    name: rows[0].nombre,
-                    lastname: rows[0].apellido,
-                    carrers: inscripciones,
-                    rol: rows[0].rol
+                    user: rows[0],
                 };
             }
             else{

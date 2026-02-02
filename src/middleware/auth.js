@@ -15,10 +15,14 @@ export const getToken = (req, res, next) =>{
 };
 
 export const authenticateUser = (req, res, next) => {
-    const {user} = req.session;
+    if (req.path.startsWith('/api/login') || req.path === '/') {
+        return next();
+    }
+
+    const user = req.session?.user;
 
     if (!user) {
         return res.status(401).send('<h1>Acceso denegado: Token no proporcionado</h1>');
     }
-    next()
+    next();
 }

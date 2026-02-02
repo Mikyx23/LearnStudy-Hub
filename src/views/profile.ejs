@@ -18,6 +18,13 @@
         <div class="profile-card">
             <div class="profile-image">
                 <img src="<%= user.foto_perfil || '/images/default-avatar.svg' %>" alt="Foto de perfil">
+                
+                <form id="upload-form" action="/api/perfil/foto-perfil" method="POST" enctype="multipart/form-data">
+                    <label for="fotoPerfil" class="upload-overlay">
+                        <i data-lucide="camera"></i>
+                    </label>
+                    <input type="file" id="fotoPerfil" name="fotoPerfil" accept="image/*" onchange="this.form.submit()" style="display: none;">
+                </form>
             </div>
             <div class="profile-info">
                 <h1>
