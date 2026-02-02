@@ -22,7 +22,7 @@ routerPomodoro.get('/', async (req, res) => {
         const result2 = await ObtenerDatosSesionesController(user.id, lapsoActual);
 
         // Ruta absoluta al script
-        const scriptPath = path.join(__dirname, '../data-structures/structures.py');
+        const scriptPath = path.join(__dirname, '../data-structures/pila.py');
         const pythonProcess = spawn('python', [scriptPath]);
 
         let dataFromPython = "";
