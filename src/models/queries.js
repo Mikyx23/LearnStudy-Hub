@@ -183,12 +183,16 @@ export const GET_MALLA_CURRICULAR = `
 `;
 
 // ----- QUERIES PROFILE -----
+
+export const UPDATE_PROFILE_PHOTO = `UPDATE tbl_usuarios SET foto = ? WHERE id_usuario = ?;`;    
+
 export const GET_USER_PROFILE = `
 SELECT 
     u.nombre AS name,
     u.apellido AS lastname,
     u.cedula,
     u.correo AS email,
+    u.foto AS foto_perfil,
     c.nombre_carrera AS career,
     -- Unidades de Crédito Cursadas (UCC)
     SUM(CASE WHEN nota_estudiante.nota_final IS NOT NULL THEN ac.uc_asignatura ELSE 0 END) AS ucc,
@@ -220,7 +224,7 @@ INNER JOIN tbl_inscripciones_carreras ic ON u.id_usuario = ic.id_usuario
 INNER JOIN tbl_carreras c ON ic.id_carrera = c.id_carrera
 INNER JOIN tbl_asignaturas_carreras ac ON c.id_carrera = ac.id_carrera
 INNER JOIN tbl_asignaturas a ON ac.id_asignatura = a.id_asignatura
--- Unión con las notas calculadas ponderadamente (Modificado)
+-- Unión con las notas calculadas ponderadamente
 LEFT JOIN (
     SELECT 
         ca.id_asignatura_carrera,
@@ -231,7 +235,7 @@ LEFT JOIN (
     GROUP BY ca.id_asignatura_carrera
 ) AS nota_estudiante ON ac.id_asignatura_carrera = nota_estudiante.id_asignatura_carrera
 WHERE u.id_usuario = ? AND c.id_carrera = ?
-GROUP BY u.id_usuario, c.id_carrera;
+GROUP BY u.id_usuario, c.id_carrera, u.foto;
 `;
 
 // ----- QUERIES CURSOS -----
