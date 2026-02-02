@@ -22,9 +22,9 @@ document.addEventListener("DOMContentLoaded", () => {
         ],
         footer: {
             socials: [
-                { name: "Facebook", icon: "fab fa-facebook-f", href: "#" },
-                { name: "Instagram", icon: "fab fa-instagram", href: "#" },
-                { name: "Twitter", icon: "fab fa-x-twitter", href: "#" }
+                { name: "Facebook", icon: "facebook", href: "#" },    // Cambiado de 'fab fa-facebook-f'
+                { name: "Instagram", icon: "instagram", href: "#" }, // Cambiado de 'fab fa-instagram'
+                { name: "X", icon: "twitter", href: "#" }            // Cambiado de 'fab fa-x-twitter'
             ],
             links: [
                 { name: "Política de Privacidad", href: "/privacidad" },
@@ -50,14 +50,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             <nav class="sidebar-menu">
                 ${appConfig.menuItems.map(item => {
-                    const isActive = currentPath.startsWith(item.href);
-                    return `
+        const isActive = currentPath.startsWith(item.href);
+        return `
                         <a href="${item.href}" class="nav-item-app ${isActive ? "active" : ""}">
                             <i data-lucide="${item.icon}" class="menu-icon"></i>
                             <span class="nav-text">${item.name}</span>
                         </a>
                     `;
-                }).join("")}
+    }).join("")}
             </nav>
         </div>
 
@@ -72,13 +72,10 @@ document.addEventListener("DOMContentLoaded", () => {
     /* =========================
         HEADER
     ========================== */
-/* =========================
-    HEADER
-========================== */
-const header = document.createElement("header");
-header.className = "app-header";
+    const header = document.createElement("header");
+    header.className = "app-header";
 
-header.innerHTML = `
+    header.innerHTML = `
         <div class="header-brand-container">
             <a href="/api/dashboard" class="brand-logo header-mode">
                 ${appConfig.appNameHTML}
@@ -98,20 +95,20 @@ header.innerHTML = `
         </a>
     `;
 
-sidebar.after(header);
+    sidebar.after(header);
 
     /* =========================
         FOOTER
     ========================== */
-    const footerElement = document.createElement("footer"); // Renamed to avoid collision with appConfig.footer
+    const footerElement = document.createElement("footer");
     footerElement.className = "app-footer";
 
     footerElement.innerHTML = `
         <div class="footer-container">
             <div class="footer-socials">
                 ${appConfig.footer.socials.map(s => `
-                    <a href="${s.href}" aria-label="${s.name}">
-                        <i class="${s.icon}"></i>
+                    <a href="${s.href}" target="_blank" rel="noopener noreferrer" aria-label="${s.name}">
+                        <i data-lucide="${s.icon}"></i>
                     </a>
                 `).join("")}
             </div>
@@ -130,13 +127,18 @@ sidebar.after(header);
 
     document.body.append(footerElement);
 
-    document.getElementById("year").textContent = new Date().getFullYear();
+    // Actualizar el año
+    const yearEl = document.getElementById("year");
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
+
     document.body.classList.add("app-layout");
 
     /* =========================
-        LUCIDE ICONS
+        LUCIDE ICONS (RE-RENDER)
     ========================== */
     if (window.lucide) {
-        lucide.createIcons();
+        window.lucide.createIcons();
+    } else {
+        console.warn("Lucide no se encontró. Revisa que el script CDN esté en el HTML.");
     }
 });
