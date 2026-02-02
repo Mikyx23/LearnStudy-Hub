@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pomodoro Study Hub</title>
     <link rel="stylesheet" href="/views/css/layout.css">
     <link rel="stylesheet" href="/views/css/pomodoro.css">
-    <script src="/views/javascript/layout.js" ></script>
+    <script src="/views/javascript/layout.js"></script>
 
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -17,8 +19,12 @@
         </div>
 
         <div class="tab-container">
-            <button class="tab-btn active" data-tab="timer">⏱️ Temporizador</button>
-            <button class="tab-btn" data-tab="history">📊 Historial</button>
+            <button class="tab-btn active" data-tab="timer">
+                <i data-lucide="timer" class="icon-sm"></i> Temporizador
+            </button>
+            <button class="tab-btn" data-tab="history">
+                <i data-lucide="history" class="icon-sm"></i> Historial
+            </button>
         </div>
 
         <div class="main-card">
@@ -79,27 +85,33 @@
 
                 <div class="history-header">
                     <h2>Sesiones Anteriores</h2>
-                    <button class="clear-history-btn" id="clear-history-btn">🗑️ Limpiar Historial</button>
+                    <button class="clear-history-btn" id="clear-history-btn">
+                        <i data-lucide="trash-2" class="icon-sm"></i> Limpiar Historial
+                    </button>
                 </div>
 
                 <div class="history-section" id="history-section">
                     <div class="empty-history">
-                        <div class="empty-history-icon">📋</div>
+                        <div class="empty-history-icon">
+                            <i data-lucide="clipboard-list" size="48"></i>
+                        </div>
                         <p>No hay sesiones registradas aún</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <audio id="alarm-sound" src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg" preload="auto"></audio>
+    </div>
+    <audio id="alarm-sound" src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg"
+        preload="auto"></audio>
     <script>
         const studyData = {
-            courses: <%- JSON.stringify(data) %>
+            courses: <% - JSON.stringify(data) %>
         };
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="/views/javascript/pomodoro.js" ></script>
+    <script src="/views/javascript/pomodoro.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             // Inicializar iconos de Lucide
@@ -109,4 +121,5 @@
         });
     </script>
 </body>
+
 </html>

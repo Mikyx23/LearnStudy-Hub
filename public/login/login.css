@@ -6,24 +6,29 @@
 }
 
 body{
-    height: 100vh;
+    min-height: 100vh;
+    background-attachment: fixed;
+    gap : 30px;
+
     /* background-color: rgba(64, 107, 173, 0.712); */
     background-image: url('/images/vista-de-angulo-alto-de-la-computadora-portatil-y-papeleria-sobre-fondo-azul.jpg');
     background-position: center;
     background-size: cover;
     display: flex;
     flex-direction: column;
-    gap: 50px;
     /* PATRON DE LOGO*/   
     position: relative;
     overflow-x: hidden;
+    
 }
 
 /* Overlay para el fondo */
 .overlay{
-    position: absolute;
+    position: fixed;
+    top: 0;
+    left: 0;
     height: 100vh;
-    width: 100vw;
+    width: 100%;
     background: linear-gradient(135deg, rgba(20, 60, 120, 0.8), rgba(10, 30, 60, 0.7)); 
     z-index: -1;
 
@@ -32,10 +37,10 @@ body{
 /* patrón derecho */
 
 .body-pattern {
-    position: absolute;
+    position: fixed;
     top: -5%;
     left: -10%;
-    width: 60%;
+    width: 55%;
     height: 110%;
     background-image: url('/images/Logo_sin_fondo.png'); 
     background-repeat: repeat;
@@ -299,5 +304,33 @@ label{
     }
     50% {
         transform: translate(20px, 10px) scale(1.05);
+    }
+}
+
+/* Media Queries para dispositivos móviles */
+@media (max-width: 480px) {
+    .form-container {
+        width: 90%; /* Ocupa casi todo el ancho disponible */
+        padding: 1.5rem;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .header-logo h1 {
+        font-size: 1.4rem; /* Texto más pequeño en móviles */
+    }
+
+    .name-lastname-container {
+        flex-direction: column; /* Nombre y Apellido uno arriba del otro */
+        gap: 0;
+    }
+
+    .user-icon {
+        font-size: 4rem;
+        top: -70px; /* Ajuste de la posición del icono superior */
+    }
+
+    .btn-register {
+        width: 100%; /* Botón de registro al ancho completo */
     }
 }
