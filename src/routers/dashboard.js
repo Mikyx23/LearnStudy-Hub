@@ -25,7 +25,8 @@ routerDashboard.get('/', async(req,res) => {
             next_exam: result2?.data?.[0] || {},
             exams: result2?.data || [],
             DateTime: DateTime,
-            frase: result4?.frase || ''
+            frase: result4?.frase || '',
+            userData: res.userData
         });
     }
     catch(error){

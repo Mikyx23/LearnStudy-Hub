@@ -8,11 +8,11 @@
     <link rel="icon" type="image/png" href="/images/logo_sin_fondo.png">
     <link rel="stylesheet" href="/views/css/layout.css">
     <link rel="stylesheet" href="/views/css/pomodoro.css">
-    <script src="/views/javascript/layout.js"></script>
-
 </head>
 
 <body>
+    <%- include('partials/_sidebar') %>
+    <%- include('partials/_header') %>
     <div class="container">
         <div class="header">
             <h1> Pomodoro</h1>
@@ -104,7 +104,7 @@
             </div>
         </div>
     </div>
-    </div>
+    <%- include('partials/_footer') %>
     <audio id="alarm-sound" src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg"
         preload="auto"></audio>
     <script>

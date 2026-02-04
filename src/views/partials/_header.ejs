@@ -1,0 +1,19 @@
+<header class="app-header">
+    <div class="header-brand-container">
+        <a href="/api/dashboard" class="brand-logo header-mode">
+            LearnStudy<span class="brand-highlight">Hub</span>
+        </a>
+    </div>
+
+    <a href="/api/perfil" class="user-profile-link">
+        <div class="user-profile">
+            <div class="user-info">
+                <small>Bienvenido,</small>
+                <strong> <%= (userData && userData.name) ? userData.name : 'Estudiante' %> </strong>
+            </div>
+            <div class="user-avatar">
+                <%= userData ? userData.initials : 'ES' %>
+            </div>
+        </div>
+    </a>
+</header>

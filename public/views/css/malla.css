@@ -17,12 +17,9 @@
 }
 
 body {
-    margin: 0;
-    padding: 0;
-    background-color: var(--bg-color);
+    /* Los estilos de layout se manejan en layout.css */
     font-family: var(--font-family);
     color: var(--text-main);
-    overflow-x: hidden; /* Evita scroll lateral */
 }
 
 body::before {
@@ -41,35 +38,27 @@ body::before {
         animation: floatingPattern 20s ease-in-out infinite;
     }
 
-/* Header más compacto para ganar espacio vertical */
-.main-header {
-    text-align: center;
-    padding: 15px 10px;
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-    color: white;
-    margin-bottom: 10px;
-    box-shadow: var(--shadow-sm);
-}
-
-.main-header h1 {
-    margin: 0;
-    font-size: 1.2rem;
-    font-weight: 700;
-}
-
-.subtitulo {
-    margin: 2px 0 0;
-    opacity: 0.8;
-    font-weight: 300;
-    font-size: 0.85rem;
-}
-
 /* Contenedor de Malla optimizado para ancho total */
 .malla {
-    max-width: 99vw;
+    width: 100%;
     margin: 0 auto;
-    padding: 0 50px 20px;
-    padding-top: 30px; 
+    padding: 20px;
+}
+
+/* Info alerta */
+.info-alerta {
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    background: #dbeafe;
+    border-left: 4px solid var(--primary-color);
+    color: #1e40af;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.info-alerta--hidden {
+    display: none;
 }
 
 /* Grid de 10 columnas fijas */

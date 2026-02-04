@@ -7,11 +7,10 @@
     <link rel="icon" type="image/png" href="/images/logo_sin_fondo.png">
     <link rel="stylesheet" href="/views/css/layout.css"> 
     <link rel="stylesheet" href="/views/css/qualifications.css">
-    <script src="/views/javascript/layout.js" ></script>
-
 </head>
 <body>
-    
+    <%- include('partials/_sidebar') %>
+    <%- include('partials/_header') %>
     <div class="container">
         <% if(mensaje){ %>
                 <div id="no-courses-msg" class="no-courses-card">
@@ -78,9 +77,8 @@
                 </form>
             </div>
         </div>
-
     </div>
-
+    <%- include('partials/_footer') %>
     <script>
         // Datos de ejemplo basados en la estructura de base de datos
         // 1. Cargamos y limpiamos studentCourses (convertimos promedio a número)

@@ -58,7 +58,8 @@ routerPomodoro.get('/', async (req, res) => {
 
             res.render('pomodoro', {
                 data: result.data || [],
-                sesiones: sesionesProcesadas || []
+                sesiones: sesionesProcesadas || [],
+                userData: res.userData
             });
         });
     } catch (error) {

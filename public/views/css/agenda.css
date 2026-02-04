@@ -41,13 +41,8 @@
 
 /* Estilos Generales */
 body {
+    /* Los estilos de layout se manejan en layout.css */
     font-family: var(--font-body);
-    background-color: var(--bg-light);
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    padding-top: 100px;
     color: var(--text-body);
     line-height: 1.6;
 }
@@ -80,21 +75,6 @@ body::before {
         transform: translate(15px, 10px) scale(1.02);
     }
 }
-
-.main-container {
-    flex: 1;
-    padding: 20px;
-}
-
-/* Navbar (mantenido igual) */
-.navbar { padding: 20px 0; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); }
-.navbar.scrolled { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(12px); padding: 12px 0; box-shadow: var(--shadow-soft); }
-.brand-icon { color: var(--primary); margin-right: 8px; }
-.text-highlight { color: var(--primary); font-weight: 800; }
-.nav-link { color: var(--dark) !important; font-weight: 500; margin: 0 15px; transition: color 0.3s; font-family: var(--font-body); }
-.nav-link:hover { color: var(--primary) !important; }
-.btn-glow { background: var(--grad-primary); color: var(--white); padding: 12px 28px; border-radius: 50px; font-weight: 600; transition: all 0.3s; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); border: none; font-family: var(--font-body); }
-.btn-glow:hover { background: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-hover); }
 
 /* Contenedor Agenda */
 .contenedor-angeda {

@@ -26,3 +26,16 @@ export const authenticateUser = (req, res, next) => {
     }
     next();
 }
+
+export const userData = (req, res, next) => {
+    const {user} = req.session
+
+    const username = user.name + " " + user.lastname
+    const nameInitials = user.name[0] + user.lastname[0]
+
+    res.userData = {
+        name: username,
+        initials: nameInitials
+    };
+    next();
+}

@@ -11,8 +11,6 @@
     <link rel="stylesheet" href="/views/css/layout.css">
     <link rel="stylesheet" href="/css/tailwind.css">
     <link rel="stylesheet" href="/views/css/dashboard.css">
-    <script src="/views/javascript/layout.js" ></script>
-
 
     <style>
         /* Ajustes específicos para el Dashboard que no interfieren con el layout global */
@@ -68,6 +66,9 @@
 </head>
 
 <body class="app-layout bg-slate-100 text-slate-800 font-sans">
+
+    <%- include('partials/_sidebar') %>
+    <%- include('partials/_header') %>
 
     <main class="main-content-wrapper">
         <div class="grid grid-cols-12 gap-6">
@@ -205,6 +206,9 @@
 
         </div> 
     </main>
+
+    <%- include('partials/_footer') %>
+    
     <script src="/views/javascript/dashboard.js"></script>
     <script>
         // Inicializar iconos de Lucide

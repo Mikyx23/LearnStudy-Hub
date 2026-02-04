@@ -21,7 +21,8 @@
 }
 
 body {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    /* background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); */
+    /* El background se maneja en layout.css */
     min-height: 100vh;
     color: var(--dark);
 
@@ -55,17 +56,13 @@ body::before {
     }
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
 /* Grid de Cursos */
 .courses-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 25px;
-    margin: 40px 0;
+    margin: 40px auto;
+    max-width: 1200px;
 }
 
 .course-card {
@@ -471,9 +468,4 @@ body::before {
         gap: 20px;
         justify-content: center;
     }
-}
-
-body > .container {
-    grid-column: 1 / -1;
-    width: 100%;
 }

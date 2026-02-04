@@ -10,9 +10,7 @@
     <link rel="stylesheet" href="/views/css/layout.css">
     <link rel="stylesheet" href="/css/tailwind.css">
     <link rel="stylesheet" href="/views/css/courses.css">
-    <script src="/views/javascript/layout.js" ></script>
 
-    
     <style>
         body, h1, h2, h3, h4, p, span, button, input {
             font-family: 'Inter', sans-serif !important;
@@ -49,20 +47,22 @@
     </style>
 </head>
 <body class="text-slate-800 bg-slate-50">
-
-    <main class="max-w-7xl mx-auto p-6 md:p-10">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
-            <div>
-                <h1 class="text-4xl text-slate-900 font-extrabold tracking-tight">Mis Cursos</h1>
-                <p class="text-slate-500 mt-1 font-medium">
-                    <% if (misAsignaturas.length > 0) { %>
-                        Tienes <%= misAsignaturas.length %> cursos activos. <%= creditosInscritos || 0 %> unidades de crédito inscritas.
-                    <% } else { %>
-                        No tienes materias inscritas todavía.
-                    <% } %>
-                </p>
+    <%- include('partials/_sidebar') %>
+    <%- include('partials/_header') %>
+    <main class="container">
+        <div class="max-w-7xl mx-auto p-6 md:p-10">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+                <div>
+                    <h1 class="text-4xl text-slate-900 font-extrabold tracking-tight">Mis Cursos</h1>
+                    <p class="text-slate-500 mt-1 font-medium">
+                        <% if (misAsignaturas.length > 0) { %>
+                            Tienes <%= misAsignaturas.length %> cursos activos. <%= creditosInscritos || 0 %> unidades de crédito inscritas.
+                        <% } else { %>
+                            No tienes materias inscritas todavía.
+                        <% } %>
+                    </p>
+                </div>
             </div>
-        </div>
 
         <% if (misAsignaturas.length === 0) { %>
             <div class="flex flex-col items-center justify-center py-20 border-2 border-dashed border-slate-200 rounded-3xl bg-white">
@@ -113,9 +113,10 @@
                     <p class="text-slate-400 mt-4 group-hover:text-blue-600 font-bold">Nueva materia</p>
                 </button>
             </div>
+        </div>
         <% } %>
     </main>
-
+    <%- include('partials/_footer') %>
     <div id="courseModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="toggleModal()"></div>
         <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl z-10 overflow-hidden">

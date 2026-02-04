@@ -15,14 +15,16 @@ routerHorario.get('/', async (req,res) => {
             res.render('horario', {
                 materias: result.courses || [],
                 horarios: result2.schedule || [],
-                mensaje: false
+                mensaje: false,
+                userData: res.userData
             })
         }
         else{
             res.render('horario', {
                 materias: [],
                 horarios: [],
-                mensaje: true
+                mensaje: true,
+                userData: res.userData
             })
         }
     }
