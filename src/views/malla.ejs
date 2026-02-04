@@ -10,7 +10,9 @@
 <body>
     <%- include('partials/_sidebar') %>
     <%- include('partials/_header') %>
-    <main class="app-content">
+    
+    <!-- CAMBIO: Usar .container en lugar de .app-content -->
+    <div class="container">
         <div id="info-alerta" class="info-alerta info-alerta--hidden">
         </div>
         <div class="malla">
@@ -47,7 +49,8 @@
                 <% } %>
             </div>
         </div>
-    </main>
+    </div>
+    
     <%- include('partials/_footer') %>
 <script>
     const pensum = <%- JSON.stringify(pensum) %>.map(m => {

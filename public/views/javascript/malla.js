@@ -58,9 +58,9 @@ function ClickAsignatura(codigoSeleccionado) {
         if (alerta) {
             if (mensajes.length > 0) {
                 alerta.innerHTML = mensajes.join('<br>');
-                alerta.classList.remove('d-none');
+                alerta.classList.remove('info-alerta--hidden');
             } else {
-                alerta.classList.add('d-none');
+                alerta.classList.add('info-alerta--hidden');
             }
         }
     }
@@ -79,7 +79,7 @@ function ReiniciarEstilos() {
     });
 
     const alerta = document.getElementById('info-alerta');
-    if (alerta) alerta.classList.add('d-none');
+    if (alerta) alerta.classList.add('info-alerta--hidden');
 }
 
 window.ClickAsignatura = ClickAsignatura;

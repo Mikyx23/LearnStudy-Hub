@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,189 +8,193 @@
     <link rel="stylesheet" href="/views/css/agenda.css">
 </head>
 <body>
-<main class="main-container">
     <%- include('partials/_sidebar') %>
     <%- include('partials/_header') %>
-<!-- Sección Agenda -->
-    <div class="contenedor-angeda" id="agenda">
-        <h1>Recordatorio de Evaluaciones</h1>
-        
-        <form id="formulario-evaluaciones" method="POST" action="/api/agenda/registrar"> 
-            <!-- Campos generales -->
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="asignatura">Asignatura:</label>
-                    <select id="asignatura" name="asignatura_id" required>
-                        <option value="">Seleccione una asignatura</option>
-                        <% asignaturas.forEach(function(asig) { %>
-                            <option value="<%= asig.id %>"><%= asig.nombre %></option>
-                        <% }); %>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="corte">Corte:</label>
-                    <select id="corte" name="corte" required>
-                        <option value="">Seleccione un corte</option>
-                        <option value="1">Corte 1 (Máx 30%)</option>
-                        <option value="2">Corte 2 (Máx 30%)</option>
-                        <option value="3">Corte 3 (Máx 40%)</option>
-                    </select>
-                </div>
-            </div>
+    
+    <!-- CAMBIO: Usar .container en lugar de .main-container -->
+    <div class="container">
+        <!-- Sección Agenda -->
+        <div class="contenedor-angeda" id="agenda">
+            <h1>Recordatorio de Evaluaciones</h1>
             
-            <!-- Contenedor de evaluación -->
-            <div class="evaluaciones-container">
-                <div class="evaluacion-group evaluacion-unica">
-                    <h3><i data-lucide="pen-line"></i> Nueva Evaluación</h3>
+            <form id="formulario-evaluaciones" method="POST" action="/api/agenda/registrar"> 
+                <!-- Campos generales -->
+                <div class="form-row">
                     <div class="form-group">
-                        <label for="descripcion_evaluacion">Nombre/Descripción:</label>
-                        <textarea id="descripcion_evaluacion" name="descripcion" placeholder="Nombre o detalles de la evaluación..." rows="2" required maxlength="30" oninput="contarCaracteres(this)"></textarea>
-                        <small id="contador-caracteres" style="color: #666; display: block; text-align: right; margin-top: 5px;">0/30 caracteres</small>
+                        <label for="asignatura">Asignatura:</label>
+                        <select id="asignatura" name="asignatura_id" required>
+                            <option value="">Seleccione una asignatura</option>
+                            <% asignaturas.forEach(function(asig) { %>
+                                <option value="<%= asig.id %>"><%= asig.nombre %></option>
+                            <% }); %>
+                        </select>
                     </div>
-                    <div class="form-row">
+                    
+                    <div class="form-group">
+                        <label for="corte">Corte:</label>
+                        <select id="corte" name="corte" required>
+                            <option value="">Seleccione un corte</option>
+                            <option value="1">Corte 1 (Máx 30%)</option>
+                            <option value="2">Corte 2 (Máx 30%)</option>
+                            <option value="3">Corte 3 (Máx 40%)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Contenedor de evaluación -->
+                <div class="evaluaciones-container">
+                    <div class="evaluacion-group evaluacion-unica">
+                        <h3><i data-lucide="pen-line"></i> Nueva Evaluación</h3>
                         <div class="form-group">
-                            <label for="porcentaje_evaluacion">Porcentaje (%):</label>
-                            <input type="number" id="porcentaje_evaluacion" name="porcentaje" min="1" max="40" required>
+                            <label for="descripcion_evaluacion">Nombre/Descripción:</label>
+                            <textarea id="descripcion_evaluacion" name="descripcion" placeholder="Nombre o detalles de la evaluación..." rows="2" required maxlength="30" oninput="contarCaracteres(this)"></textarea>
+                            <small id="contador-caracteres" style="color: #666; display: block; text-align: right; margin-top: 5px;">0/30 caracteres</small>
                         </div>
-                        <div class="form-group">
-                            <label for="fecha_evaluacion">Fecha:</label>
-                            <input type="date" id="fecha_evaluacion" name="fecha" required>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="porcentaje_evaluacion">Porcentaje (%):</label>
+                                <input type="number" id="porcentaje_evaluacion" name="porcentaje" min="1" max="40" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="fecha_evaluacion">Fecha:</label>
+                                <input type="date" id="fecha_evaluacion" name="fecha" required>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+                
+                <button id="agregar">Agregar Evaluación</button>
+            </form>
             
-            <button id="agregar">Agregar Evaluación</button>
-        </form>
-        
-        <!-- Encabezados de la lista -->
-        <div class="encabezados-lista">
-            <span>Asignatura</span>
-            <span>Corte</span>
-            <span>Estado</span>
-            <span>Nombre</span>
-            <span>Porcentaje</span>
-            <span>Fecha</span>
+            <!-- Encabezados de la lista -->
+            <div class="encabezados-lista">
+                <span>Asignatura</span>
+                <span>Corte</span>
+                <span>Estado</span>
+                <span>Nombre</span>
+                <span>Porcentaje</span>
+                <span>Fecha</span>
+            </div>
+
+            <!-- Lista de evaluaciones (se renderiza dinámicamente) -->
+            <ul id="lista-examenes">
+                <!-- Las evaluaciones se cargan dinámicamente con JavaScript -->
+            </ul>
+
+            <!-- Paginación -->
+            <div id="paginacion" class="paginacion-container">
+                <button id="btn-prev-pag" class="btn-pag">Anterior</button>
+                <div id="numeros-paginas" class="numeros-paginas"></div>
+                <button id="btn-next-pag" class="btn-pag">Siguiente</button>
+            </div>
         </div>
 
-        <!-- Lista de evaluaciones (se renderiza dinámicamente) -->
-        <ul id="lista-examenes">
-            <!-- Las evaluaciones se cargan dinámicamente con JavaScript -->
-        </ul>
-
-        <!-- Paginación -->
-        <div id="paginacion" class="paginacion-container">
-            <button id="btn-prev-pag" class="btn-pag">Anterior</button>
-            <div id="numeros-paginas" class="numeros-paginas"></div>
-            <button id="btn-next-pag" class="btn-pag">Siguiente</button>
-        </div>
+        <!-- Sección Calendario -->
+        <section class="calendario-section" id="calendario">
+            <div class="calendario-container">
+                <h2><i data-lucide="calendar"></i> Calendario de Evaluaciones</h2>
+                
+                <!-- Filtros y controles -->
+                <div class="calendario-controls">
+                    <div class="filtros">
+                        <div class="filtro-group">
+                            <label for="filtro-mes">Mes:</label>
+                            <select id="filtro-mes">
+                                <option value="todos">Todos los meses</option>
+                                <option value="0">Enero</option>
+                                <option value="1">Febrero</option>
+                                <option value="2">Marzo</option>
+                                <option value="3">Abril</option>
+                                <option value="4">Mayo</option>
+                                <option value="5">Junio</option>
+                                <option value="6">Julio</option>
+                                <option value="7">Agosto</option>
+                                <option value="8">Septiembre</option>
+                                <option value="9">Octubre</option>
+                                <option value="10">Noviembre</option>
+                                <option value="11">Diciembre</option>
+                            </select>
+                        </div>
+                        <div class="filtro-group">
+                            <label for="filtro-asignatura">Asignatura:</label>
+                            <select id="filtro-asignatura">
+                                <option value="todos">Todas las asignaturas</option>
+                            </select>
+                        </div>
+                        <div class="filtro-group">
+                            <label for="filtro-corte">Corte:</label>
+                            <select id="filtro-corte">
+                                <option value="todos">Todos los cortes</option>
+                                <option value="corte1">Corte 1</option>
+                                <option value="corte2">Corte 2</option>
+                                <option value="corte3">Corte 3</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="calendario-nav">
+                        <button id="btn-hoy" class="btn-calendario">
+                            <i data-lucide="calendar-days"></i> Hoy
+                        </button>
+                        <button id="btn-prev-mes" class="btn-calendario">
+                            <i data-lucide="chevron-left"></i>
+                        </button>
+                        <span id="mes-actual" class="mes-actual">Febrero 2026</span>
+                        <button id="btn-next-mes" class="btn-calendario">
+                            <i data-lucide="chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Vista de calendario -->
+                <div class="calendario-vista">
+                    <!-- Cabecera días de la semana -->
+                    <div class="calendario-dias-semana">
+                        <div class="dia-semana">Dom</div>
+                        <div class="dia-semana">Lun</div>
+                        <div class="dia-semana">Mar</div>
+                        <div class="dia-semana">Mié</div>
+                        <div class="dia-semana">Jue</div>
+                        <div class="dia-semana">Vie</div>
+                        <div class="dia-semana">Sáb</div>
+                    </div>
+                    
+                    <!-- Días del mes -->
+                    <div id="calendario-dias" class="calendario-dias"></div>
+                </div>
+                
+                <!-- Leyenda -->
+                <div class="calendario-leyenda">
+                    <div class="leyenda-item">
+                        <span class="leyenda-color" style="background-color: #3b82f6; width: 16px; height: 16px;"></span>
+                        <span>Corte 1</span>
+                    </div>
+                    <div class="leyenda-item">
+                        <span class="leyenda-color" style="background-color: #f59e0b; width: 16px; height: 16px;"></span>
+                        <span>Corte 2</span>
+                    </div>
+                    <div class="leyenda-item">
+                        <span class="leyenda-color" style="background-color: #8b5cf6; width: 16px; height: 16px;"></span>
+                        <span>Corte 3</span>
+                    </div>
+                    <div class="leyenda-item">
+                        <strong>Click en los cuadros para ver detalles</strong>
+                    </div>
+                </div>
+                
+                <!-- Próximas evaluaciones -->
+                <div class="proximas-evaluaciones">
+                    <h3><i data-lucide="clock"></i> Próximas Evaluaciones Pendientes</h3>
+                    <div id="lista-proximas" class="lista-proximas">
+                        <!-- Las próximas evaluaciones se cargarán aquí -->
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
-
-    <!-- Sección Calendario -->
-    <section class="calendario-section" id="calendario">
-        <div class="calendario-container">
-            <h2><i data-lucide="calendar"></i> Calendario de Evaluaciones</h2>
-            
-            <!-- Filtros y controles -->
-            <div class="calendario-controls">
-                <div class="filtros">
-                    <div class="filtro-group">
-                        <label for="filtro-mes">Mes:</label>
-                        <select id="filtro-mes">
-                            <option value="todos">Todos los meses</option>
-                            <option value="0">Enero</option>
-                            <option value="1">Febrero</option>
-                            <option value="2">Marzo</option>
-                            <option value="3">Abril</option>
-                            <option value="4">Mayo</option>
-                            <option value="5">Junio</option>
-                            <option value="6">Julio</option>
-                            <option value="7">Agosto</option>
-                            <option value="8">Septiembre</option>
-                            <option value="9">Octubre</option>
-                            <option value="10">Noviembre</option>
-                            <option value="11">Diciembre</option>
-                        </select>
-                    </div>
-                    <div class="filtro-group">
-                        <label for="filtro-asignatura">Asignatura:</label>
-                        <select id="filtro-asignatura">
-                            <option value="todos">Todas las asignaturas</option>
-                        </select>
-                    </div>
-                    <div class="filtro-group">
-                        <label for="filtro-corte">Corte:</label>
-                        <select id="filtro-corte">
-                            <option value="todos">Todos los cortes</option>
-                            <option value="corte1">Corte 1</option>
-                            <option value="corte2">Corte 2</option>
-                            <option value="corte3">Corte 3</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="calendario-nav">
-                    <button id="btn-hoy" class="btn-calendario">
-                        <i data-lucide="calendar-days"></i> Hoy
-                    </button>
-                    <button id="btn-prev-mes" class="btn-calendario">
-                        <i data-lucide="chevron-left"></i>
-                    </button>
-                    <span id="mes-actual" class="mes-actual">Febrero 2026</span>
-                    <button id="btn-next-mes" class="btn-calendario">
-                        <i data-lucide="chevron-right"></i>
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Vista de calendario -->
-            <div class="calendario-vista">
-                <!-- Cabecera días de la semana -->
-                <div class="calendario-dias-semana">
-                    <div class="dia-semana">Dom</div>
-                    <div class="dia-semana">Lun</div>
-                    <div class="dia-semana">Mar</div>
-                    <div class="dia-semana">Mié</div>
-                    <div class="dia-semana">Jue</div>
-                    <div class="dia-semana">Vie</div>
-                    <div class="dia-semana">Sáb</div>
-                </div>
-                
-                <!-- Días del mes -->
-                <div id="calendario-dias" class="calendario-dias"></div>
-            </div>
-            
-            <!-- Leyenda -->
-            <div class="calendario-leyenda">
-                <div class="leyenda-item">
-                    <span class="leyenda-color" style="background-color: #3b82f6; width: 16px; height: 16px;"></span>
-                    <span>Corte 1</span>
-                </div>
-                <div class="leyenda-item">
-                    <span class="leyenda-color" style="background-color: #f59e0b; width: 16px; height: 16px;"></span>
-                    <span>Corte 2</span>
-                </div>
-                <div class="leyenda-item">
-                    <span class="leyenda-color" style="background-color: #8b5cf6; width: 16px; height: 16px;"></span>
-                    <span>Corte 3</span>
-                </div>
-                <div class="leyenda-item">
-                    <strong>Click en los cuadros para ver detalles</strong>
-                </div>
-            </div>
-            
-            <!-- Próximas evaluaciones -->
-            <div class="proximas-evaluaciones">
-                <h3><i data-lucide="clock"></i> Próximas Evaluaciones Pendientes</h3>
-                <div id="lista-proximas" class="lista-proximas">
-                    <!-- Las próximas evaluaciones se cargarán aquí -->
-                </div>
-            </div>
-        </div>
-    </section>
-</main>
+    
     <%- include('partials/_footer') %>
+    
 <script>
     const DATOS_INICIALES_DEL_SERVIDOR = <%- JSON.stringify(todasLasEvaluaciones || []) %>;
 </script>

@@ -34,10 +34,19 @@ body {
     color: var(--text-main);
     margin: 0;
     -webkit-font-smoothing: antialiased; 
-    display: grid; 
-    min-height: 110dvh;
-    grid-template-rows: 
-    auto 1fr auto;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: var(--sidebar-width) 1fr;
+    grid-template-rows: var(--header-height) 1fr auto;
+    grid-template-areas:
+        "sidebar header"
+        "sidebar main"
+        "sidebar footer";
+    transition: grid-template-columns 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+body:has(.app-sidebar:hover) {
+    grid-template-columns: var(--sidebar-expanded) 1fr;
 }
 
 /* LOGO & BRANDING */
@@ -73,28 +82,11 @@ body {
 }
 
 /* =========================================
-    LAYOUT PRINCIPAL 
-========================================= */
-body.app-layout {
-    padding-left: var(--sidebar-width); 
-    padding-top: var(--header-height);  
-    transition: padding-left 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-body.app-layout:has(.app-sidebar:hover) {
-    padding-left: var(--sidebar-expanded);
-}
-
-/* =========================================
     HEADER (Glassmorphism)
 ========================================= */
 .app-header {
-    position: fixed;
-    top: 0;
-    left: var(--sidebar-width); 
-    right: 0;
-    height: var(--header-height);
-    z-index: 1000;
+    grid-area: header;
+    z-index: 100;
     
     background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(16px);
@@ -106,12 +98,9 @@ body.app-layout:has(.app-sidebar:hover) {
     align-items: center;
     justify-content: space-between;
     padding: 0 32px;
-    transition: left 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.app-sidebar:hover ~ .app-header {
-    left: var(--sidebar-expanded);
-}
+/* Eliminar regla obsoleta del hover del sidebar */
 
 /* Perfil de Usuario */
 .user-profile {
@@ -167,37 +156,69 @@ body.app-layout:has(.app-sidebar:hover) {
     SIDEBAR
 ========================================= */
 .app-sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: var(--sidebar-width); 
+    grid-area: sidebar;
     background: var(--dark);
-    z-index: 1001;
+    z-index: 101;
     display: flex;
     flex-direction: column;
-    padding: 20px 12px;
-    transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-    overflow: hidden;
+    padding: 0; /* Quitamos padding del contenedor principal */
+    overflow: hidden; /* Sin scroll en el contenedor principal */
     box-shadow: 10px 0 30px rgba(0,0,0,0.1);
-}
-
-.app-sidebar:hover {
-    width: var(--sidebar-expanded);
+    position: sticky;
+    top: 0;
+    height: 100vh; /* Altura completa de la ventana visible */
+    align-self: start; /* Se pega al inicio de su grid area */
 }
 
 .sidebar-header {
+    flex-shrink: 0; /* No se comprime */
     height: var(--header-height);
     display: flex;
     align-items: center;
     justify-content: center; /* Centrado cuando colapsado */
+    padding: 20px 12px 0;
     margin-bottom: 20px;
     overflow: hidden;
 }
 
 .app-sidebar:hover .sidebar-header {
     justify-content: flex-start; /* Alineado izq cuando expandido */
-    padding-left: 10px;
+    padding-left: 22px;
+}
+
+/* Contenedor de items del menú con scroll */
+.sidebar-nav {
+    flex: 1; /* Ocupa el espacio disponible */
+    overflow-y: auto; /* Scroll solo aquí */
+    overflow-x: hidden;
+    padding: 0 12px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.05);
+}
+
+/* Estilo del scrollbar para el contenedor de navegación */
+.sidebar-nav::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Contenedor del botón de logout (fijo en la parte inferior) */
+.sidebar-footer {
+    flex-shrink: 0; /* No se comprime */
+    padding: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Menú Items */
@@ -254,8 +275,8 @@ body.app-layout:has(.app-sidebar:hover) {
 }
 
 .logout-btn {
-    margin-top: auto;
     color: #f87171 !important; /* Rojo suave */
+    margin-top: auto;
 }
 .logout-btn:hover {
     background: rgba(239, 68, 68, 0.15) !important;
@@ -266,11 +287,11 @@ body.app-layout:has(.app-sidebar:hover) {
     FOOTER
 ========================================= */
 .app-footer {
+    grid-area: footer;
     background: var(--dark); 
     color: var(--text-light); 
     border-top: 1px solid #e2e8f0;
     padding: 40px 20px;
-    margin-top: auto;
 }
 
 .footer-container {
@@ -324,4 +345,14 @@ body.app-layout:has(.app-sidebar:hover) {
     font-size: 0.85rem;
     color: #94a3b8;
     margin-top: 10px;
+}
+/* =========================================
+    MAIN CONTENT CONTAINER
+========================================= */
+.container {
+    grid-area: main;
+    padding: 40px 32px;
+    background-color: transparent;
+    overflow-y: auto;
+    min-height: 0; /* Importante para que funcione el scroll */
 }
