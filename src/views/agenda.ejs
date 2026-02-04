@@ -6,11 +6,11 @@
     <title>Agenda/Evaluaciones - LearnStudy-Hub</title>
     <link rel="stylesheet" href="/views/css/layout.css">
     <link rel="stylesheet" href="/views/css/agenda.css">
-    <script src="/views/javascript/layout.js" ></script>
 </head>
 <body>
 <main class="main-container">
-
+    <%- include('partials/_sidebar') %>
+    <%- include('partials/_header') %>
 <!-- Sección Agenda -->
     <div class="contenedor-angeda" id="agenda">
         <h1>Recordatorio de Evaluaciones</h1>
@@ -190,7 +190,7 @@
         </div>
     </section>
 </main>
-
+    <%- include('partials/_footer') %>
 <script>
     const DATOS_INICIALES_DEL_SERVIDOR = <%- JSON.stringify(todasLasEvaluaciones || []) %>;
 </script>

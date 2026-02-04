@@ -6,9 +6,10 @@
     <title>Horario - LearnStudyHub</title>
     <link rel="stylesheet" href="/views/css/layout.css">
     <link rel="stylesheet" href="/views/css/horario.css">
-    <script src="/views/javascript/layout.js" ></script>
 </head>
 <body>
+    <%- include('partials/_sidebar') %>
+    <%- include('partials/_header') %>
     <% if(mensaje){ %>
             <div id="no-courses-msg" class="no-courses-card">
                 <div class="card-icon">
@@ -136,7 +137,7 @@
                 </div>
             </div>
         </div>
-
+        <%- include('partials/_footer') %>
         <script>
             const materiasConIDs = <%- JSON.stringify(materias) %>;
             const initialScheduleData = <%- JSON.stringify(horarios) %>;

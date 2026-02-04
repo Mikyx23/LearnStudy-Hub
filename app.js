@@ -11,7 +11,7 @@ const { port } = config; // Desestructura el puerto definido en la configuració
 // ----------- MODULOS IMPORTADOS -----------
 import express from 'express'; // Framework principal para el servidor web
 import cookieParser from 'cookie-parser'; // Middleware para gestionar y leer cookies del navegador
-import { getToken, authenticateUser } from './src/middleware/auth.js'; // Middlewares personalizados de seguridad
+import { getToken, authenticateUser, userData } from './src/middleware/auth.js'; // Middlewares personalizados de seguridad
 const app = express(); // Inicialización de la aplicación Express
 
 // Seguridad: Oculta la cabecera 'x-powered-by' para no revelar que se usa Express
@@ -44,7 +44,8 @@ app.use('/api/login', routerLogin); // Rutas relacionadas con el inicio de sesi�
 
 // ----------- BARRERA DE SEGURIDAD -----------
 // A partir de aquí, todas las rutas requieren autenticación obligatoria
-app.use(authenticateUser); 
+app.use(authenticateUser);
+app.use(userData); // Recupera datos del usuario para el header
 
 // ----------- ROUTERS PRIVADOS (PROTEGIDOS) -----------
 import {routerDashboard} from './src/routers/dashboard.js';

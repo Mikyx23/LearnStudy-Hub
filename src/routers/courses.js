@@ -16,7 +16,8 @@ routerCourses.get('/', async (req,res) => {
         res.render('courses', { 
             misAsignaturas: result.courses || [],
             disponibles: result2.availables || [],
-            creditosInscritos: creditosInscritos || 0
+            creditosInscritos: creditosInscritos || 0,
+            userData: res.userData
         });
     }
 });

@@ -58,7 +58,8 @@ routerProfile.get('/', async (req, res) => {
             res.render('profile', { 
                 user: result.user[0], 
                 subject: subjectsProcessed, // Usamos los datos procesados por la cola
-                average: average 
+                average: average,
+                userData: res.userData
             });
         } else {
             return res.status(404).send(result.message);

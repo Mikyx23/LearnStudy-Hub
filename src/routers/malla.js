@@ -7,5 +7,5 @@ routerMalla.get('/', async (req,res) => {
 
     const pensum = await ObtenerMallaCurricularController(user.carrer);
 
-    res.render('malla', { pensum: pensum.pensum });
+    res.render('malla', { pensum: pensum.pensum, userData: res.userData });
 });

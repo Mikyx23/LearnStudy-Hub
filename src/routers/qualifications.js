@@ -19,14 +19,16 @@ routerQualifications.get('/', async (req,res) => {
             res.render('qualifications', {
                 cursos: result2.courses || [],
                 evaluaciones: result3.exams || [],
-                mensaje: false
+                mensaje: false,
+                userData: res.userData
             });
         }
         else if(!result2.success && result2.message === 'No se ha podido obtener los cursos de las calificaciones'){
             res.render('qualifications', {
                 cursos: result2.courses || [],
                 evaluaciones: result3.exams || [],
-                mensaje: true
+                mensaje: true,
+                userData: res.userData
             });
         }
         else{

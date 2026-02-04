@@ -20,7 +20,8 @@ routerAgenda.get('/', async(req, res) => {
         res.status(200).render('agenda', {
             asignaturas: result.courses || [],
             // evaluaciones: result2.exams || [],
-            todasLasEvaluaciones: result2.exams || []
+            todasLasEvaluaciones: result2.exams || [],
+            userData: res.userData
         });
         
     }
