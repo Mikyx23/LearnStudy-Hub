@@ -9,7 +9,7 @@ let anioSeleccionado = fechaActual.getFullYear();
 
 // Paginación
 let paginaActual = 1;
-const elementosPorPagina = 10;
+const elementosPorPagina = 5;
 
 const configuracionPorcentajes = {
     corte1: { max: 30, colorClass: 'corte1', nombre: 'Corte 1' },
