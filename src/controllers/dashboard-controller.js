@@ -9,10 +9,10 @@ export const ObtenerDatosAcademicosController = async (id_carrera, id_usuario, i
     return await Dashboard.ObtenerDatosAcademicos(id_carrera, id_usuario, id_lapso);
 }
 
-export const ObtenerClasesDiaActualController = async (id_usuario, id_lapso, time_zone) => {
+export const ObtenerClasesDiaActualController = async (id_carrera,id_usuario, id_lapso, time_zone) => {
     const diaActual = DateTime.now().setZone(time_zone).weekday;
 
-    return await Dashboard.ObtenerClasesDiaActual(id_usuario, id_lapso, diaActual);
+    return await Dashboard.ObtenerClasesDiaActual(id_carrera, id_usuario, id_lapso, diaActual);
 }
 
 export const ObtenerFraseController = async () => {

@@ -1,5 +1,5 @@
 import express from 'express';
-export const routerDashboard = express.Router();
+export const routerDashboard = express.Router(); // Enrutador para el panel principal (Dashboard)
 import { 
     ObtenerDatosUsuarioController,
     ObtenerDatosAcademicosController,
@@ -16,7 +16,7 @@ routerDashboard.get('/', async(req,res) => {
 
         const result = await ObtenerDatosUsuarioController(user.id, lapsoActual);
         const result2 = await ObtenerDatosAcademicosController(user.carrer, user.id, lapsoActual);
-        const result3 = await ObtenerClasesDiaActualController(user.id, lapsoActual, user.timezone);
+        const result3 = await ObtenerClasesDiaActualController(user.carrer, user.id, lapsoActual, user.timezone);
         const result4 = await ObtenerFraseController();
 
         res.render('dashboard', {

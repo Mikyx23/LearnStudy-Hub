@@ -15,22 +15,13 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    background-color: var(--bg-color);
+    /* Los estilos de layout se manejan en layout.css */
     color: var(--text-dark);
-}
-
-.container {
-    flex: 1;
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 0 1rem;
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
 }
 
 /* --- Tarjeta del Perfil --- */
@@ -44,11 +35,14 @@ body {
     gap: 2rem;
     margin-bottom: 2rem;
     margin-top: 1rem;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-/* CONTENEDOR DE IMAGEN (MODIFICADO) */
+/* CONTENEDOR DE IMAGEN */
 .profile-image {
-    position: relative; /* Necesario para posicionar el icono encima */
+    position: relative;
     width: 120px;
     height: 120px;
     flex-shrink: 0;
@@ -63,7 +57,7 @@ body {
     display: block;
 }
 
-/* OVERLAY PARA SUBIR FOTO (NUEVO) */
+/* OVERLAY PARA SUBIR FOTO */
 .upload-overlay {
     position: absolute;
     top: 0;
@@ -78,13 +72,13 @@ body {
     justify-content: center;
     color: white;
     cursor: pointer;
-    opacity: 0; /* Oculto por defecto */
+    opacity: 0;
     transition: opacity 0.3s ease;
     border: 4px solid transparent;
 }
 
 .profile-image:hover .upload-overlay {
-    opacity: 1; /* Aparece al pasar el mouse */
+    opacity: 1;
 }
 
 .upload-overlay i {
@@ -108,11 +102,13 @@ body {
     font-size: 1.8rem;
     margin-bottom: 0.5rem;
     color: #156ed3;
+    font-weight: 700;
 }
 
 .profile-info p {
     color: var(--text-light);
     font-weight: 500;
+    margin-bottom: 0;
 }
 
 .info-grid {
@@ -122,16 +118,23 @@ body {
     margin-top: 1rem;
 }
 
+.info-item {
+    display: flex;
+    flex-direction: column;
+}
+
 .info-item label {
     display: block;
     font-size: 0.85rem;
     color: var(--text-light);
     font-weight: 600;
+    margin-bottom: 0.25rem;
 }
 
 .info-item span {
     font-size: 1rem;
     font-weight: 500;
+    color: var(--text-dark);
 }
 
 /* --- Sección de Calificaciones --- */
@@ -141,18 +144,29 @@ body {
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     padding: 2rem;
     margin-bottom: 2rem;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .section-title {
-    margin-bottom: 1.5rem;
+    margin: 0 0 1.5rem 0;
     font-size: 1.4rem;
+    font-weight: 700;
     border-bottom: 2px solid var(--bg-color);
     padding-bottom: 10px;
+    color: var(--text-dark);
 }
 
+/* Tabla de calificaciones */
 table {
     width: 100%;
     border-collapse: collapse;
+    background-color: var(--white);
+}
+
+thead {
+    background-color: #f8f9fa;
 }
 
 th, td {
@@ -165,14 +179,32 @@ th {
     background-color: #f8f9fa;
     color: var(--text-light);
     font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+td {
+    color: var(--text-dark);
+    font-size: 0.95rem;
+}
+
+tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+tbody tr:hover {
+    background-color: #f8f9fa;
 }
 
 /* Badges de estado */
 .status {
+    display: inline-block;
     padding: 0.25rem 0.75rem;
     border-radius: 20px;
     font-size: 0.85rem;
     font-weight: 600;
+    text-align: center;
 }
 
 .status.passed {
@@ -185,6 +217,7 @@ th {
     color: var(--danger);
 }
 
+/* Mensaje cuando no hay datos */
 .no-data-message {
     text-align: center;
     padding: 2rem;
@@ -192,6 +225,16 @@ th {
     border-radius: 8px;
     border: 1px dashed #dee2e6;
     color: #6c757d;
+    margin-bottom: 2rem;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.no-data-message p {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
 }
 
 /* Responsividad */
@@ -199,12 +242,28 @@ th {
     .profile-card {
         flex-direction: column;
         text-align: center;
+        padding: 1.5rem;
     }
     
-    .info-grid {
-        text-align: left;
+    .profile-info h1 {
+        font-size: 1.5rem;
     }
 
+    .info-grid {
+        text-align: left;
+        grid-template-columns: 1fr;
+    }
+
+    .grades-section {
+        padding: 1.5rem;
+        overflow-x: auto;
+    }
+
+    .section-title {
+        font-size: 1.2rem;
+    }
+
+    /* Tabla responsive */
     table, thead, tbody, th, td, tr {
         display: block;
     }
@@ -215,21 +274,61 @@ th {
         left: -9999px;
     }
     
+    tr {
+        margin-bottom: 1rem;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 0.5rem;
+        background-color: var(--white);
+    }
+
+    tr:hover {
+        background-color: #f8f9fa;
+    }
+    
     td {
         position: relative;
         padding-left: 50%;
         border: none;
         border-bottom: 1px solid #eee;
+        min-height: 45px;
+        display: flex;
+        align-items: center;
+    }
+
+    td:last-child {
+        border-bottom: none;
     }
     
     td:before {
         position: absolute;
-        top: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
         left: 1rem;
         width: 45%;
         padding-right: 10px;
         white-space: nowrap;
-        font-weight: bold;
+        font-weight: 600;
+        color: var(--text-light);
+        font-size: 0.85rem;
         content: attr(data-label);
+    }
+
+    td strong {
+        font-weight: 700;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-card {
+        padding: 1rem;
+    }
+
+    .profile-info h1 {
+        font-size: 1.3rem;
+    }
+
+    .grades-section {
+        padding: 1rem;
     }
 }

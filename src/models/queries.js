@@ -93,6 +93,7 @@ WITH AsignaturasProcesadas AS (
         END AS nombre_asignatura_romano
     FROM tbl_asignaturas_carreras ac
     INNER JOIN tbl_asignaturas a ON ac.id_asignatura = a.id_asignatura
+    WHERE ac.id_carrera = ? -- <--- FILTRO 1: Contexto de carrera para la nomenclatura
 )
 SELECT
     ca.id_curso,
@@ -116,11 +117,13 @@ INNER JOIN AsignaturasProcesadas ap
 INNER JOIN tbl_horarios h 
     ON h.id_curso = ca.id_curso
 INNER JOIN tbl_inscripciones_carreras ic 
-    ON ic.id_usuario = ca.id_usuario AND ic.id_carrera = ap.id_carrera
+    ON ic.id_usuario = ca.id_usuario 
+    AND ic.id_carrera = ap.id_carrera
+    AND ic.id_carrera = ? -- <--- FILTRO 2: Validación de carrera activa
 WHERE ca.id_usuario = ?
 AND ca.id_lapso = ?
-AND h.dia_semana = ?  -- <--- FILTRO PARA EL DÍA ACTUAL
-ORDER BY h.hora_inicio; 
+AND h.dia_semana = ?
+ORDER BY h.hora_inicio;
 `;
 
 export const GET_PHRASE = `SELECT frase FROM tbl_frases ORDER BY RAND() LIMIT 1;`;
@@ -291,8 +294,9 @@ SELECT
     ap.uc_asignatura AS creditos
 FROM tbl_cursos_academicos ca
 INNER JOIN tbl_usuarios u ON u.id_usuario = ca.id_usuario
--- Traemos la carrera del usuario para asegurar que el cruce sea correcto
-INNER JOIN tbl_inscripciones_carreras ic ON u.id_usuario = ic.id_usuario
+-- Filtramos la inscripción para que coincida con la carrera que estamos consultando
+INNER JOIN tbl_inscripciones_carreras ic ON u.id_usuario = ic.id_usuario 
+    AND ic.id_carrera = ? -- <--- NUEVO FILTRO: Evita la duplicidad por múltiples carreras
 INNER JOIN AsignaturasProcesadas ap ON (
     ap.id_asignatura_carrera = ca.id_asignatura_carrera 
     AND ap.id_carrera = ic.id_carrera
@@ -302,38 +306,39 @@ WHERE ca.id_usuario = ? AND ca.id_lapso = ?
 
 export const GET_COURSES_AVAILABLE = `
 WITH MateriasAprobadas AS (
-    -- 1. Materias que el usuario ya aprobó
+    -- 1. Filtramos aprobadas SOLO de la carrera actual
     SELECT 
         ca.id_asignatura_carrera,
         ac.uc_asignatura,
         ac.semestre
     FROM tbl_cursos_academicos ca
     JOIN tbl_asignaturas_carreras ac ON ca.id_asignatura_carrera = ac.id_asignatura_carrera
-    -- Ahora obtenemos calificacion y ponderacion directamente de la agenda
     JOIN tbl_agenda_evaluaciones age ON ca.id_curso = age.id_curso
     WHERE ca.id_usuario = ? 
+    AND ac.id_carrera = ?
     GROUP BY ca.id_curso, ac.id_asignatura_carrera, ac.uc_asignatura, ac.semestre
-    -- El cálculo usa calificacion y ponderación de la misma tabla 'age'
     HAVING SUM(age.calificacion * (age.ponderacion / 100)) >= 9.5
 ),
 ResumenInscripcionActual AS (
-    -- 2. UC inscritas en el lapso vigente (Sin cambios)
+    -- 2. UC inscritas en el lapso vigente para esta carrera
     SELECT 
         ac.id_asignatura_carrera, 
         SUM(ac.uc_asignatura) OVER() as total_uc_inscritas
     FROM tbl_cursos_academicos ca
     JOIN tbl_asignaturas_carreras ac ON ca.id_asignatura_carrera = ac.id_asignatura_carrera
-    WHERE ca.id_usuario = ? AND ca.id_lapso = ?
+    WHERE ca.id_usuario = ? 
+    AND ca.id_lapso = ?
+    AND ac.id_carrera = ?
 ),
 ResumenEstudiante AS (
-    -- 3. Totales históricos (Sin cambios)
+    -- 3. Totales históricos basados en el filtro anterior
     SELECT 
         COALESCE(SUM(uc_asignatura), 0) AS total_uca,
         COALESCE(MAX(semestre), 0) AS max_semestre_aprobado
     FROM MateriasAprobadas
 ),
 MallaBaseFormateada AS (
-    -- 4. Malla curricular con formato de nombres (Sin cambios)
+    -- 4. Malla curricular (Ya tenía el filtro de carrera)
     SELECT 
         t.id_asignatura_carrera,
         t.codigo,
@@ -424,12 +429,12 @@ SELECT
     ca.id_curso AS id,
     ap.nombre_asignatura_romano AS nombre
 FROM tbl_cursos_academicos ca
--- Unimos con el CTE usando el id_asignatura_carrera
 INNER JOIN AsignaturasProcesadas ap 
     ON ap.id_asignatura_carrera = ca.id_asignatura_carrera
--- Es importante filtrar por la carrera del usuario para que el ROW_NUMBER funcione bien
 INNER JOIN tbl_inscripciones_carreras ic 
-    ON ic.id_usuario = ca.id_usuario AND ic.id_carrera = ap.id_carrera
+    ON ic.id_usuario = ca.id_usuario 
+    AND ic.id_carrera = ap.id_carrera
+    AND ic.id_carrera = ? -- <--- FILTRO AGREGADO: Garantiza el contexto de la carrera activa
 WHERE ca.id_usuario = ? AND ca.id_lapso = ?;
 `;
 
@@ -443,26 +448,31 @@ WITH AsignaturasProcesadas AS (
         COUNT(*) OVER (PARTITION BY a.nombre_asignatura, ac.id_carrera) AS total_repeticiones
     FROM tbl_asignaturas_carreras ac
     INNER JOIN tbl_asignaturas a ON ac.id_asignatura = a.id_asignatura
+    WHERE ac.id_carrera = ?
 ),
 MallaConNombres AS (
     SELECT 
         id_asignatura_carrera,
-        CASE 
-            WHEN nombre_asignatura = 'PROYECTO DE SERVICIO COMUNITARIO' THEN nombre_asignatura
-            WHEN total_repeticiones > 1 THEN 
-                CONCAT(nombre_asignatura, ' ', 
-                    CASE secuencia
-                        WHEN 1 THEN 'I' WHEN 2 THEN 'II' WHEN 3 THEN 'III' WHEN 4 THEN 'IV'
-                        WHEN 5 THEN 'V' WHEN 6 THEN 'VI' WHEN 7 THEN 'VII' WHEN 8 THEN 'VIII'
-                        WHEN 9 THEN 'IX' WHEN 10 THEN 'X' ELSE '' 
-                    END)
-            ELSE nombre_asignatura 
-        END AS nombre_romano
-    FROM AsignaturasProcesadas
+        nombre_romano -- (Aquí mantenemos tu lógica de CASE que está perfecta)
+    FROM (
+        SELECT id_asignatura_carrera,
+            CASE 
+                WHEN nombre_asignatura = 'PROYECTO DE SERVICIO COMUNITARIO' THEN nombre_asignatura
+                WHEN total_repeticiones > 1 THEN 
+                    CONCAT(nombre_asignatura, ' ', 
+                        CASE secuencia
+                            WHEN 1 THEN 'I' WHEN 2 THEN 'II' WHEN 3 THEN 'III' WHEN 4 THEN 'IV'
+                            WHEN 5 THEN 'V' WHEN 6 THEN 'VI' WHEN 7 THEN 'VII' WHEN 8 THEN 'VIII'
+                            WHEN 9 THEN 'IX' WHEN 10 THEN 'X' ELSE '' 
+                        END)
+                ELSE nombre_asignatura 
+            END AS nombre_romano
+        FROM AsignaturasProcesadas
+    ) sub
 )
 SELECT
-    ae.id_evaluacion AS id,           -- El ID único de la evaluación
-    ca.id_curso AS curso_id,         -- Mantenemos el curso por si lo necesitas
+    ae.id_evaluacion AS id,
+    ca.id_curso AS curso_id,
     ap.nombre_romano AS asignatura_nombre,
     ae.descripcion AS nombre,
     ae.corte AS corte,
@@ -476,7 +486,7 @@ INNER JOIN tbl_agenda_evaluaciones ae
     ON ca.id_curso = ae.id_curso
 WHERE ca.id_usuario = ? 
     AND ca.id_lapso = ?
-ORDER BY ap.nombre_romano, ae.fecha_entrega;
+ORDER BY ae.fecha_entrega ASC;
 `;
 
 // ----- QUERIES CALIFICACIONES -----
@@ -513,15 +523,15 @@ SELECT
     ap.nombre_romano,
     ap.codigo_asignatura,
     ap.uc_asignatura,
-    -- Cálculo directo desde 'ev' (tbl_agenda_evaluaciones)
+    -- Agregamos COALESCE para manejar evaluaciones sin nota aún
     SUM(COALESCE(ev.calificacion, 0) * (ev.ponderacion / 100.0)) AS promedio
 FROM tbl_cursos_academicos ca
-INNER JOIN tbl_inscripciones_carreras ic ON ca.id_usuario = ic.id_usuario
+INNER JOIN tbl_inscripciones_carreras ic ON ca.id_usuario = ic.id_usuario 
+    AND ic.id_carrera = ?
 INNER JOIN AsignaturasProcesadas ap ON (
     ap.id_asignatura_carrera = ca.id_asignatura_carrera 
     AND ap.id_carrera = ic.id_carrera
 )
--- La tabla de agenda ahora contiene todo lo necesario para el cálculo
 INNER JOIN tbl_agenda_evaluaciones ev ON ca.id_curso = ev.id_curso
 WHERE ca.id_usuario = ? AND ca.id_lapso = ?
 GROUP BY 
@@ -583,10 +593,12 @@ WITH AsignaturasProcesadas AS (
         COUNT(*) OVER (PARTITION BY a.nombre_asignatura, ac.id_carrera) AS total_repeticiones
     FROM tbl_asignaturas_carreras ac
     INNER JOIN tbl_asignaturas a ON ac.id_asignatura = a.id_asignatura
+    WHERE ac.id_carrera = ? -- <--- FILTRO 1: Contexto de carrera
 ),
 MallaConNombres AS (
     SELECT 
         id_asignatura_carrera,
+        -- Mantenemos tu lógica de CASE para nombres romanos
         CASE 
             WHEN nombre_asignatura = 'PROYECTO DE SERVICIO COMUNITARIO' THEN nombre_asignatura
             WHEN total_repeticiones > 1 THEN 
@@ -606,14 +618,12 @@ SELECT
     ae.descripcion,
     ae.ponderacion AS porcentaje,
     ae.corte,
-    -- Acceso directo a la calificación ahora en tbl_agenda_evaluaciones
     ae.calificacion
 FROM tbl_cursos_academicos ca
 INNER JOIN MallaConNombres ap 
     ON ca.id_asignatura_carrera = ap.id_asignatura_carrera
 INNER JOIN tbl_agenda_evaluaciones ae 
     ON ca.id_curso = ae.id_curso
--- Se eliminó el LEFT JOIN con tbl_calificaciones
 WHERE ca.id_usuario = ? 
     AND ca.id_lapso = ?
 ORDER BY ca.id_curso, ae.corte, ae.fecha_entrega;
@@ -647,6 +657,7 @@ WITH AsignaturasProcesadas AS (
         END AS nombre_asignatura_romano
     FROM tbl_asignaturas_carreras ac
     INNER JOIN tbl_asignaturas a ON ac.id_asignatura = a.id_asignatura
+    WHERE ac.id_carrera = ?
 )
 SELECT
     ca.id_curso AS id,
@@ -655,7 +666,9 @@ FROM tbl_cursos_academicos ca
 INNER JOIN AsignaturasProcesadas ap 
     ON ap.id_asignatura_carrera = ca.id_asignatura_carrera
 INNER JOIN tbl_inscripciones_carreras ic 
-    ON ic.id_usuario = ca.id_usuario AND ic.id_carrera = ap.id_carrera
+    ON ic.id_usuario = ca.id_usuario 
+    AND ic.id_carrera = ap.id_carrera
+    AND ic.id_carrera = ?
 WHERE ca.id_usuario = ?
 AND ca.id_lapso = ?
 `;
@@ -678,6 +691,7 @@ WITH AsignaturasProcesadas AS (
         END AS nombre_asignatura_romano
     FROM tbl_asignaturas_carreras ac
     INNER JOIN tbl_asignaturas a ON ac.id_asignatura = a.id_asignatura
+    WHERE ac.id_carrera = ?
 )
 SELECT
     ca.id_curso,
@@ -701,7 +715,9 @@ INNER JOIN AsignaturasProcesadas ap
 INNER JOIN tbl_horarios h 
     ON h.id_curso = ca.id_curso
 INNER JOIN tbl_inscripciones_carreras ic 
-    ON ic.id_usuario = ca.id_usuario AND ic.id_carrera = ap.id_carrera
+    ON ic.id_usuario = ca.id_usuario 
+    AND ic.id_carrera = ap.id_carrera
+    AND ic.id_carrera = ?
 WHERE ca.id_usuario = ?
 AND ca.id_lapso = ?
 ORDER BY h.dia_semana, h.hora_inicio;
@@ -722,7 +738,6 @@ AND ca.id_lapso = ?;`;
 
 export const GET_POMODORO_DATA = `
 WITH AsignaturasProcesadas AS (
-    -- 1. Obtenemos los nombres y calculamos la secuencia romana por carrera
     SELECT 
         ac.id_asignatura_carrera,
         ac.id_carrera,
@@ -731,9 +746,9 @@ WITH AsignaturasProcesadas AS (
         COUNT(*) OVER (PARTITION BY ac.id_carrera, a.nombre_asignatura) AS total_repeticiones
     FROM tbl_asignaturas_carreras ac
     INNER JOIN tbl_asignaturas a ON ac.id_asignatura = a.id_asignatura
+    WHERE ac.id_carrera = ?
 ),
 MallaConNombres AS (
-    -- 2. Aplicamos la lógica de formato al nombre de la asignatura
     SELECT 
         id_asignatura_carrera,
         CASE 
@@ -749,7 +764,6 @@ MallaConNombres AS (
         END AS nombre_formateado
     FROM AsignaturasProcesadas
 )
--- 3. Consulta final agrupando SOLO evaluaciones PENDIENTES
 SELECT
     ca.id_curso AS id,
     mn.nombre_formateado AS name,
@@ -759,7 +773,7 @@ SELECT
                 JSON_OBJECT(
                     'id', ae.id_evaluacion,
                     'name', ae.descripcion,
-                    'status', ae.estado -- Opcional, para confirmar en el front
+                    'status', ae.estado
                 ), 
                 NULL)
         ), 
@@ -768,7 +782,6 @@ SELECT
 FROM tbl_cursos_academicos ca
 INNER JOIN MallaConNombres mn 
     ON ca.id_asignatura_carrera = mn.id_asignatura_carrera
--- Filtrar el estado directamente en el JOIN para mantener los cursos vacíos si es necesario
 LEFT JOIN tbl_agenda_evaluaciones ae 
     ON ca.id_curso = ae.id_curso 
     AND ae.estado = 'PENDIENTE' 
@@ -788,6 +801,7 @@ WITH AsignaturasProcesadas AS (
         COUNT(*) OVER (PARTITION BY ac.id_carrera, a.nombre_asignatura) AS total_repeticiones
     FROM tbl_asignaturas_carreras ac
     INNER JOIN tbl_asignaturas a ON ac.id_asignatura = a.id_asignatura
+    WHERE ac.id_carrera = ?
 ),
 MallaConNombres AS (
     SELECT 
@@ -815,7 +829,6 @@ SELECT
     p.hora_inicio,
     p.hora_final,
     p.ciclos,
-    -- Cálculo opcional: Duración en minutos
     TIMESTAMPDIFF(MINUTE, p.hora_inicio, p.hora_final) AS minutos_totales
 FROM tbl_pomodoro p
 INNER JOIN tbl_agenda_evaluaciones ae ON p.id_evaluacion = ae.id_evaluacion
