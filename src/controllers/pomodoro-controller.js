@@ -12,10 +12,10 @@ export const LimpiarSesionPomodoroController = async (id_sesion) => {
     return Pomodoro.LimpiarSesionPomodoro(id_sesion);
 }
 
-export const ObtenerDatosPomodoroController = async (id_usuario, lapsoActual) => {
-    return Pomodoro.ObtenerDatosPomodoro(id_usuario, lapsoActual)
+export const ObtenerDatosPomodoroController = async (id_carrera, id_usuario, lapsoActual) => {
+    return Pomodoro.ObtenerDatosPomodoro(id_carrera,id_usuario, lapsoActual)
 }
 
-export const ObtenerDatosSesionesController = async (id_usuario, lapsoActual) => {
-    return Pomodoro.ObtenerDatosSesiones(id_usuario, lapsoActual)
+export const ObtenerDatosSesionesController = async (id_carrera,id_usuario, lapsoActual) => {
+    return Pomodoro.ObtenerDatosSesiones(id_carrera,id_usuario, lapsoActual)
 }

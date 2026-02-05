@@ -24,9 +24,9 @@ export class Calificaciones {
         }
     }
 
-    static ObtenerCursosCalificaciones = async (id_usuario,id_lapso) => {
+    static ObtenerCursosCalificaciones = async (id_carrera,id_usuario,id_lapso) => {
         try{
-            const [rows] = await pool.execute(GET_COURSES_QUALIFICATIONS,[id_usuario,id_lapso]);
+            const [rows] = await pool.execute(GET_COURSES_QUALIFICATIONS,[id_carrera,id_usuario,id_lapso]);
 
             if(rows.length > 0){
                 return {
@@ -47,9 +47,9 @@ export class Calificaciones {
         }
     }
 
-    static ObtenerEvaluacionesCalificaciones = async (id_usuario,id_lapso) => {
+    static ObtenerEvaluacionesCalificaciones = async (id_carrera,id_usuario,id_lapso) => {
         try{
-            const [rows] = await pool.execute(GET_EXAMS_QUALIFICATIONS,[id_usuario,id_lapso]);
+            const [rows] = await pool.execute(GET_EXAMS_QUALIFICATIONS,[id_carrera,id_usuario,id_lapso]);
 
             if(rows.length > 0){
                 return {

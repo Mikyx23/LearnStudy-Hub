@@ -20,27 +20,20 @@ const configuracionPorcentajes = {
 // =========================================
 // 2. SELECTORES DEL DOM
 // =========================================
-// Contenedores principales
 const listaExamenes = document.getElementById('lista-examenes');
 const mesActualElement = document.getElementById('mes-actual');
 const calendarioDias = document.getElementById('calendario-dias');
 const listaProximas = document.getElementById('lista-proximas');
-
-// Formularios e Inputs
 const formularioEvaluaciones = document.getElementById('formulario-evaluaciones');
 const asignaturaInput = document.getElementById('asignatura');
 const corteSelect = document.getElementById('corte');
 const fechaEvaluacionInput = document.getElementById('fecha_evaluacion');
-
-// Filtros y Botones
 const filtroMes = document.getElementById('filtro-mes');
 const filtroAsignatura = document.getElementById('filtro-asignatura');
 const filtroCorte = document.getElementById('filtro-corte');
 const btnHoy = document.getElementById('btn-hoy');
 const btnPrevMes = document.getElementById('btn-prev-mes');
 const btnNextMes = document.getElementById('btn-next-mes');
-
-// Paginación
 const btnPrevPag = document.getElementById('btn-prev-pag');
 const btnNextPag = document.getElementById('btn-next-pag');
 const numerosPaginas = document.getElementById('numeros-paginas');
@@ -79,6 +72,15 @@ function getEstadoInfo(estado) {
     return estados[estado] || estados['PENDIENTE'];
 }
 
+/**
+ * NUEVA FUNCIÓN DE APOYO PARA VALIDACIÓN
+ */
+function obtenerPorcentajeAcumulado(asignaturaNombre, corteClave) {
+    return todasLasEvaluaciones
+        .filter(ev => ev.asignatura === asignaturaNombre && ev.corte === corteClave)
+        .reduce((sum, ev) => sum + parseFloat(ev.porcentaje), 0);
+}
+
 // Modal de detalles
 const modalDetalles = document.createElement('div');
 modalDetalles.className = 'modal-detalles';
@@ -94,9 +96,7 @@ modalDetalles.innerHTML = `
             <div class="detalle-item"><span class="detalle-label">Corte:</span><span class="detalle-valor" id="modal-corte"></span></div>
             <div class="detalle-item"><span class="detalle-label">Fecha:</span><span class="detalle-valor fecha" id="modal-fecha"></span></div>
         </div>
-        <div class="modal-acciones" id="modal-acciones">
-            <!-- Los botones se agregarán dinámicamente aquí -->
-        </div>
+        <div class="modal-acciones" id="modal-acciones"></div>
     </div>`;
 document.body.appendChild(modalDetalles);
 
@@ -106,19 +106,14 @@ document.body.appendChild(modalDetalles);
 
 function renderizarListaEvaluaciones() {
     if (!listaExamenes) return;
-    
-    // Calcular índices para paginación
     const inicio = (paginaActual - 1) * elementosPorPagina;
     const fin = inicio + elementosPorPagina;
     const evaluacionesPagina = todasLasEvaluaciones.slice(inicio, fin);
-    
     listaExamenes.innerHTML = '';
-    
     if (evaluacionesPagina.length === 0) {
         listaExamenes.innerHTML = '<li class="sin-evaluaciones"><p>No existen evaluaciones registradas actualmente.</p></li>';
         return;
     }
-    
     evaluacionesPagina.forEach(evaluacion => {
         const estadoInfo = getEstadoInfo(evaluacion.estado);
         const li = document.createElement('li');
@@ -133,43 +128,28 @@ function renderizarListaEvaluaciones() {
             <span>${new Date(evaluacion.fecha).toLocaleDateString('es-ES')}</span>
         `;
         li.onclick = (e) => {
-            if (!e.target.closest('.acciones-container')) {
-                mostrarDetallesEvento(evaluacion);
-            }
+            if (!e.target.closest('.acciones-container')) mostrarDetallesEvento(evaluacion);
         };
         listaExamenes.appendChild(li);
     });
-    
     actualizarPaginacion();
 }
 
 function actualizarPaginacion() {
     if (!numerosPaginas || !btnPrevPag || !btnNextPag) return;
-    
     const totalPaginas = Math.ceil(todasLasEvaluaciones.length / elementosPorPagina);
-    
-    // Botones anterior/siguiente
     btnPrevPag.disabled = paginaActual === 1;
     btnNextPag.disabled = paginaActual === totalPaginas || totalPaginas === 0;
-    
-    // Números de página
     numerosPaginas.innerHTML = '';
     const maxBotones = 5;
     let inicio = Math.max(1, paginaActual - Math.floor(maxBotones / 2));
     let fin = Math.min(totalPaginas, inicio + maxBotones - 1);
-    
-    if (fin - inicio + 1 < maxBotones) {
-        inicio = Math.max(1, fin - maxBotones + 1);
-    }
-    
+    if (fin - inicio + 1 < maxBotones) inicio = Math.max(1, fin - maxBotones + 1);
     for (let i = inicio; i <= fin; i++) {
         const btn = document.createElement('button');
         btn.className = `numero-pag ${i === paginaActual ? 'activa' : ''}`;
         btn.textContent = i;
-        btn.onclick = () => {
-            paginaActual = i;
-            renderizarListaEvaluaciones();
-        };
+        btn.onclick = () => { paginaActual = i; renderizarListaEvaluaciones(); };
         numerosPaginas.appendChild(btn);
     }
 }
@@ -185,31 +165,17 @@ async function marcarComoEntregada(id) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ estado: 'ENTREGADA' })
         });
-        
         if (res.ok) {
             const evaluacionIndex = todasLasEvaluaciones.findIndex(e => e.id === id);
             if (evaluacionIndex !== -1) {
                 todasLasEvaluaciones[evaluacionIndex].estado = 'ENTREGADA';
                 renderizarListaEvaluaciones();
                 actualizarProximasEvaluaciones();
-                
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Evaluación entregada!',
-                    text: 'La evaluación ha sido marcada como entregada.',
-                    confirmButtonText: 'Aceptar'
-                });
+                Swal.fire({ icon: 'success', title: '¡Evaluación entregada!', text: 'La evaluación ha sido marcada como entregada.', confirmButtonText: 'Aceptar' });
             }
-        } else {
-            throw new Error('Error al actualizar el estado');
-        }
+        } else { throw new Error('Error'); }
     } catch (error) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'No se pudo marcar la evaluación como entregada.',
-            confirmButtonText: 'Aceptar'
-        });
+        Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo marcar la evaluación como entregada.' });
     }
 }
 
@@ -224,47 +190,24 @@ async function eliminarEvaluacion(id) {
         confirmButtonText: 'Sí, eliminar',
         cancelButtonText: 'Cancelar'
     });
-    
     if (result.isConfirmed) {
         try {
-            const res = await fetch(`/api/agenda/delete/${id}`, {
-                method: 'DELETE'
-            });
-            
+            const res = await fetch(`/api/agenda/delete/${id}`, { method: 'DELETE' });
             if (res.ok) {
                 const index = todasLasEvaluaciones.findIndex(e => e.id === id);
                 if (index !== -1) {
-                    // Actualizar porcentajes usados
                     const evaluacion = todasLasEvaluaciones[index];
                     porcentajesUsados[evaluacion.corte] -= evaluacion.porcentaje;
-                    
-                    // Eliminar del array
                     todasLasEvaluaciones.splice(index, 1);
-                    
-                    // Volver a la primera página si es necesario
                     if (paginaActual > Math.ceil(todasLasEvaluaciones.length / elementosPorPagina)) {
                         paginaActual = Math.max(1, Math.ceil(todasLasEvaluaciones.length / elementosPorPagina));
                     }
-                    
                     renderizarListaEvaluaciones();
                     actualizarProximasEvaluaciones();
-                    
-                    Swal.fire({
-                        icon: 'success',
-                        title: '¡Eliminado!',
-                        text: 'La evaluación ha sido eliminada.',
-                        confirmButtonText: 'Aceptar'
-                    });
+                    Swal.fire({ icon: 'success', title: '¡Eliminado!', text: 'La evaluación ha sido eliminada.' });
                 }
             }
-        } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'No se pudo eliminar la evaluación.',
-                confirmButtonText: 'Aceptar'
-            });
-        }
+        } catch (error) { Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo eliminar.' }); }
     }
 }
 
@@ -305,72 +248,44 @@ function generarCalendario(mes, anio) {
     calendarioDias.innerHTML = '';
     const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
     mesActualElement.textContent = `${meses[mes]} ${anio}`;
-
     const primerDiaSemana = new Date(anio, mes, 1).getDay();
     const diasEnMes = new Date(anio, mes + 1, 0).getDate();
     const evaluacionesFiltradas = filtrarEvaluaciones();
-
-    // Días mes anterior
     const uDiaMesAnt = new Date(anio, mes, 0).getDate();
-    for (let i = primerDiaSemana - 1; i >= 0; i--) {
-        agregarDiaCalendario(null, uDiaMesAnt - i, true, evaluacionesFiltradas, mes - 1, anio);
-    }
-    // Días mes actual
+    for (let i = primerDiaSemana - 1; i >= 0; i--) agregarDiaCalendario(null, uDiaMesAnt - i, true, evaluacionesFiltradas, mes - 1, anio);
     const hoy = new Date();
     for (let d = 1; d <= diasEnMes; d++) {
         const esHoy = hoy.getDate() === d && hoy.getMonth() === mes && hoy.getFullYear() === anio;
         agregarDiaCalendario(d, d, false, evaluacionesFiltradas, mes, anio, esHoy);
     }
-    // Rellenar hasta completar 42 celdas
     const restantes = 42 - (primerDiaSemana + diasEnMes);
-    for (let d = 1; d <= restantes; d++) {
-        agregarDiaCalendario(null, d, true, evaluacionesFiltradas, mes + 1, anio);
-    }
+    for (let d = 1; d <= restantes; d++) agregarDiaCalendario(null, d, true, evaluacionesFiltradas, mes + 1, anio);
 }
 
 function agregarDiaCalendario(diaReal, diaMostrado, esInactivo, evFiltradas, mes, anio, esHoy) {
     const diaElement = document.createElement('div');
     diaElement.className = `dia-calendario ${esInactivo ? 'dia-inactivo' : ''} ${esHoy ? 'dia-hoy' : ''}`;
     diaElement.innerHTML = `<div class="dia-numero">${diaMostrado}</div>`;
-    
     const eventosContainer = document.createElement('div');
     eventosContainer.className = 'eventos-dia';
-
     if (!esInactivo && diaReal) {
         const fechaStr = `${anio}-${String(mes + 1).padStart(2, '0')}-${String(diaReal).padStart(2, '0')}`;
         const eventosDelDia = evFiltradas.filter(e => e.fecha === fechaStr);
-
-        eventosDelDia.forEach((evento, index) => {
+        eventosDelDia.forEach((evento) => {
             const evEl = document.createElement('div');
-            
-            // Obtener inicial de la asignatura
             const inicial = evento.asignatura.charAt(0).toUpperCase();
-            
-            // Determinar color basado en el corte
             const colorClase = `evento-evaluacion${evento.corte.charAt(evento.corte.length - 1)}`;
-            
             evEl.className = `evento-calendario ${colorClase}`;
-            evEl.textContent = inicial; // Solo muestra la inicial
+            evEl.textContent = inicial;
             evEl.setAttribute('data-tooltip', `${evento.asignatura}: ${truncarTexto(evento.nombre, 20)}`);
-            
-            evEl.onclick = (e) => { 
-                e.stopPropagation(); 
-                mostrarDetallesEvento(evento); 
-            };
-            
+            evEl.onclick = (e) => { e.stopPropagation(); mostrarDetallesEvento(evento); };
             eventosContainer.appendChild(evEl);
         });
-
-        // Si hay más de 6 eventos, mostrar indicador
         if (eventosDelDia.length > 6) {
             const mas = document.createElement('div');
             mas.className = 'evento-calendario evento-multiple';
             mas.textContent = `+${eventosDelDia.length - 6}`;
-            mas.setAttribute('data-tooltip', `${eventosDelDia.length} evaluaciones este día`);
-            mas.onclick = (e) => { 
-                e.stopPropagation(); 
-                mostrarEventosDelDia(eventosDelDia, fechaStr); 
-            };
+            mas.onclick = (e) => { e.stopPropagation(); mostrarEventosDelDia(eventosDelDia, fechaStr); };
             eventosContainer.appendChild(mas);
         }
     }
@@ -379,8 +294,7 @@ function agregarDiaCalendario(diaReal, diaMostrado, esInactivo, evFiltradas, mes
 }
 
 function truncarTexto(texto, maxLength) {
-    if (!texto) return '';
-    if (texto.length <= maxLength) return texto;
+    if (!texto || texto.length <= maxLength) return texto;
     return texto.substring(0, maxLength) + '...';
 }
 
@@ -392,31 +306,20 @@ function mostrarDetallesEvento(evento) {
     document.getElementById('modal-porcentaje').textContent = `${evento.porcentaje}%`;
     document.getElementById('modal-corte').textContent = evento.corte.replace('corte', 'Corte ');
     document.getElementById('modal-fecha').textContent = evento.fechaLarga;
-    
-    // AGREGAR BOTONES AL MODAL
     const modalAcciones = document.getElementById('modal-acciones');
     modalAcciones.innerHTML = '';
-    
     if (evento.estado === 'PENDIENTE') {
         const btnEntregar = document.createElement('button');
         btnEntregar.className = 'btn-accion-modal btn-entregar';
         btnEntregar.innerHTML = '<i class="fas fa-check"></i> Marcar como Entregada';
-        btnEntregar.onclick = () => {
-            modalDetalles.style.display = 'none';
-            marcarComoEntregada(evento.id);
-        };
+        btnEntregar.onclick = () => { modalDetalles.style.display = 'none'; marcarComoEntregada(evento.id); };
         modalAcciones.appendChild(btnEntregar);
     }
-    
     const btnEliminar = document.createElement('button');
     btnEliminar.className = 'btn-accion-modal btn-eliminar';
     btnEliminar.innerHTML = '<i class="fas fa-trash"></i> Eliminar';
-    btnEliminar.onclick = () => {
-        modalDetalles.style.display = 'none';
-        eliminarEvaluacion(evento.id);
-    };
+    btnEliminar.onclick = () => { modalDetalles.style.display = 'none'; eliminarEvaluacion(evento.id); };
     modalAcciones.appendChild(btnEliminar);
-    
     modalDetalles.style.display = 'flex';
 }
 
@@ -425,31 +328,15 @@ function mostrarEventosDelDia(eventos, fechaStr) {
     let html = `<h4>Eventos del ${fechaFormateada}</h4>`;
     eventos.forEach(e => {
         const estadoInfo = getEstadoInfo(e.estado);
-        html += `
-            <div class="evento-modal">
-                <strong>${e.asignatura}</strong>: ${e.nombre}
-                <br><small>${e.porcentaje}% - ${e.corte.replace('corte', 'Corte ')} - 
-                <span class="${estadoInfo.class}">${estadoInfo.texto}</span></small>
-            </div>
-        `;
+        html += `<div class="evento-modal"><strong>${e.asignatura}</strong>: ${e.nombre}<br><small>${e.porcentaje}% - ${e.corte.replace('corte', 'Corte ')} - <span class="${estadoInfo.class}">${estadoInfo.texto}</span></small></div>`;
     });
-    
-    Swal.fire({
-        title: 'Eventos del día',
-        html: html,
-        confirmButtonText: 'Cerrar'
-    });
+    Swal.fire({ title: 'Eventos del día', html: html, confirmButtonText: 'Cerrar' });
 }
 
 function actualizarProximasEvaluaciones() {
     if (!listaProximas) return;
     const hoyStr = getLocalDateString(new Date());
-    // Solo mostrar evaluaciones PENDIENTES
-    const futuras = todasLasEvaluaciones
-        .filter(e => e.fecha >= hoyStr && e.estado === 'PENDIENTE')
-        .sort((a, b) => a.fecha.localeCompare(b.fecha))
-        .slice(0, 5);
-
+    const futuras = todasLasEvaluaciones.filter(e => e.fecha >= hoyStr && e.estado === 'PENDIENTE').sort((a, b) => a.fecha.localeCompare(b.fecha)).slice(0, 5);
     listaProximas.innerHTML = futuras.length ? '' : '<p>No hay evaluaciones próximas pendientes</p>';
     futuras.forEach(ev => {
         const f = parseLocalDate(ev.fecha);
@@ -464,13 +351,36 @@ function actualizarProximasEvaluaciones() {
 }
 
 // =========================================
-// 7. EVENT LISTENERS
+// 7. EVENT LISTENERS (VALIDACIÓN INCLUIDA)
 // =========================================
 
 if (formularioEvaluaciones) {
     formularioEvaluaciones.addEventListener('submit', async (event) => {
         event.preventDefault();
-        const datosJSON = Object.fromEntries(new FormData(event.target).entries());
+        const formData = new FormData(event.target);
+        const datosJSON = Object.fromEntries(formData.entries());
+
+        // --- INICIO VALIDACIÓN PORCENTAJE ---
+        const asigSelect = document.getElementById('asignatura');
+        const asigNombre = asigSelect.options[asigSelect.selectedIndex].text;
+        const corteClave = `corte${datosJSON.corte}`;
+        const nuevoPorc = parseFloat(datosJSON.porcentaje);
+        
+        const acumulado = obtenerPorcentajeAcumulado(asigNombre, corteClave);
+        const maxPermitido = configuracionPorcentajes[corteClave].max;
+
+        if (acumulado + nuevoPorc > maxPermitido) {
+            Swal.fire({
+                icon: "warning",
+                title: "Límite de porcentaje excedido",
+                text: `La suma de las evaluaciones para esta materia en este corte no puede superar el ${maxPermitido}%.`,
+                confirmButtonColor: "#f59e0b",
+                confirmButtonText: "Entendido"
+            });
+            return; // Detener el envío
+        }
+        // --- FIN VALIDACIÓN ---
+
         try {
             const res = await fetch(`/api/agenda/registrar`, {
                 method: 'POST',
@@ -479,83 +389,24 @@ if (formularioEvaluaciones) {
             });
             const data = await res.json();
             if (res.ok && data.redirectUrl) {
-                Swal.fire({
-                    icon: "success",
-                    title: "¡Guardado con éxito!",
-                    text: "Presiona el botón para continuar.",
-                    confirmButtonColor: "#28a745",
-                    confirmButtonText: "Ok",
-                    allowOutsideClick: false
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = data.redirectUrl;
-                    }
-                });
-            } else {
-                Swal.fire({
-                    icon: "error",
-                    title: "Error al agendar",
-                    text: "No pudimos registrar la evaluación en la agenda.",
-                    confirmButtonColor: "#3085d6",
-                    confirmButtonText: "Entendido"
-                });
-            }
+                Swal.fire({ icon: "success", title: "¡Guardado con éxito!", confirmButtonColor: "#28a745", confirmButtonText: "Ok", allowOutsideClick: false })
+                .then((result) => { if (result.isConfirmed) window.location.href = data.redirectUrl; });
+            } else { throw new Error('Error'); }
         } catch (e) {
-            Swal.fire({
-                icon: "error",
-                title: "¡Error de conexión!",
-                text: "No se pudo establecer comunicación con el servidor.",
-                confirmButtonText: "Reintentar",
-                confirmButtonColor: "#d33",
-            });
+            Swal.fire({ icon: "error", title: "Error", text: "No se pudo registrar la evaluación." });
         }
     });
 }
 
-// Eventos de paginación
-if (btnPrevPag) {
-    btnPrevPag.onclick = () => {
-        if (paginaActual > 1) {
-            paginaActual--;
-            renderizarListaEvaluaciones();
-        }
-    };
-}
-
-if (btnNextPag) {
-    btnNextPag.onclick = () => {
-        const totalPaginas = Math.ceil(todasLasEvaluaciones.length / elementosPorPagina);
-        if (paginaActual < totalPaginas) {
-            paginaActual++;
-            renderizarListaEvaluaciones();
-        }
-    };
-}
-
-// Eventos del calendario
-if (btnPrevMes) btnPrevMes.onclick = () => { 
-    mesSeleccionado--; 
-    if(mesSeleccionado < 0){ mesSeleccionado = 11; anioSeleccionado--; } 
-    generarCalendario(mesSeleccionado, anioSeleccionado); 
-};
-
-if (btnNextMes) btnNextMes.onclick = () => { 
-    mesSeleccionado++; 
-    if(mesSeleccionado > 11){ mesSeleccionado = 0; anioSeleccionado++; } 
-    generarCalendario(mesSeleccionado, anioSeleccionado); 
-};
-
-if (btnHoy) btnHoy.onclick = () => { 
-    const h = new Date(); 
-    mesSeleccionado = h.getMonth(); 
-    anioSeleccionado = h.getFullYear(); 
-    generarCalendario(mesSeleccionado, anioSeleccionado); 
-};
-
+// Paginación y Calendario Listeners
+if (btnPrevPag) btnPrevPag.onclick = () => { if (paginaActual > 1) { paginaActual--; renderizarListaEvaluaciones(); } };
+if (btnNextPag) btnNextPag.onclick = () => { if (paginaActual < Math.ceil(todasLasEvaluaciones.length / elementosPorPagina)) { paginaActual++; renderizarListaEvaluaciones(); } };
+if (btnPrevMes) btnPrevMes.onclick = () => { mesSeleccionado--; if(mesSeleccionado < 0){ mesSeleccionado = 11; anioSeleccionado--; } generarCalendario(mesSeleccionado, anioSeleccionado); };
+if (btnNextMes) btnNextMes.onclick = () => { mesSeleccionado++; if(mesSeleccionado > 11){ mesSeleccionado = 0; anioSeleccionado++; } generarCalendario(mesSeleccionado, anioSeleccionado); };
+if (btnHoy) btnHoy.onclick = () => { const h = new Date(); mesSeleccionado = h.getMonth(); anioSeleccionado = h.getFullYear(); generarCalendario(mesSeleccionado, anioSeleccionado); };
 if (filtroMes) filtroMes.onchange = () => generarCalendario(mesSeleccionado, anioSeleccionado);
 if (filtroAsignatura) filtroAsignatura.onchange = () => generarCalendario(mesSeleccionado, anioSeleccionado);
 if (filtroCorte) filtroCorte.onchange = () => generarCalendario(mesSeleccionado, anioSeleccionado);
-
 modalDetalles.querySelector('.cerrar-modal').onclick = () => modalDetalles.style.display = 'none';
 
 // =========================================
@@ -578,11 +429,8 @@ function inicializarApp(datosBrutos) {
             fechaLarga: formatLongDate(fLimpia)
         };
     });
-
-    // Establecer fecha mínima para el formulario
     const todayStr = getLocalDateString(new Date());
     if (fechaEvaluacionInput) fechaEvaluacionInput.min = todayStr;
-
     actualizarFiltroAsignaturas();
     renderizarListaEvaluaciones();
     generarCalendario(mesSeleccionado, anioSeleccionado);
@@ -591,30 +439,19 @@ function inicializarApp(datosBrutos) {
 
 function contarCaracteres(textarea) {
     const contador = document.getElementById('contador-caracteres');
+    if (!contador) return;
     const longitud = textarea.value.length;
     const max = textarea.getAttribute('maxlength');
     contador.textContent = `${longitud}/${max} caracteres`;
-    
-    // Opcional: Cambiar color cuando se acerca al límite
-    if (longitud > max * 0.8) {
-        contador.style.color = '#ef4444';
-    } else {
-        contador.style.color = '#666';
-    }
+    contador.style.color = longitud > max * 0.8 ? '#ef4444' : '#666';
 }
 
-// Inicializar contador al cargar la página
 document.addEventListener('DOMContentLoaded', function() {
     const textarea = document.getElementById('descripcion_evaluacion');
     if (textarea) {
         contarCaracteres(textarea);
-        textarea.addEventListener('input', function() {
-            contarCaracteres(this);
-        });
+        textarea.addEventListener('input', function() { contarCaracteres(this); });
     }
 });
 
-// Disparo inicial
-if (typeof DATOS_INICIALES_DEL_SERVIDOR !== 'undefined') {
-    inicializarApp(DATOS_INICIALES_DEL_SERVIDOR);
-}
+if (typeof DATOS_INICIALES_DEL_SERVIDOR !== 'undefined') inicializarApp(DATOS_INICIALES_DEL_SERVIDOR);

@@ -9,12 +9,12 @@ export class Agenda {
 
             if(result.affectedRows > 0){
                 return {
-                    sucess:true,
+                    success:true,
                 }
             }
             else{
                 return {
-                    sucess:false,
+                    success:false,
                     message: 'No se ha podido crear la evaluación'
                 }
             }
@@ -30,7 +30,7 @@ export class Agenda {
 
             if(result.affectedRows > 0){
                 return {
-                    sucess:true,
+                    success:true,
                 }
             }
             else{
@@ -52,12 +52,12 @@ export class Agenda {
 
             if(result.affectedRows > 0){
                 return {
-                    sucess:true,
+                    success:true,
                 }
             }
             else{
                 return {
-                    sucess:false,
+                    success:false,
                     message: 'No se ha podido actualizar el estado de la evaluación'
                 }
             }
@@ -67,19 +67,19 @@ export class Agenda {
         }
     }
     
-    static ObtenerCursosAgenda = async (id_usuario, id_lapso) => {
+    static ObtenerCursosAgenda = async (id_carrera,id_usuario, id_lapso) => {
         try{
-            const [rows] = await pool.query(GET_COURSES_AGENDA, [id_usuario, id_lapso]);
+            const [rows] = await pool.query(GET_COURSES_AGENDA, [id_carrera,id_usuario, id_lapso]);
             
             if(rows.length > 0){
                 return {
-                    sucess:true,
+                    success:true,
                     courses: rows
                 }
             }
             else{
                 return {
-                    sucess:false,
+                    success:false,
                     message: 'No se encontraron cursos'
                 }
             }
@@ -89,19 +89,19 @@ export class Agenda {
         }
     }
 
-    static ObtenerEvaluaciones = async (id_usuario, id_lapso) => {
+    static ObtenerEvaluaciones = async (id_carrera,id_usuario, id_lapso) => {
         try{
-            const [rows] = await pool.query(GET_EXAMS, [id_usuario, id_lapso]);
+            const [rows] = await pool.query(GET_EXAMS, [id_carrera,id_usuario, id_lapso]);
             
             if(rows.length > 0){
                 return {
-                    sucess:true,
+                    success:true,
                     exams: rows
                 }
             }
             else{
                 return {
-                    sucess:false,
+                    success:false,
                     message: 'No se encontraron evaluaciones'
                 }
             }

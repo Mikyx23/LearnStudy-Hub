@@ -24,9 +24,9 @@ export class Curso {
     }
 
 
-    static ObtenerCursos = async (id_usuario,id_lapso) => {
+    static ObtenerCursos = async (id_carrera,id_usuario,id_lapso) => {
         try{
-            const [rows] = await pool.execute(GET_COURSES,[id_usuario,id_lapso]);
+            const [rows] = await pool.execute(GET_COURSES,[id_carrera,id_usuario,id_lapso]);
 
             if(rows.length > 0){
                 return {
@@ -48,7 +48,7 @@ export class Curso {
 
     static ObtenerCursosDisponibles = async (id_usuario,id_lapso,id_carrera) => {
         try{
-            const [rows] = await pool.execute(GET_COURSES_AVAILABLE,[id_usuario,id_usuario,id_lapso,id_carrera]);
+            const [rows] = await pool.execute(GET_COURSES_AVAILABLE,[id_usuario,id_carrera,id_usuario,id_lapso,id_carrera,id_carrera]);
 
             if(rows.length > 0){
                 return {

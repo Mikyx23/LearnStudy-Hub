@@ -71,9 +71,9 @@ export class Pomodoro {
         }
     }
 
-    static ObtenerDatosPomodoro = async (id_usuario, id_lapso) => {
+    static ObtenerDatosPomodoro = async (id_carrera,id_usuario, id_lapso) => {
         try{
-            const [rows] = await pool.query(GET_POMODORO_DATA, [id_usuario, id_lapso]);
+            const [rows] = await pool.query(GET_POMODORO_DATA, [id_carrera,id_usuario, id_lapso]);
             
             if(rows.length > 0){
                 return {
@@ -93,9 +93,9 @@ export class Pomodoro {
         }
     }
 
-    static ObtenerDatosSesiones = async (id_usuario, id_lapso) => {
+    static ObtenerDatosSesiones = async (id_carrera,id_usuario, id_lapso) => {
         try{
-            const [rows] = await pool.query(GET_SESSIONS_DATA, [id_usuario, id_lapso]);
+            const [rows] = await pool.query(GET_SESSIONS_DATA, [id_carrera,id_usuario, id_lapso]);
 
             if(rows.length > 0){
                 return {

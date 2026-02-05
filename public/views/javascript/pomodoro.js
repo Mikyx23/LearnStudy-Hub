@@ -9,7 +9,7 @@ const pauseBtn = document.getElementById('pause-btn');
 const resetBtn = document.getElementById('reset-btn');
 const clearHistoryBtn = document.getElementById('clear-history-btn');
 
-// --- CONFIGURACIÓN POMODORO (25/5) ---
+// --- CONFIGURACIÓN POMODORO (25/5) --- PRUEBAS (0.1/0.05) ---
 const STUDY_TIME = 25 * 60; 
 const BREAK_TIME = 5 * 60;  
 

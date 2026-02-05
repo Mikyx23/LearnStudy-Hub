@@ -12,8 +12,8 @@ routerQualifications.get('/', async (req,res) => {
     try{
         const {user} = req.session;
 
-        const result2 = await ObtenerCursosCalificacionesController(user.id,lapsoActual);
-        const result3 = await ObtenerEvaluacionesCalificacionesController(user.id,lapsoActual);
+        const result2 = await ObtenerCursosCalificacionesController(user.carrer,user.id,lapsoActual);
+        const result3 = await ObtenerEvaluacionesCalificacionesController(user.carrer,user.id,lapsoActual);
 
         if(result2.success || result3.success){
             res.render('qualifications', {
