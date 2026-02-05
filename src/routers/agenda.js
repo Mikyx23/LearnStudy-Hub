@@ -22,7 +22,7 @@ routerAgenda.get('/', async(req, res) => {
         // Consultas al controlador: se busca la carga académica y el cronograma de exámenes
         const result = await ObtenerCursosAgendaController(user.carrer,user.id,lapsoActual);
         const result2 = await ObtenerEvaluacionesController(user.carrer,user.id,lapsoActual);
-        
+
         // Envía los datos a la plantilla agenda.ejs
         res.status(200).render('agenda', {
             asignaturas: result.courses || [],
