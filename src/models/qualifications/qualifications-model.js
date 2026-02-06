@@ -1,5 +1,5 @@
 import {pool} from '../conexion.js';
-import { GET_COURSES_QUALIFICATIONS, GET_EXAMS_QUALIFICATIONS, INSERT_QUALIFICATIONS } from '../queries.js';
+import { GET_COURSES_QUALIFICATIONS, GET_EXAMS_QUALIFICATIONS, INSERT_QUALIFICATIONS } from './qualifications-queries.js';
 
 
 export class Calificaciones {

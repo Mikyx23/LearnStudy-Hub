@@ -5,7 +5,7 @@ import {
     GET_SESSIONS_DATA,
     DELETE_POMODORO_SESSION,
     DELETE_POMODORO_HISTORY
-} from '../queries.js';
+} from './pomodoro-queries.js';
 
 export class Pomodoro {
     static CrearSesionPomodoro = async (id_evaluacion, descripcion_sesion, hora_inicio, hora_final, ciclos) => {

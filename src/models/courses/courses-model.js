@@ -1,5 +1,5 @@
 import {pool} from '../conexion.js';
-import { GET_COURSES, GET_COURSES_AVAILABLE, ADD_COURSE } from '../queries.js';
+import { GET_COURSES, GET_COURSES_AVAILABLE, ADD_COURSE } from './courses-queries.js';
 
 export class Curso {
     static InsertarCurso = async (id_usuario,id_asignatura_carrera,id_lapso) => {

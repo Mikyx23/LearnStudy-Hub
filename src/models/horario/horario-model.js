@@ -1,5 +1,5 @@
 import {pool} from '../conexion.js';
-import { GET_COURSES_SCHEDULE, GET_SCHEDULE, INSERT_SCHEDULE, DELETE_SCHEDULE } from '../queries.js';
+import { GET_COURSES_SCHEDULE, GET_SCHEDULE, INSERT_SCHEDULE, DELETE_SCHEDULE } from './horario-queries.js'
 
 export class Horario {
     static CrearHorario = async (horario) => {

@@ -23,7 +23,7 @@ import {
     DELETE_MALLA_CRUD,
     DELETE_PRELACION_MATERIA_CRUD,
     DELETE_PRELACION_ACADEMICA_CRUD
-} from '../queries.js'
+} from './crud-queries.js'
 
 export class Crud {
     static InsertarCarrera = async (nombre_carrera) => {
