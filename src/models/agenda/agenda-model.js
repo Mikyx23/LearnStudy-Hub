@@ -1,6 +1,5 @@
-import {pool} from './conexion.js';
-import { GET_COURSES_AGENDA, INSERT_EXAM, GET_EXAMS, SET_STATE_EXAM, DELETE_EXAM } from './queries.js';
-
+import {pool} from '../conexion.js';
+import { GET_COURSES_AGENDA, INSERT_EXAM, GET_EXAMS, SET_STATE_EXAM, DELETE_EXAM } from './agenda-queries.js';
 
 export class Agenda {
     static CrearEvaluacion = async (id_curso, descripcion, corte, porcentaje, fecha_entrega) => {

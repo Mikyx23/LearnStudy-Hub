@@ -1,4 +1,4 @@
-import { Calificaciones } from "../models/qualifications-model.js";
+import { Calificaciones } from "../models/qualifications/qualifications-model.js";
 
 export const InsertarCalificacionController = async (id_curso, id_evaluacion, calificacion) => {
     return await Calificaciones.InsertarCalificacion(id_curso, id_evaluacion, calificacion);

@@ -1,4 +1,4 @@
-import { RecuperarContraseña } from "../models/recover-model.js";
+import { RecuperarContraseña } from "../models/recover/recover-model.js";
 
 export const CrearRecuperarContraseñaController = async (id_usuario,pregunta1,respuesta1,pregunta2,respuesta2,pregunta3,respuesta3) => {
     return await RecuperarContraseña.CrearRecuperarContraseña(id_usuario,pregunta1,respuesta1,pregunta2,respuesta2,pregunta3,respuesta3);

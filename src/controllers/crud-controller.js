@@ -1,4 +1,4 @@
-import { Crud } from "../models/crud-model.js";
+import { Crud } from "../models/crud/crud-model.js";
 
 export const InsertarCarreraController = async (nombre_carrera) => {
     return await Crud.InsertarCarrera(nombre_carrera)

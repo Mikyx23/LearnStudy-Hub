@@ -1,4 +1,4 @@
-import { Dashboard } from "../models/dashboard-model.js";
+import { Dashboard } from "../models/dashboard/dashboard-model.js";
 import { DateTime } from 'luxon';
 
 export const ObtenerDatosUsuarioController = async (id_usuario, id_lapso) => {

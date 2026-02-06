@@ -1,5 +1,5 @@
-import {pool} from './conexion.js';
-import { GET_MALLA_CURRICULAR } from './queries.js';
+import {pool} from '../conexion.js';
+import { GET_MALLA_CURRICULAR } from '../queries.js';
 
 
 export class Malla {

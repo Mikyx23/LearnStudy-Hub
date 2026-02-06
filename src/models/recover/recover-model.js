@@ -1,6 +1,6 @@
-import {pool} from './conexion.js';
+import {pool} from '../conexion.js';
 import bcrypt from 'bcryptjs';
-import { config } from '../../config.js';
+import { config } from '../../../config.js';
 const { saltRounds } = config;
 
 

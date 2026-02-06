@@ -1,4 +1,4 @@
-import {Malla} from '../models/malla-model.js';
+import {Malla} from '../models/malla/malla-model.js';
 
 export const ObtenerMallaCurricularController = async (carrer) => {
     return await Malla.ObtenerMallaCurricular(carrer);
