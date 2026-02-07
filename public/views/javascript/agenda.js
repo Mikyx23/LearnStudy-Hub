@@ -21,24 +21,25 @@ let paginaActual = 1;
 const elementosPorPagina = 6;
 
 const configuracionPorcentajes = {
-    corte1: { max: 30, colorClass: 'bg-red-50 border-red-200 text-red-600', nombre: 'Corte 1' },
+    corte1: { max: 30, colorClass: 'bg-red-50 border-red-200 text-red-700', nombre: 'Corte 1' },
     corte2: { max: 30, colorClass: 'bg-yellow-50 border-yellow-200 text-yellow-700', nombre: 'Corte 2' },
-    corte3: { max: 40, colorClass: 'bg-green-50 border-green-200 text-green-600', nombre: 'Corte 3' }
+    corte3: { max: 40, colorClass: 'bg-green-50 border-green-200 text-green-700', nombre: 'Corte 3' }
 };
+
 // =========================================
-// 2. SELECTORES DEL DOM
+// 2. SELECTORES DEL DOM (Adaptados al HTML)
 // =========================================
 const listaExamenes = document.getElementById('lista-examenes');
 const mesActualElement = document.getElementById('mes-actual');
 const calendarioDias = document.getElementById('calendario-dias');
-const calendarioContainer = document.querySelector('.calendario-grid');
 
-// Formularios e Inputs
+// Formularios e Inputs - Adaptados a los IDs del HTML
 const formularioEvaluaciones = document.getElementById('formulario-evaluaciones');
 const asignaturaInput = document.getElementById('asignatura');
 const corteSelect = document.getElementById('corte');
 const fechaEvaluacionInput = document.getElementById('fecha_evaluacion');
-const nombreInput = document.getElementById('nombre_evaluacion'); // Cambiado de descripcion a nombre
+const descripcionInput = document.getElementById('descripcion_evaluacion'); // Cambiado a ID correcto
+const descripcionDetalleInput = document.getElementById('descripcion_detalle');
 
 // Filtros y Botones
 const filtroMes = document.getElementById('filtro-mes');
@@ -120,9 +121,9 @@ function getDayName(date) {
 
 function getEstadoInfo(estado) {
     const estados = {
-        'PENDIENTE': { class: 'bg-blue-50 text-blue-600 border-blue-100', texto: 'Pendiente' },
-        'ENTREGADA': { class: 'bg-emerald-50 text-emerald-600 border-emerald-100', texto: 'Entregada' },
-        'CALIFICADA': { class: 'bg-purple-50 text-purple-600 border-purple-100', texto: 'Calificada' }
+        'PENDIENTE': { class: 'bg-blue-100 text-blue-700 border-blue-200', texto: 'Pendiente' },
+        'ENTREGADA': { class: 'bg-emerald-100 text-emerald-700 border-emerald-200', texto: 'Entregada' },
+        'CALIFICADA': { class: 'bg-purple-100 text-purple-700 border-purple-200', texto: 'Calificada' }
     };
     return estados[estado] || estados['PENDIENTE'];
 }
@@ -156,7 +157,7 @@ function renderizarCalendario() {
     // Días vacíos antes del primer día del mes
     for (let i = 0; i < primerDiaSemana; i++) {
         const diaVacio = document.createElement('div');
-        diaVacio.className = 'h-24 bg-transparent rounded-lg';
+        diaVacio.className = 'h-24 bg-gray-50/50 rounded-lg border border-transparent';
         calendarioDias.appendChild(diaVacio);
     }
 
@@ -195,8 +196,8 @@ function renderizarCalendario() {
         // Contenido del día
         let contenido = `
             <div class="flex justify-between items-start mb-1">
-                <span class="text-sm font-semibold ${esHoy(dia) ? 'text-blue-400' : 'text-gray-400'}">${dia}</span>
-                <span class="text-xs ${esHoy(dia) ? 'text-blue-300' : 'text-gray-500'}">${getDayName(fechaDia)}</span>
+                <span class="text-sm font-semibold ${esHoy(dia) ? 'text-blue-600' : 'text-gray-700'}">${dia}</span>
+                <span class="text-xs ${esHoy(dia) ? 'text-blue-500' : 'text-gray-500'}">${getDayName(fechaDia)}</span>
             </div>
         `;
 
@@ -204,9 +205,10 @@ function renderizarCalendario() {
         if (evaluacionesDia.length > 0) {
             evaluacionesDia.slice(0, 2).forEach((ev, index) => {
                 const corteInfo = getCorteInfo(ev.corte);
-                const nombreCorto = ev.nombre.length > 15 ? ev.nombre.substring(0, 15) + '...' : ev.nombre;
+                const nombre = ev.nombre || ev.descripcion || 'Evaluación';
+                const nombreCorto = nombre.length > 15 ? nombre.substring(0, 15) + '...' : nombre;
                 contenido += `
-                    <div class="mt-1 p-1 rounded text-xs truncate ${corteInfo.colorClass} border ${corteInfo.colorClass.includes('border') ? '' : 'border-gray-700'}">
+                    <div class="mt-1 p-1 rounded text-xs truncate ${corteInfo.colorClass} border">
                         ${nombreCorto}
                     </div>
                 `;
@@ -228,17 +230,12 @@ function renderizarCalendario() {
         if (evaluacionesDia.length > 0) {
             diaElement.addEventListener('click', () => mostrarEvaluacionesDia(fechaString));
             diaElement.style.cursor = 'pointer';
+            diaElement.classList.add('hover:shadow-md', 'hover:border-blue-300');
         } else {
             diaElement.style.cursor = 'default';
         }
 
         calendarioDias.appendChild(diaElement);
-    }
-
-    // Ajustar altura del contenedor para ocupar espacio disponible
-    if (calendarioContainer) {
-        const rows = Math.ceil((diasEnMes + primerDiaSemana) / 7);
-        calendarioContainer.style.minHeight = `${rows * 96}px`;
     }
 }
 
@@ -249,12 +246,11 @@ function mostrarEvaluacionesDia(fecha) {
     });
 
     if (evaluacionesDia.length === 0) {
-        SwalClaro.fire({
+        swalClaro.fire({
             title: `No hay evaluaciones`,
             text: `No hay evaluaciones programadas para el ${formatShortDate(fecha)}`,
             icon: 'info',
-            
-            confirmButtonColor: '#38bdf8',
+            confirmButtonColor: '#3b82f6',
             confirmButtonText: 'Cerrar'
         });
         return;
@@ -264,15 +260,17 @@ function mostrarEvaluacionesDia(fecha) {
     evaluacionesDia.forEach(ev => {
         const corteInfo = getCorteInfo(ev.corte);
         const estadoInfo = getEstadoInfo(ev.estado);
+        const nombre = ev.nombre || ev.descripcion || 'Sin nombre';
+        
         mensaje += `
-            <div class="bg-gray-800/50 p-4 rounded-lg border border-gray-700 hover:border-gray-600 transition">
+            <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-blue-300 transition">
                 <div class="flex justify-between items-start mb-2">
-                    <div class="font-semibold text-white text-lg">${ev.asignatura_nombre || 'Sin asignatura'}</div>
+                    <div class="font-semibold text-gray-900 text-lg">${ev.asignatura_nombre || 'Sin asignatura'}</div>
                     <span class="px-2 py-1 rounded text-xs font-semibold ${corteInfo.colorClass}">
                         Corte ${ev.corte} • ${ev.porcentaje}%
                     </span>
                 </div>
-                <div class="text-sm text-gray-300 mt-2">${ev.nombre}</div>
+                <div class="text-sm text-gray-700 mt-2">${nombre}</div>
                 <div class="text-xs text-gray-500 mt-3 flex justify-between items-center">
                     <span>${formatShortDate(ev.fecha)}</span>
                     <span class="${estadoInfo.class} px-2 py-1 rounded-full text-xs">
@@ -284,11 +282,12 @@ function mostrarEvaluacionesDia(fecha) {
     });
     mensaje += `</div>`;
 
-    SwalClaro.fire({
-        title: `Evaluaciones`,
+    swalClaro.fire({
+        title: `Evaluaciones - ${formatShortDate(fecha)}`,
         html: mensaje,
         showConfirmButton: false,
-        showCloseButton: true
+        showCloseButton: true,
+        width: '500px'
     });
 }
 
@@ -306,15 +305,16 @@ function renderizarLista() {
             <tr>
                 <td colspan="4" class="text-center py-16 text-gray-500">
                     <div class="flex flex-col items-center justify-center">
-                        <svg class="w-16 h-16 text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                         </svg>
-                        <p class="text-lg">No hay evaluaciones registradas</p>
-                        <p class="text-sm text-gray-600 mt-2">Agrega tu primera evaluación usando el formulario</p>
+                        <p class="text-lg text-gray-600">No hay evaluaciones registradas</p>
+                        <p class="text-sm text-gray-500 mt-2">Agrega tu primera evaluación usando el formulario</p>
                     </div>
                 </td>
             </tr>
         `;
+        actualizarContadores(0);
         return;
     }
 
@@ -333,20 +333,21 @@ function renderizarLista() {
     evaluacionesPaginadas.forEach((evaluacion, index) => {
         const estadoInfo = getEstadoInfo(evaluacion.estado);
         const corteInfo = getCorteInfo(evaluacion.corte);
+        const nombre = evaluacion.nombre || evaluacion.descripcion || 'Sin nombre';
 
         const fila = document.createElement('tr');
-        fila.className = 'border-b border-gray-800 hover:bg-gray-800/30 transition-all duration-200 cursor-pointer group';
+        fila.className = 'border-b border-gray-200 hover:bg-blue-50 transition-all duration-200 cursor-pointer group';
 
         // Alternar colores de fila
         if (index % 2 === 0) {
-            fila.className += ' bg-gray-900/20';
+            fila.className += ' bg-gray-50/50';
         }
 
         fila.innerHTML = `
             <td class="py-4 px-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-3 h-3 rounded-full ${corteInfo.colorClass.split(' ')[0]} border ${corteInfo.colorClass.includes('border') ? '' : 'border-gray-700'}"></div>
-                    <span class="font-medium text-gray-200">${evaluacion.asignatura_nombre || 'Sin asignatura'}</span>
+                    <div class="w-3 h-3 rounded-full ${corteInfo.colorClass.split(' ')[0]} border ${corteInfo.colorClass.includes('border') ? '' : 'border-gray-300'}"></div>
+                    <span class="font-medium text-gray-800">${evaluacion.asignatura_nombre || 'Sin asignatura'}</span>
                 </div>
             </td>
             <td class="py-4 px-4">
@@ -354,13 +355,13 @@ function renderizarLista() {
                     ${estadoInfo.texto}
                 </span>
             </td>
-            <td class="py-4 px-4 text-gray-300 max-w-xs truncate" title="${evaluacion.nombre}">
-                ${evaluacion.nombre}
+            <td class="py-4 px-4 text-gray-700 max-w-xs truncate" title="${nombre}">
+                ${nombre}
             </td>
             <td class="py-4 px-4">
                 <div class="flex items-center justify-between">
-                    <span class="text-gray-400 font-medium">${formatShortDate(evaluacion.fecha)}</span>
-                    <svg class="w-4 h-4 text-gray-600 opacity-0 group-hover:opacity-100 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <span class="text-gray-600 font-medium">${formatShortDate(evaluacion.fecha)}</span>
+                    <svg class="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                     </svg>
                 </div>
@@ -384,13 +385,13 @@ function actualizarContadores(totalElementos) {
     const paginaActualSpan = document.getElementById('pagina-actual');
     const totalPaginas = document.getElementById('total-paginas');
 
-    const inicio = (paginaActual - 1) * elementosPorPagina + 1;
+    const inicio = totalElementos > 0 ? (paginaActual - 1) * elementosPorPagina + 1 : 0;
     const fin = Math.min(paginaActual * elementosPorPagina, totalElementos);
     const totalPags = Math.ceil(totalElementos / elementosPorPagina);
 
     if (totalEvaluaciones) totalEvaluaciones.textContent = totalElementos;
     if (totalElementosSpan) totalElementosSpan.textContent = totalElementos;
-    if (elementosMostrados) elementosMostrados.textContent = `${inicio}-${fin}`;
+    if (elementosMostrados) elementosMostrados.textContent = totalElementos > 0 ? `${inicio}-${fin}` : '0-0';
     if (paginaActualSpan) paginaActualSpan.textContent = paginaActual;
     if (totalPaginas) totalPaginas.textContent = totalPags;
 }
@@ -414,7 +415,7 @@ function renderizarPaginacion(totalElementos) {
     if (inicio > 1) {
         const botonPrimera = document.createElement('button');
         botonPrimera.textContent = '1';
-        botonPrimera.className = 'w-8 h-8 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white transition';
+        botonPrimera.className = 'w-8 h-8 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700 hover:text-gray-900 transition';
         botonPrimera.addEventListener('click', () => {
             paginaActual = 1;
             renderizarLista();
@@ -435,7 +436,7 @@ function renderizarPaginacion(totalElementos) {
         botonPagina.textContent = i;
         botonPagina.className = i === paginaActual
             ? 'w-8 h-8 rounded-lg bg-blue-600 text-white font-semibold transition shadow-lg shadow-blue-600/30'
-            : 'w-8 h-8 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white transition';
+            : 'w-8 h-8 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700 hover:text-gray-900 transition';
 
         botonPagina.addEventListener('click', () => {
             paginaActual = i;
@@ -456,7 +457,7 @@ function renderizarPaginacion(totalElementos) {
 
         const botonUltima = document.createElement('button');
         botonUltima.textContent = totalPaginas;
-        botonUltima.className = 'w-8 h-8 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white transition';
+        botonUltima.className = 'w-8 h-8 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700 hover:text-gray-900 transition';
         botonUltima.addEventListener('click', () => {
             paginaActual = totalPaginas;
             renderizarLista();
@@ -468,15 +469,15 @@ function renderizarPaginacion(totalElementos) {
     if (btnPrevPag) {
         btnPrevPag.disabled = paginaActual === 1;
         btnPrevPag.className = btnPrevPag.disabled
-            ? 'bg-gray-900 text-gray-600 px-4 py-2 rounded-lg font-medium transition cursor-not-allowed'
-            : 'bg-gray-800 hover:bg-gray-700 text-blue-400 px-4 py-2 rounded-lg font-medium transition';
+            ? 'bg-gray-100 text-gray-400 px-4 py-2 rounded-xl font-medium transition cursor-not-allowed border-2 border-gray-300'
+            : 'bg-gray-200 hover:bg-gray-300 text-blue-700 px-4 py-2 rounded-xl font-medium transition border-2 border-gray-300';
     }
 
     if (btnNextPag) {
         btnNextPag.disabled = paginaActual === totalPaginas || totalPaginas === 0;
         btnNextPag.className = btnNextPag.disabled
-            ? 'bg-gray-900 text-gray-600 px-4 py-2 rounded-lg font-medium transition cursor-not-allowed'
-            : 'bg-gray-800 hover:bg-gray-700 text-blue-400 px-4 py-2 rounded-lg font-medium transition';
+            ? 'bg-gray-100 text-gray-400 px-4 py-2 rounded-xl font-medium transition cursor-not-allowed border-2 border-gray-300'
+            : 'bg-gray-200 hover:bg-gray-300 text-blue-700 px-4 py-2 rounded-xl font-medium transition border-2 border-gray-300';
     }
 }
 
@@ -484,15 +485,16 @@ function mostrarDetallesEvaluacion(evaluacion) {
     const estadoInfo = getEstadoInfo(evaluacion.estado);
     const corteInfo = getCorteInfo(evaluacion.corte);
     const fechaEv = parseLocalDate(extraerFechaISO(evaluacion.fecha));
+    const nombre = evaluacion.nombre || evaluacion.descripcion || 'Sin nombre';
 
-    SwalClaro.fire({
+    swalClaro.fire({
         title: 'Detalles de la Evaluación',
         html: `
             <div class="text-left space-y-4">
-                <div class="flex items-center justify-between border-b border-gray-700 pb-3">
+                <div class="flex items-center justify-between border-b border-gray-300 pb-3">
                     <div>
-                        <h3 class="text-xl font-bold text-white">${evaluacion.asignatura_nombre || 'Sin asignatura'}</h3>
-                        <p class="text-gray-400 mt-1">${evaluacion.nombre}</p>
+                        <h3 class="text-xl font-bold text-gray-900">${evaluacion.asignatura_nombre || 'Sin asignatura'}</h3>
+                        <p class="text-gray-600 mt-1">${nombre}</p>
                     </div>
                     <span class="px-3 py-1.5 rounded-full text-sm font-semibold ${corteInfo.colorClass}">
                         Corte ${evaluacion.corte}
@@ -500,23 +502,23 @@ function mostrarDetallesEvaluacion(evaluacion) {
                 </div>
                 
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-gray-800/30 p-3 rounded-lg">
-                        <div class="text-sm text-gray-400">Estado</div>
+                    <div class="bg-gray-100 p-3 rounded-lg">
+                        <div class="text-sm text-gray-600">Estado</div>
                         <div class="mt-1">
                             <span class="px-3 py-1 rounded-full text-xs font-semibold ${estadoInfo.class}">
                                 ${estadoInfo.texto}
                             </span>
                         </div>
                     </div>
-                    <div class="bg-gray-800/30 p-3 rounded-lg">
-                        <div class="text-sm text-gray-400">Porcentaje</div>
-                        <div class="mt-1 text-2xl font-bold text-blue-400">${evaluacion.porcentaje}%</div>
+                    <div class="bg-gray-100 p-3 rounded-lg">
+                        <div class="text-sm text-gray-600">Porcentaje</div>
+                        <div class="mt-1 text-2xl font-bold text-blue-600">${evaluacion.porcentaje}%</div>
                     </div>
                 </div>
                 
-                <div class="bg-gray-800/30 p-3 rounded-lg">
-                    <div class="text-sm text-gray-400">Fecha de entrega</div>
-                    <div class="mt-1 text-lg font-semibold text-cyan-400">${formatShortDate(evaluacion.fecha)}</div>
+                <div class="bg-gray-100 p-3 rounded-lg">
+                    <div class="text-sm text-gray-600">Fecha de entrega</div>
+                    <div class="mt-1 text-lg font-semibold text-blue-700">${formatShortDate(evaluacion.fecha)}</div>
                     <div class="text-xs text-gray-500 mt-1">
                         ${getDayName(fechaEv)} • 
                         ${fechaEv.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
@@ -528,14 +530,13 @@ function mostrarDetallesEvaluacion(evaluacion) {
                 </div>
             </div>
         `,
-        
         width: '500px',
         showCancelButton: true,
         confirmButtonText: '<i class="mr-2">🗑️</i> Eliminar',
         cancelButtonText: 'Cerrar',
         showCloseButton: true,
         customClass: {
-            closeButton: 'text-gray-400 hover:text-white'
+            closeButton: 'text-gray-400 hover:text-gray-600'
         }
     }).then((result) => {
         if (result.isConfirmed) {
@@ -575,17 +576,17 @@ async function cargarEvaluaciones() {
         renderizarLista();
     } catch (error) {
         console.error('Error al cargar evaluaciones:', error);
-        SwalClaro.fire({
+        swalClaro.fire({
             icon: 'error',
             title: 'Error',
             text: 'No se pudieron cargar las evaluaciones',
-            confirmButtonColor: '#38bdf8'
+            confirmButtonColor: '#3b82f6'
         });
     }
 }
 
 async function eliminarEvaluacion(id) {
-    const confirm = await SwalClaro.fire({
+    const confirm = await swalClaro.fire({
         title: '¿Estás seguro?',
         text: 'Esta acción no se puede deshacer',
         icon: 'warning',
@@ -605,7 +606,7 @@ async function eliminarEvaluacion(id) {
 
         if (!response.ok) throw new Error('Error al eliminar');
 
-        SwalClaro.fire({
+        swalClaro.fire({
             icon: 'success',
             title: '¡Eliminada!',
             text: 'La evaluación ha sido eliminada correctamente',
@@ -616,7 +617,7 @@ async function eliminarEvaluacion(id) {
         await cargarEvaluaciones();
     } catch (error) {
         console.error('Error al eliminar:', error);
-        SwalClaro.fire({
+        swalClaro.fire({
             icon: 'error',
             title: 'Error',
             text: 'No se pudo eliminar la evaluación',
@@ -628,16 +629,16 @@ async function eliminarEvaluacion(id) {
 // 7. EVENT LISTENERS MEJORADOS
 // =========================================
 
-// Contador de caracteres para el nombre de evaluación
-if (nombreInput) {
-    nombreInput.addEventListener('input', (e) => {
+// Contador de caracteres para la descripción de evaluación
+if (descripcionInput) {
+    descripcionInput.addEventListener('input', (e) => {
         const contador = document.getElementById('contador-caracteres');
         if (contador) {
             const length = e.target.value.length;
             contador.textContent = `${length}/30 caracteres`;
             contador.className = length > 25
-                ? 'text-xs mt-1 text-red-400 font-medium'
-                : 'text-xs mt-1 text-gray-500';
+                ? 'text-sm mt-2 text-red-500 font-medium'
+                : 'text-sm mt-2 text-blue-600';
         }
     });
 }
@@ -658,8 +659,8 @@ if (formularioEvaluaciones) {
             const formData = new FormData(formularioEvaluaciones);
 
             // Asegurarse de que el campo se llama 'nombre' en lugar de 'descripcion'
-            // Si el formulario tiene name="descripcion", cambiar a name="nombre"
-            const nombreValue = document.getElementById('nombre_evaluacion').value;
+            // Si el backend espera 'nombre', lo agregamos desde el input de descripción
+            const nombreValue = document.getElementById('descripcion_evaluacion').value;
             formData.append('nombre', nombreValue);
 
             const response = await fetch('/api/agenda/registrar', {
@@ -672,7 +673,7 @@ if (formularioEvaluaciones) {
                 throw new Error(errorData.message || 'Error al registrar');
             }
 
-            SwalClaro.fire({
+            swalClaro.fire({
                 icon: 'success',
                 title: '¡Registrada!',
                 text: 'La evaluación ha sido registrada exitosamente',
@@ -686,18 +687,19 @@ if (formularioEvaluaciones) {
             const contador = document.getElementById('contador-caracteres');
             if (contador) {
                 contador.textContent = '0/30 caracteres';
-                contador.className = 'text-xs mt-1 text-gray-500';
+                contador.className = 'text-sm mt-2 text-blue-600';
             }
 
+            // Recargar las evaluaciones
             await cargarEvaluaciones();
 
         } catch (error) {
             console.error('Error al registrar:', error);
-            SwalClaro.fire({
+            swalClaro.fire({
                 icon: 'error',
                 title: 'Error',
                 text: error.message || 'No se pudo registrar la evaluación',
-                confirmButtonColor: '#38bdf8'
+                confirmButtonColor: '#3b82f6'
             });
         } finally {
             // Rehabilitar botón
@@ -814,53 +816,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, 60000);
 });
-
-// Función para exportar a CSV
-function exportarEvaluaciones() {
-    if (todasLasEvaluaciones.length === 0) {
-        SwalClaro.fire({
-            icon: 'warning',
-            title: 'Sin datos',
-            text: 'No hay evaluaciones para exportar'
-        });
-        return;
-    }
-
-    let csv = 'Asignatura,Nombre,Corte,Porcentaje,Fecha,Estado,Curso ID\n';
-
-    todasLasEvaluaciones.forEach(ev => {
-        csv += `"${ev.asignatura_nombre || ''}","${ev.nombre}",Corte ${ev.corte},${ev.porcentaje}%,"${formatShortDate(ev.fecha)}",${ev.estado},${ev.curso_id || ''}\n`;
-    });
-
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `evaluaciones_${getLocalDateString(new Date())}.csv`;
-    a.click();
-
-    SwalClaro.fire({
-        icon: 'success',
-        title: 'Exportado',
-        text: 'Las evaluaciones han sido exportadas a CSV',
-
-        timer: 2000,
-        showConfirmButton: false
-    });
-}
-
-// Añadir botón de exportación si no existe
-function agregarBotonExportacion() {
-    const header = document.querySelector('h2.text-2xl.font-bold.text-white.mb-6');
-    if (header && !document.getElementById('btn-exportar')) {
-        const btnExportar = document.createElement('button');
-        btnExportar.id = 'btn-exportar';
-        btnExportar.className = 'ml-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2';
-        btnExportar.innerHTML = '<i>📥</i> Exportar CSV';
-        btnExportar.onclick = exportarEvaluaciones;
-        header.parentElement.insertBefore(btnExportar, header.nextSibling);
-    }
-}
 
 // Inicializar botón de exportación
 document.addEventListener('DOMContentLoaded', agregarBotonExportacion);
