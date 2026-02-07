@@ -1,3 +1,4 @@
+
 // Vector para almacenar todas las clases (inicial + agregadas)
 let scheduleData = initialScheduleData.map(clase => ({
     ...clase,
