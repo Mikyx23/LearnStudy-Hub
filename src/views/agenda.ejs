@@ -38,25 +38,23 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-    :root {
-        --primary-blue: #2563eb;
-        --primary-green: #10b981;
-        --bg-light: #ffffff;
-        --text-dark: #1e293b;
-        --text-gray: #334155;
-        --border-color: #e0e7ff;
-        --card-shadow: 0 4px 6px -1px rgb(37 99 235 / 0.1), 0 2px 4px -2px rgb(37 99 235 / 0.1);
+    /* ==============================================
+        ESTILOS ESPECÍFICOS PARA PÁGINA DE AGENDA
+        Variables locales para evitar conflictos
+    ============================================== */
+    .agenda-page {
+        --agenda-primary-blue: #2563eb;
+        --agenda-primary-green: #10b981;
+        --agenda-bg-light: #ffffff;
+        --agenda-text-dark: #1e293b;
+        --agenda-text-gray: #334155;
+        --agenda-border-color: #e0e7ff;
+        --agenda-card-shadow: 0 4px 6px -1px rgb(37 99 235 / 0.1), 0 2px 4px -2px rgb(37 99 235 / 0.1);
+        --agenda-card-shadow-xl: 0 20px 25px -5px rgb(37 99 235 / 0.1), 0 10px 10px -5px rgb(37 99 235 / 0.05);
     }
 
-    body { 
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        background: #ffffff;
-        color: var(--text-dark);
-        line-height: 1.6;
-    }
-
-    /* Contenedor principal adaptable al sidebar */
-    .contenedor-principal {
+    /* Contenedor principal de agenda */
+    .agenda-page .agenda-contenedor-principal {
         max-width: 100%;
         margin: 0 auto;
         padding: 0 1.5rem;
@@ -64,25 +62,25 @@
     }
 
     @media (min-width: 1024px) {
-        .contenedor-principal {
+        .agenda-page .agenda-contenedor-principal {
             padding: 0 2rem;
         }
     }
 
     @media (min-width: 1280px) {
-        .contenedor-principal {
+        .agenda-page .agenda-contenedor-principal {
             padding: 0 2.5rem;
         }
     }
 
     @media (max-width: 768px) {
-        .contenedor-principal {
+        .agenda-page .agenda-contenedor-principal {
             padding: 0 1rem;
         }
     }
 
-    /* Tarjetas y Contenedores */
-    .card-container {
+    /* Tarjetas y Contenedores específicos de agenda */
+    .agenda-page .agenda-card-container {
         background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
         border-radius: 1.5rem;
         border: 2px solid #bfdbfe;
@@ -90,72 +88,76 @@
         padding: 2rem;
     }
 
-    .gradient-card {
+    .agenda-page .agenda-gradient-card {
         background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
         border: 2px solid #bfdbfe;
     }
 
-    /* Inputs Personalizados */
-    input, select, textarea {
+    /* Inputs Personalizados para agenda */
+    .agenda-page .agenda-input,
+    .agenda-page .agenda-select,
+    .agenda-page .agenda-textarea {
         background-color: #ffffff !important;
         color: #1e293b !important;
         border: 2px solid #bfdbfe !important;
-        transition: all 0.3s ease;
+        transition: all 0.3s ease !important;
     }
 
-    input:focus, select:focus, textarea:focus {
+    .agenda-page .agenda-input:focus,
+    .agenda-page .agenda-select:focus,
+    .agenda-page .agenda-textarea:focus {
         border-color: #2563eb !important;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        outline: none;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+        outline: none !important;
     }
 
-    /* Botones */
-    .btn-primary {
+    /* Botones específicos de agenda */
+    .agenda-page .agenda-btn-primary {
         background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
     }
 
-    .btn-primary:hover {
+    .agenda-page .agenda-btn-primary:hover {
         background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
         box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
         transform: translateY(-2px);
     }
 
-    /* Calendario */
-    .dia-calendario {
+    /* Calendario de agenda */
+    .agenda-page .agenda-dia-calendario {
         border: 2px solid #dbeafe;
         background: #ffffff;
         transition: all 0.3s ease;
     }
 
-    .dia-calendario:hover {
+    .agenda-page .agenda-dia-calendario:hover {
         background: #eff6ff;
         border-color: #93c5fd;
         transform: scale(1.05);
     }
 
-    /* Tabla */
-    .tabla-evaluaciones thead {
+    /* Tabla de agenda */
+    .agenda-page .agenda-tabla-evaluaciones thead {
         background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
     }
 
-    .tabla-evaluaciones tbody tr {
+    .agenda-page .agenda-tabla-evaluaciones tbody tr {
         background: #ffffff;
         border-bottom: 1px solid #e0e7ff;
         transition: all 0.3s ease;
     }
 
-    .tabla-evaluaciones tbody tr:hover {
+    .agenda-page .agenda-tabla-evaluaciones tbody tr:hover {
         background: #eff6ff;
         transform: translateX(5px);
     }
 
-    /* Animaciones */
-    .fade-in {
-        animation: fadeIn 0.5s ease-in;
+    /* Animaciones específicas de agenda */
+    .agenda-page .agenda-fade-in {
+        animation: agendaFadeIn 0.5s ease-in;
     }
 
-    @keyframes fadeIn {
+    @keyframes agendaFadeIn {
         from {
             opacity: 0;
             transform: translateY(20px);
@@ -166,44 +168,133 @@
         }
     }
 
-    .glow {
+    .agenda-page .agenda-glow {
         box-shadow: 0 0 30px rgba(37, 99, 235, 0.2);
     }
 
-    /* Títulos con gradiente */
-    .titulo-gradiente {
+    /* Títulos con gradiente específicos de agenda */
+    .agenda-page .agenda-titulo-gradiente {
         background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    /* Clases de utilidad específicas para agenda */
+    .agenda-page .agenda-shadow-xl {
+        box-shadow: var(--agenda-card-shadow-xl);
+    }
+
+    .agenda-page .agenda-placeholder-azul::placeholder {
+        color: #93c5fd !important;
+    }
+
+    /* Estilos para inputs de formulario de agenda */
+    .agenda-page select.agenda-form-select,
+    .agenda-page input.agenda-form-input,
+    .agenda-page textarea.agenda-form-textarea {
+        font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+        font-weight: 500 !important;
+    }
+
+    /* Contenedor de calendario de agenda */
+    .agenda-page .agenda-calendario-grid {
+        background: transparent;
+    }
+
+    /* Leyenda de agenda */
+    .agenda-page .agenda-leyenda-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Paginación de agenda */
+    .agenda-page .agenda-paginacion-btn {
+        transition: all 0.2s ease;
+    }
+
+    .agenda-page .agenda-paginacion-btn:hover:not(:disabled) {
+        transform: translateY(-1px);
+    }
+
+    /* Estilos para iconos dentro de agenda */
+    .agenda-page .agenda-icon {
+        stroke-width: 2;
+    }
+
+    /* Clases para estados específicos */
+    .agenda-page .agenda-corte-1 {
+        background-color: #fef2f2 !important;
+        border-color: #fca5a5 !important;
+    }
+
+    .agenda-page .agenda-corte-2 {
+        background-color: #fefce8 !important;
+        border-color: #fde047 !important;
+    }
+
+    .agenda-page .agenda-corte-3 {
+        background-color: #f0fdf4 !important;
+        border-color: #86efac !important;
+    }
+
+    /* Responsividad específica para agenda */
+    @media (max-width: 640px) {
+        .agenda-page .agenda-grid-responsive {
+            grid-template-columns: 1fr !important;
+        }
+        
+        .agenda-page .agenda-padding-mobile {
+            padding: 1.5rem !important;
+        }
+    }
+
+    /* Estilos para scrollbar en agenda (opcional) */
+    .agenda-page ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    .agenda-page ::-webkit-scrollbar-track {
+        background: #eff6ff;
+        border-radius: 4px;
+    }
+
+    .agenda-page ::-webkit-scrollbar-thumb {
+        background: #bfdbfe;
+        border-radius: 4px;
+    }
+
+    .agenda-page ::-webkit-scrollbar-thumb:hover {
+        background: #93c5fd;
     }
 </style>
 
 </head>
-<body class="min-h-screen">
+<body class="min-h-screen agenda-page">
 
     <%- include('partials/_sidebar') %>
     <%- include('partials/_header') %>
     
     <!-- Contenedor Principal con márgenes amplios -->
-    <div class="contenedor-principal py-8">
+    <div class="agenda-contenedor-principal py-8">
         
         <!-- Grid de 2 columnas: Formulario y Calendario -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8 fade-in">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8 agenda-fade-in">
             
             <!-- COLUMNA IZQUIERDA: Formulario -->
-            <div class="gradient-card rounded-2xl p-8 shadow-2xl glow">
+            <div class="agenda-gradient-card rounded-2xl p-8 agenda-shadow-xl agenda-glow">
                 <div class="flex items-center justify-between mb-8">
                     <div>
-                        <h1 class="text-3xl md:text-4xl font-bold titulo-gradiente">
+                        <h1 class="text-3xl md:text-4xl font-bold agenda-titulo-gradiente">
                             Agregar Evaluación
                         </h1>
                         <p class="text-azul-700 text-base mt-2 font-medium">Registra nuevas evaluaciones para llevar un control</p>
                     </div>
                     <div class="text-azul-600">
-                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                        </svg>
+                        <i data-lucide="plus-circle" class="w-10 h-10 agenda-icon"></i>
                     </div>
                 </div>
                 
@@ -212,13 +303,11 @@
                     <!-- Asignatura -->
                     <div>
                         <label for="asignatura" class="block text-base font-bold text-azul-800 mb-3 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-azul-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                            </svg>
+                            <i data-lucide="book-open" class="w-5 h-5 text-azul-600 agenda-icon"></i>
                             Asignatura
                         </label>
                         <select id="asignatura" name="asignatura_id" required
-                            class="w-full bg-white text-azul-900 border-2 border-azul-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-azul-500 transition font-medium">
+                            class="w-full bg-white text-azul-900 border-2 border-azul-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-azul-500 transition font-medium agenda-form-select">
                             <option value="" disabled selected>Selecciona una asignatura</option>
                             <% asignaturas.forEach(function(asig) { %>
                                 <option value="<%= asig.id %>"><%= asig.nombre %></option>
@@ -229,75 +318,65 @@
                     <!-- Corte -->
                     <div>
                         <label for="corte" class="block text-base font-bold text-azul-800 mb-3 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-azul-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                            </svg>
+                            <i data-lucide="folder-kanban" class="w-5 h-5 text-azul-600 agenda-icon"></i>
                             Corte
                         </label>
                         <select id="corte" name="corte" required
-                            class="w-full bg-white text-azul-900 border-2 border-azul-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-azul-500 transition font-medium">
+                            class="w-full bg-white text-azul-900 border-2 border-azul-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-azul-500 transition font-medium agenda-form-select">
                             <option value="" disabled selected>Selecciona el corte</option>
                             <option value="1" class="text-red-600 font-semibold">Corte 1 (Máx 30%)</option>
                             <option value="2" class="text-yellow-600 font-semibold">Corte 2 (Máx 30%)</option>
                             <option value="3" class="text-green-600 font-semibold">Corte 3 (Máx 40%)</option>
                         </select>
                     </div>
+                    
                     <!-- Porcentaje -->
                     <div>
                         <label for="porcentaje" class="block text-base font-bold text-azul-800 mb-3 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-azul-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                            </svg>
+                            <i data-lucide="percent" class="w-5 h-5 text-azul-600 agenda-icon"></i>
                             Porcentaje (%)
                         </label>
                         <input type="number" id="porcentaje" name="porcentaje" min="1" max="100" required
-                            class="w-full bg-white text-azul-900 border-2 border-azul-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-azul-500 transition font-medium"
+                            class="w-full bg-white text-azul-900 border-2 border-azul-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-azul-500 transition font-medium agenda-form-input"
                             placeholder="Ej: 25">
                     </div>
+                    
                     <!-- Descripción -->
                     <div>
                         <label for="descripcion_evaluacion" class="block text-base font-bold text-azul-800 mb-3 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-azul-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                            </svg>
+                            <i data-lucide="file-text" class="w-5 h-5 text-azul-600 agenda-icon"></i>
                             Descripción
                         </label>
                         <input type="text" id="descripcion_evaluacion" name="descripcion" placeholder="Ej: Parcial 1, Taller, Quiz" required maxlength="30"
-                            class="w-full bg-white text-azul-900 border-2 border-azul-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-azul-500 transition font-medium placeholder-azul-400">
+                            class="w-full bg-white text-azul-900 border-2 border-azul-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-azul-500 transition font-medium agenda-form-input agenda-placeholder-azul">
                         <small id="contador-caracteres" class="text-sm mt-2 text-azul-600 block font-medium">0/30 caracteres</small>
                     </div>
                     
                     <!-- Descripción detallada -->
                     <div>
                         <label for="descripcion_detalle" class="block text-base font-bold text-azul-800 mb-3 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-azul-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                            </svg>
+                            <i data-lucide="edit-3" class="w-5 h-5 text-azul-600 agenda-icon"></i>
                             Detalles adicionales (Opcional)
                         </label>
                         <textarea id="descripcion_detalle" name="descripcion_detalle" placeholder="Detalles importantes sobre la evaluación..." rows="3"
-                            class="w-full bg-white text-azul-900 border-2 border-azul-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-azul-500 transition resize-none font-medium placeholder-azul-400"></textarea>
+                            class="w-full bg-white text-azul-900 border-2 border-azul-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-azul-500 transition resize-none font-medium agenda-form-textarea agenda-placeholder-azul"></textarea>
                     </div>
                     
                     <!-- Fecha -->
                     <div>
                         <label for="fecha_evaluacion" class="block text-base font-bold text-azul-800 mb-3 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-azul-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
+                            <i data-lucide="calendar" class="w-5 h-5 text-azul-600 agenda-icon"></i>
                             Fecha de entrega
                         </label>
                         <input type="date" id="fecha_evaluacion" name="fecha" required
-                            class="w-full bg-white text-azul-900 border-2 border-azul-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-azul-500 transition font-medium">
+                            class="w-full bg-white text-azul-900 border-2 border-azul-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-azul-500 transition font-medium agenda-form-input">
                     </div>
                     
                     <!-- Botón Agregar -->
                     <button type="submit" id="agregar"
-                        class="w-full btn-primary text-white font-bold py-4 rounded-xl transition shadow-lg text-lg">
+                        class="w-full agenda-btn-primary text-white font-bold py-4 rounded-xl transition shadow-lg text-lg">
                         <span class="flex items-center justify-center gap-2">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                            </svg>
+                            <i data-lucide="plus-circle" class="w-6 h-6 agenda-icon"></i>
                             Agregar Evaluación
                         </span>
                     </button>
@@ -306,13 +385,11 @@
             </div>
             
             <!-- COLUMNA DERECHA: Calendario -->
-            <div class="gradient-card rounded-2xl p-8 shadow-2xl glow">
+            <div class="agenda-gradient-card rounded-2xl p-8 agenda-shadow-xl agenda-glow">
                 <div class="flex items-center justify-between mb-8">
                     <div>
-                        <h2 class="text-3xl md:text-4xl font-bold titulo-gradiente flex items-center gap-3">
-                            <svg class="w-10 h-10 text-azul-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
+                        <h2 class="text-3xl md:text-4xl font-bold agenda-titulo-gradiente flex items-center gap-3">
+                            <i data-lucide="calendar-days" class="w-10 h-10 text-azul-600 agenda-icon"></i>
                             Calendario Académico
                         </h2>
                         <p class="text-azul-700 text-base mt-2 font-medium">Visualiza tus evaluaciones por fecha</p>
@@ -326,7 +403,7 @@
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                             <div class="flex items-center gap-3">
                                 <label class="text-base font-bold text-azul-800">Mes:</label>
-                                <select id="filtro-mes" class="bg-white text-azul-900 border-2 border-azul-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-azul-500 flex-1 sm:min-w-[160px]">
+                                <select id="filtro-mes" class="bg-white text-azul-900 border-2 border-azul-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-azul-500 flex-1 sm:min-w-[160px] agenda-form-select">
                                     <option value="todos">Todos los meses</option>
                                     <option value="0">Enero</option>
                                     <option value="1">Febrero</option>
@@ -343,7 +420,7 @@
                                 </select>
                             </div>
                             
-                            <button id="btn-hoy" class="btn-primary text-white px-5 py-2.5 rounded-xl font-bold transition whitespace-nowrap">
+                            <button id="btn-hoy" class="agenda-btn-primary text-white px-5 py-2.5 rounded-xl font-bold transition whitespace-nowrap">
                                 Hoy
                             </button>
                         </div>
@@ -351,22 +428,18 @@
                         <!-- Segunda fila: Navegación de mes -->
                         <div class="flex items-center justify-center gap-2">
                             <button id="btn-prev-mes" class="bg-azul-100 hover:bg-azul-200 text-azul-800 p-2.5 rounded-xl transition hover:scale-105 border-2 border-azul-300">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
-                                </svg>
+                                <i data-lucide="chevron-left" class="w-5 h-5 agenda-icon"></i>
                             </button>
                             <span id="mes-actual" class="bg-white text-azul-900 px-6 py-2.5 rounded-xl font-bold text-center border-2 border-azul-200 flex-1 max-w-[240px]">Febrero 2026</span>
                             <button id="btn-next-mes" class="bg-azul-100 hover:bg-azul-200 text-azul-800 p-2.5 rounded-xl transition hover:scale-105 border-2 border-azul-300">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
-                                </svg>
+                                <i data-lucide="chevron-right" class="w-5 h-5 agenda-icon"></i>
                             </button>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Grid del Calendario -->
-                <div class="calendario-grid">
+                <div class="agenda-calendario-grid">
                     <!-- Días de la semana -->
                     <div class="grid grid-cols-7 gap-2 mb-4">
                         <div class="text-center text-sm font-bold text-azul-700 py-2">Dom</div>
@@ -387,19 +460,19 @@
                 <!-- Leyenda -->
                 <div class="mt-6 pt-6 border-t-2 border-azul-200">
                     <div class="flex flex-wrap gap-4">
-                        <div class="flex items-center gap-2">
+                        <div class="agenda-leyenda-item">
                             <div class="w-4 h-4 rounded-full bg-blue-200 border-2 border-blue-500"></div>
                             <span class="text-sm font-semibold text-azul-800">Hoy</span>
                         </div>
-                        <div class="flex items-center gap-2">
+                        <div class="agenda-leyenda-item">
                             <div class="w-4 h-4 rounded-full bg-red-200 border-2 border-red-500"></div>
                             <span class="text-sm font-semibold text-azul-800">Corte 1</span>
                         </div>
-                        <div class="flex items-center gap-2">
+                        <div class="agenda-leyenda-item">
                             <div class="w-4 h-4 rounded-full bg-yellow-200 border-2 border-yellow-500"></div>
                             <span class="text-sm font-semibold text-azul-800">Corte 2</span>
                         </div>
-                        <div class="flex items-center gap-2">
+                        <div class="agenda-leyenda-item">
                             <div class="w-4 h-4 rounded-full bg-green-200 border-2 border-green-500"></div>
                             <span class="text-sm font-semibold text-azul-800">Corte 3</span>
                         </div>
@@ -409,11 +482,11 @@
         </div>
         
         <!-- TABLA DE EVALUACIONES (Ancho completo) -->
-        <div class="gradient-card rounded-2xl shadow-2xl glow overflow-hidden fade-in">
-            <div class="p-8">
+        <div class="agenda-gradient-card rounded-2xl agenda-shadow-xl agenda-glow overflow-hidden agenda-fade-in">
+            <div class="p-8 agenda-padding-mobile">
                 <div class="flex flex-col md:flex-row md:items-center justify-between mb-8">
                     <div>
-                        <h2 class="text-3xl md:text-4xl font-bold titulo-gradiente mb-2">Lista de Evaluaciones</h2>
+                        <h2 class="text-3xl md:text-4xl font-bold agenda-titulo-gradiente mb-2">Lista de Evaluaciones</h2>
                         <p class="text-azul-700 font-medium text-lg">Total: <span id="total-evaluaciones" class="font-bold text-azul-600">0</span> evaluaciones registradas</p>
                     </div>
                     <div class="flex items-center gap-3 mt-4 md:mt-0">
@@ -425,8 +498,7 @@
                 
                 <!-- Tabla -->
                 <div class="overflow-x-auto rounded-xl border-2 border-azul-200 shadow-sm">
-
-                    <table class="w-full tabla-evaluaciones">
+                    <table class="w-full agenda-tabla-evaluaciones">
                         <thead>
                             <tr class="bg-gradient-to-r from-azul-100 to-azul-200">
                                 <th class="text-left text-base font-bold text-azul-900 p-4">Asignatura</th>
@@ -449,20 +521,16 @@
                         <span class="text-azul-700 text-base font-medium">Mostrando <span id="elementos-mostrados" class="font-bold text-azul-900">0</span> de <span id="total-elementos" class="font-bold text-azul-900">0</span> evaluaciones</span>
                     </div>
                     <div class="flex items-center gap-4">
-                        <button id="btn-prev-pag" class="bg-azul-100 hover:bg-azul-200 text-azul-800 px-5 py-3 rounded-xl font-bold transition disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-azul-100 flex items-center gap-2 border-2 border-azul-300">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
-                            </svg>
+                        <button id="btn-prev-pag" class="bg-azul-100 hover:bg-azul-200 text-azul-800 px-5 py-3 rounded-xl font-bold transition disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-azul-100 flex items-center gap-2 border-2 border-azul-300 agenda-paginacion-btn">
+                            <i data-lucide="chevron-left" class="w-5 h-5 agenda-icon"></i>
                             Anterior
                         </button>
                         <div id="numeros-paginas" class="flex gap-2">
                             <!-- Números de página se generan dinámicamente -->
                         </div>
-                        <button id="btn-next-pag" class="bg-azul-100 hover:bg-azul-200 text-azul-800 px-5 py-3 rounded-xl font-bold transition disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-azul-100 flex items-center gap-2 border-2 border-azul-300">
+                        <button id="btn-next-pag" class="bg-azul-100 hover:bg-azul-200 text-azul-800 px-5 py-3 rounded-xl font-bold transition disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-azul-100 flex items-center gap-2 border-2 border-azul-300 agenda-paginacion-btn">
                             Siguiente
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
-                            </svg>
+                            <i data-lucide="chevron-right" class="w-5 h-5 agenda-icon"></i>
                         </button>
                     </div>
                 </div>

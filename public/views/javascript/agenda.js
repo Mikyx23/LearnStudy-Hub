@@ -212,7 +212,6 @@ function inicializarDatos() {
         inicializarIconosLucide();
     }
 }
-
 async function cargarEvaluacionesDesdeAPI() {
     try {
         console.log('Cargando evaluaciones desde API...');
@@ -224,49 +223,59 @@ async function cargarEvaluacionesDesdeAPI() {
             credentials: 'include'
         });
         
+        // Si hay error 401 (no autorizado), no sobrescribir datos existentes
         if (response.status === 401) {
-            throw new Error('Sesión expirada. Por favor, inicia sesión nuevamente.');
+            console.warn('Sesión expirada. Manteniendo datos locales.');
+            return false;
         }
         
         if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+            console.warn(`Error HTTP ${response.status}. Manteniendo datos locales.`);
+            return false;
         }
         
         const data = await response.json();
         
         if (data.success && Array.isArray(data.evaluaciones)) {
-            todasLasEvaluaciones = data.evaluaciones.map(ev => ({
-                ...ev,
-                fecha: extraerFechaISO(ev.fecha)
-            }));
-            
-            console.log('Evaluaciones cargadas desde API:', todasLasEvaluaciones.length);
-            
-            actualizarContadores(todasLasEvaluaciones.length);
-            renderizarCalendario();
-            renderizarLista();
-            inicializarIconosLucide();
+            // Solo actualizar si hay datos nuevos
+            if (data.evaluaciones.length > 0) {
+                todasLasEvaluaciones = data.evaluaciones.map(ev => ({
+                    ...ev,
+                    fecha: extraerFechaISO(ev.fecha)
+                }));
+                
+                console.log('Evaluaciones actualizadas desde API:', todasLasEvaluaciones.length);
+                
+                actualizarContadores(todasLasEvaluaciones.length);
+                renderizarCalendario();
+                renderizarLista();
+                inicializarIconosLucide();
+            } else {
+                console.log('API devolvió array vacío, manteniendo datos actuales');
+            }
             
             return true;
         } else {
-            throw new Error(data.message || 'Error en la respuesta del servidor');
+            console.warn('Respuesta inválida de API:', data);
+            return false;
         }
     } catch (error) {
         console.error('Error al cargar evaluaciones desde API:', error);
         
+        // Solo mostrar error si no es un error de conexión
         if (!error.message.includes('Failed to fetch')) {
             swalClaro.fire({
-                icon: 'error',
-                title: 'Error',
-                text: error.message || 'No se pudieron cargar las evaluaciones',
-                confirmButtonColor: '#3b82f6'
+                icon: 'warning',
+                title: 'Información',
+                text: 'No se pudo sincronizar con el servidor. Mostrando datos locales.',
+                timer: 3000,
+                showConfirmButton: false
             });
         }
         
         return false;
     }
 }
-
 // =========================================
 // 5. FUNCIÓN PARA CAMBIAR ESTADO
 // =========================================
@@ -1303,14 +1312,20 @@ document.addEventListener('keydown', (e) => {
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('DOM cargado, inicializando agenda...');
     
+    // Primero cargar estados disponibles
     await cargarEstadosDisponibles();
+    
+    // Luego inicializar con datos locales (inyectados del servidor)
     inicializarDatos();
     
+    // Configurar campos del formulario
     if (fechaEvaluacionInput) {
-        fechaEvaluacionInput.value = getLocalDateString(new Date());
-        fechaEvaluacionInput.min = getLocalDateString(new Date());
+        const hoy = getLocalDateString(new Date());
+        fechaEvaluacionInput.value = hoy;
+        fechaEvaluacionInput.min = hoy;
     }
     
+    // Configurar listener para cambio de corte
     if (corteSelect && porcentajeInput) {
         corteSelect.addEventListener('change', (e) => {
             const corte = parseInt(e.target.value);
@@ -1334,34 +1349,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
     
-    setTimeout(() => {
-        cargarEvaluacionesDesdeAPI();
-    }, 1000);
-    
+    // Inicializar iconos inmediatamente
     inicializarIconosLucide();
-});
-
-// Función para depuración
-async function verificarRutas() {
-    const rutas = [
-        '/api/agenda/api/evaluaciones',
-        '/api/agenda/registrar',
-        '/api/agenda/estados'
-    ];
     
-    for (const ruta of rutas) {
-        try {
-            const response = await fetch(ruta, {
-                method: 'GET',
-                credentials: 'include'
-            });
-            console.log(`Ruta ${ruta}: ${response.status} ${response.statusText}`);
-        } catch (error) {
-            console.error(`Error en ruta ${ruta}:`, error.message);
+    // Intentar cargar desde API pero mantener datos iniciales si hay error
+    setTimeout(async () => {
+        const cargadoDesdeAPI = await cargarEvaluacionesDesdeAPI();
+        
+        // Si no se pudo cargar desde API, mantener los datos iniciales
+        if (!cargadoDesdeAPI && todasLasEvaluaciones.length > 0) {
+            console.log('Manteniendo datos iniciales del servidor:', todasLasEvaluaciones.length);
+            
+            // Asegurar que los datos se muestren correctamente
+            actualizarContadores(todasLasEvaluaciones.length);
+            renderizarCalendario();
+            renderizarLista();
+            inicializarIconosLucide();
         }
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(verificarRutas, 2000);
+    }, 500);
 });
