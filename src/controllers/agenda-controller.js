@@ -12,10 +12,10 @@ export const ActualizarEstadoEvaluacionController = async (id_evaluacion, estado
     return Agenda.ActualizarEstadoEvaluacion(id_evaluacion, estado);
 }
 
-export const ObtenerCursosAgendaController = async (id_usuario, id_lapso) => {
-    return Agenda.ObtenerCursosAgenda(id_usuario, id_lapso);
+export const ObtenerCursosAgendaController = async (id_carrera,id_usuario, id_lapso) => {
+    return Agenda.ObtenerCursosAgenda(id_carrera,id_usuario, id_lapso);
 }
 
-export const ObtenerEvaluacionesController = async (id_usuario, id_lapso) => {
-    return Agenda.ObtenerEvaluaciones(id_usuario, id_lapso);
+export const ObtenerEvaluacionesController = async (id_carrera,id_usuario, id_lapso) => {
+    return Agenda.ObtenerEvaluaciones(id_carrera,id_usuario, id_lapso);
 }

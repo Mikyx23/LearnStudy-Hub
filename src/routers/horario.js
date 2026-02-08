@@ -8,8 +8,8 @@ routerHorario.get('/', async (req,res) => {
     try{
         const {user} = req.session;
 
-        const result = await ObtenerCursosHorarioController(user.id, lapsoActual);
-        const result2 = await ObtenerHorarioController(user.id, lapsoActual);
+        const result = await ObtenerCursosHorarioController(user.carrer,user.id, lapsoActual);
+        const result2 = await ObtenerHorarioController(user.carrer,user.id, lapsoActual);
 
         if(result.success){
             res.render('horario', {
@@ -47,7 +47,8 @@ routerHorario.post('/guardar', async (req,res) => {
         }
     }
     catch(error){
-        throw new Error('No se ha podido guardar el horario');
+        // throw new Error('No se ha podido guardar el horario');
+        console.log(error)
     }
 });
 

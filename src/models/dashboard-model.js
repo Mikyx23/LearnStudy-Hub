@@ -46,9 +46,9 @@ export class Dashboard {
         }
     }
 
-    static ObtenerClasesDiaActual = async (id_usuario, id_lapso, dia_semana) => {
+    static ObtenerClasesDiaActual = async (id_carrera, id_usuario, id_lapso, dia_semana) => {
         try{
-            const [rows] = await pool.execute(GET_TODAY_CLASSES,[id_usuario,id_lapso,dia_semana]);
+            const [rows] = await pool.execute(GET_TODAY_CLASSES,[id_carrera,id_carrera,id_usuario,id_lapso,dia_semana]);
 
             if(rows.length > 0){
                 return {

@@ -19,7 +19,8 @@ export class Horario {
             }
         }
         catch(error){
-            throw new Error('Ha ocurrido un error inesperado: No se ha podido crear el horario');
+            // throw new Error('Ha ocurrido un error inesperado: No se ha podido crear el horario');
+            console.log(error)
         }
     }
 
@@ -44,9 +45,9 @@ export class Horario {
         }
     }
 
-    static ObtenerCursosHorario = async (id_usuario,id_lapso) => {
+    static ObtenerCursosHorario = async (id_carrera,id_usuario,id_lapso) => {
         try{
-            const [rows] = await pool.execute(GET_COURSES_SCHEDULE,[id_usuario,id_lapso]);
+            const [rows] = await pool.execute(GET_COURSES_SCHEDULE,[id_carrera,id_carrera,id_usuario,id_lapso]);
 
             if(rows.length > 0){
                 return {
@@ -66,9 +67,9 @@ export class Horario {
         }
     }
 
-    static ObtenerHorario = async (id_usuario,id_lapso) => {
+    static ObtenerHorario = async (id_carrera,id_usuario,id_lapso) => {
         try{
-            const [rows] = await pool.execute(GET_SCHEDULE,[id_usuario,id_lapso]);
+            const [rows] = await pool.execute(GET_SCHEDULE,[id_carrera,id_carrera,id_usuario,id_lapso]);
 
             if(rows.length > 0){
                 return {

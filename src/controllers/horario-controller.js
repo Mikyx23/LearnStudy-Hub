@@ -16,10 +16,10 @@ export const EliminarHorarioController = async (id_usuario,id_lapso) => {
     return await Horario.EliminarHorario(id_usuario,id_lapso);
 }
 
-export const ObtenerCursosHorarioController = async (id_usuario,id_lapso) => {
-    return await Horario.ObtenerCursosHorario(id_usuario,id_lapso);
+export const ObtenerCursosHorarioController = async (id_carrera,id_usuario,id_lapso) => {
+    return await Horario.ObtenerCursosHorario(id_carrera,id_usuario,id_lapso);
 }
 
-export const ObtenerHorarioController = async (id_usuario,id_lapso) => {
-    return await Horario.ObtenerHorario(id_usuario,id_lapso);
+export const ObtenerHorarioController = async (id_carrera,id_usuario,id_lapso) => {
+    return await Horario.ObtenerHorario(id_carrera,id_usuario,id_lapso);
 }

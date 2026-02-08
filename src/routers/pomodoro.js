@@ -18,8 +18,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 routerPomodoro.get('/', async (req, res) => {
     try {
         const { user } = req.session;
-        const result = await ObtenerDatosPomodoroController(user.id, lapsoActual);
-        const result2 = await ObtenerDatosSesionesController(user.id, lapsoActual);
+        const result = await ObtenerDatosPomodoroController(user.carrer,user.id, lapsoActual);
+        const result2 = await ObtenerDatosSesionesController(user.carrer,user.id, lapsoActual);
 
         // Ruta absoluta al script
         const scriptPath = path.join(__dirname, '../data-structures/pila.py');

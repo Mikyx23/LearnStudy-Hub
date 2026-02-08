@@ -1,5 +1,5 @@
-import express from 'express';
-export const routerAgenda = express.Router();
+import express from 'express';  // Importación de Express para la gestión de rutas y peticiones HTTP
+export const routerAgenda = express.Router(); // Definición del router de Express para gestionar los endpoints de la agenda
 import { 
     ObtenerCursosAgendaController, 
     CrearEvaluacionController, 
@@ -13,11 +13,13 @@ const { lapsoActual } = config;
 // Ruta principal (renderiza HTML)
 routerAgenda.get('/', async(req, res) => {
     try{
-        const {user} = req.session;
+        const {user} = req.session; // Extrae la información del usuario autenticado desde la sesión
         
-        const result = await ObtenerCursosAgendaController(user.id,lapsoActual);
-        const result2 = await ObtenerEvaluacionesController(user.id,lapsoActual);
+        // Consultas al controlador: se busca la carga académica y el cronograma de exámenes
+        const result = await ObtenerCursosAgendaController(user.carrer,user.id,lapsoActual);
+        const result2 = await ObtenerEvaluacionesController(user.carrer,user.id,lapsoActual);
 
+        // Envía los datos a la plantilla agenda.ejs
         res.status(200).render('agenda', {
             asignaturas: result.courses || [],
             todasLasEvaluaciones: result2.exams || [],
@@ -110,6 +112,7 @@ routerAgenda.post('/registrar', async (req, res) => {
 // Ruta para actualizar estado de evaluación con más opciones
 routerAgenda.put('/estado/:id', async (req, res) => {
     try{
+        // Obtiene el ID desde los parámetros de la ruta y el nuevo estado desde el body
         const { id } = req.params;
         const { estado, estado_actual } = req.body;
 
@@ -141,6 +144,7 @@ routerAgenda.put('/estado/:id', async (req, res) => {
             });
         }
 
+        // Lógica para actualizar el registro específico
         const result = await ActualizarEstadoEvaluacionController(id, estado);
 
         if(result.sucess){
@@ -188,8 +192,10 @@ routerAgenda.get('/estados', async (req, res) => {
 // Ruta para eliminar evaluación
 routerAgenda.delete('/delete/:id', async (req, res) => {
     try{
+        // Extrae el ID del recurso a eliminar
         const { id } = req.params;
 
+        // Ejecuta la eliminación en la base de datos a través del controlador
         const result = await EliminarEvaluacionController(id);
 
         if(result.sucess){
