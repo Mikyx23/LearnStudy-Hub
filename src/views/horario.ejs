@@ -138,12 +138,12 @@
                 </div>
             </div>
         </div>
+        <%- include('partials/_footer') %>
         <script>
             const materiasConIDs = <%- JSON.stringify(materias) %>;
             const initialScheduleData = <%- JSON.stringify(horarios) %>;
         </script>
     <% } %>
-    <%- include('partials/_footer') %>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="/views/javascript/horario.js" ></script>
