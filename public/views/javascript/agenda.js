@@ -1,3 +1,4 @@
+
 // =============================
 // CONFIG GLOBAL SWEETALERT TEMA CLARO
 // =============================
@@ -27,27 +28,21 @@ const configuracionPorcentajes = {
 };
 
 // =========================================
-// 2. SELECTORES DEL DOM (Adaptados al HTML)
+// 2. SELECTORES DEL DOM
 // =========================================
 const listaExamenes = document.getElementById('lista-examenes');
 const mesActualElement = document.getElementById('mes-actual');
 const calendarioDias = document.getElementById('calendario-dias');
-
-// Formularios e Inputs - Adaptados a los IDs del HTML
 const formularioEvaluaciones = document.getElementById('formulario-evaluaciones');
 const asignaturaInput = document.getElementById('asignatura');
 const corteSelect = document.getElementById('corte');
 const fechaEvaluacionInput = document.getElementById('fecha_evaluacion');
-const descripcionInput = document.getElementById('descripcion_evaluacion'); // Cambiado a ID correcto
-const descripcionDetalleInput = document.getElementById('descripcion_detalle');
-
-// Filtros y Botones
+const descripcionInput = document.getElementById('descripcion_evaluacion');
+const porcentajeInput = document.getElementById('porcentaje');
 const filtroMes = document.getElementById('filtro-mes');
 const btnHoy = document.getElementById('btn-hoy');
 const btnPrevMes = document.getElementById('btn-prev-mes');
 const btnNextMes = document.getElementById('btn-next-mes');
-
-// Paginación
 const btnPrevPag = document.getElementById('btn-prev-pag');
 const btnNextPag = document.getElementById('btn-next-pag');
 const numerosPaginas = document.getElementById('numeros-paginas');
@@ -55,15 +50,11 @@ const numerosPaginas = document.getElementById('numeros-paginas');
 // =========================================
 // 3. FUNCIONES DE APOYO
 // =========================================
-
-// Función para extraer solo la fecha de un string ISO (eliminar hora)
 function extraerFechaISO(dateString) {
     if (!dateString) return null;
-    // Si ya es YYYY-MM-DD, retornar tal cual
     if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
         return dateString;
     }
-    // Si es ISO con tiempo, extraer solo la fecha
     if (dateString.includes('T')) {
         return dateString.split('T')[0];
     }
@@ -99,21 +90,6 @@ function formatShortDate(dateString) {
     }
 }
 
-function formatLongDate(dateString) {
-    try {
-        const fecha = parseLocalDate(dateString);
-        const options = {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        };
-        return fecha.toLocaleDateString('es-ES', options);
-    } catch (e) {
-        return formatShortDate(dateString);
-    }
-}
-
 function getDayName(date) {
     const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
     return days[date.getDay()];
@@ -133,11 +109,110 @@ function getCorteInfo(corte) {
 }
 
 // =========================================
-// 4. RENDERIZADO DEL CALENDARIO MEJORADO
+// 4. FUNCIONES PARA CARGAR Y MANEJAR DATOS
 // =========================================
-
+function inicializarDatos() {
+    console.log('Inicializando datos...');
+    
+    // Usar los datos inyectados desde el servidor
+    if (typeof DATOS_INICIALES_DEL_SERVIDOR !== 'undefined' && Array.isArray(DATOS_INICIALES_DEL_SERVIDOR)) {
+        todasLasEvaluaciones = DATOS_INICIALES_DEL_SERVIDOR.map(ev => ({
+            ...ev,
+            fecha: extraerFechaISO(ev.fecha)
+        }));
+        console.log('Datos cargados desde servidor:', todasLasEvaluaciones.length);
+        
+        // Actualizar contadores
+        actualizarContadores(todasLasEvaluaciones.length);
+        
+        // Renderizar
+        renderizarCalendario();
+        renderizarLista();
+        
+        // Configurar fecha mínima
+        if (fechaEvaluacionInput) {
+            fechaEvaluacionInput.min = getLocalDateString(new Date());
+            fechaEvaluacionInput.value = getLocalDateString(new Date());
+        }
+    } else {
+        console.warn('No se encontraron datos iniciales del servidor');
+        
+        // Mostrar calendario vacío
+        renderizarCalendario();
+        renderizarLista();
+    }
+}
+async function cargarEvaluacionesDesdeAPI() {
+    try {
+        console.log('Intentando cargar evaluaciones desde API...');
+        
+        // Intenta cargar desde la nueva ruta API
+        const response = await fetch('/api/agenda/api/evaluaciones', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                // Eliminamos el token ya que usamos sesiones
+            },
+            credentials: 'include' // Importante para enviar cookies de sesión
+        });
+        
+        console.log('Respuesta recibida:', response.status, response.statusText);
+        
+        if (response.status === 401) {
+            // Sesión expirada
+            throw new Error('Sesión expirada. Por favor, inicia sesión nuevamente.');
+        }
+        
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        console.log('Datos recibidos de API:', data);
+        
+        if (data.success && Array.isArray(data.evaluaciones)) {
+            todasLasEvaluaciones = data.evaluaciones.map(ev => ({
+                ...ev,
+                fecha: extraerFechaISO(ev.fecha)
+            }));
+            
+            console.log('Evaluaciones cargadas desde API:', todasLasEvaluaciones.length);
+            
+            // Actualizar contadores
+            actualizarContadores(todasLasEvaluaciones.length);
+            
+            // Renderizar
+            renderizarCalendario();
+            renderizarLista();
+            
+            return true;
+        } else {
+            throw new Error(data.message || 'Error en la respuesta del servidor');
+        }
+    } catch (error) {
+        console.error('Error al cargar evaluaciones desde API:', error);
+        
+        // Mostrar error solo si no es un error de red común
+        if (!error.message.includes('Failed to fetch')) {
+            swalClaro.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.message || 'No se pudieron cargar las evaluaciones',
+                confirmButtonColor: '#3b82f6'
+            });
+        }
+        
+        return false;
+    }
+}
+// =========================================
+// 5. RENDERIZADO DEL CALENDARIO
+// =========================================
 function renderizarCalendario() {
-    if (!calendarioDias) return;
+    if (!calendarioDias) {
+        console.error('Elemento calendario-dias no encontrado');
+        return;
+    }
 
     const primerDia = new Date(anioSeleccionado, mesSeleccionado, 1);
     const ultimoDia = new Date(anioSeleccionado, mesSeleccionado + 1, 0);
@@ -174,7 +249,7 @@ function renderizarCalendario() {
         const fechaDia = new Date(anioSeleccionado, mesSeleccionado, dia);
         const fechaString = getLocalDateString(fechaDia);
 
-        // Obtener evaluaciones de este día (comparando solo fecha, sin hora)
+        // Obtener evaluaciones de este día
         const evaluacionesDia = todasLasEvaluaciones.filter(ev => {
             const fechaEv = extraerFechaISO(ev.fecha);
             return fechaEv === fechaString;
@@ -238,7 +313,6 @@ function renderizarCalendario() {
         calendarioDias.appendChild(diaElement);
     }
 }
-
 function mostrarEvaluacionesDia(fecha) {
     const evaluacionesDia = todasLasEvaluaciones.filter(ev => {
         const fechaEv = extraerFechaISO(ev.fecha);
@@ -290,20 +364,21 @@ function mostrarEvaluacionesDia(fecha) {
         width: '500px'
     });
 }
-
 // =========================================
-// 5. RENDERIZADO DE LA LISTA/TABLA MEJORADO
+// 6. RENDERIZADO DE LA LISTA/TABLA
 // =========================================
-
 function renderizarLista() {
-    if (!listaExamenes) return;
+    if (!listaExamenes) {
+        console.error('Elemento lista-examenes no encontrado');
+        return;
+    }
 
     listaExamenes.innerHTML = '';
 
     if (todasLasEvaluaciones.length === 0) {
         listaExamenes.innerHTML = `
             <tr>
-                <td colspan="4" class="text-center py-16 text-gray-500">
+                <td colspan="5" class="text-center py-16 text-gray-500">
                     <div class="flex flex-col items-center justify-center">
                         <svg class="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
@@ -359,6 +434,11 @@ function renderizarLista() {
                 ${nombre}
             </td>
             <td class="py-4 px-4">
+                <span class="px-3 py-1 rounded-full text-xs font-semibold ${corteInfo.colorClass}">
+                    ${evaluacion.porcentaje}%
+                </span>
+            </td>
+            <td class="py-4 px-4">
                 <div class="flex items-center justify-between">
                     <span class="text-gray-600 font-medium">${formatShortDate(evaluacion.fecha)}</span>
                     <svg class="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -375,7 +455,6 @@ function renderizarLista() {
     });
 
     renderizarPaginacion(evaluacionesOrdenadas.length);
-    actualizarContadores(evaluacionesOrdenadas.length);
 }
 
 function actualizarContadores(totalElementos) {
@@ -480,7 +559,6 @@ function renderizarPaginacion(totalElementos) {
             : 'bg-gray-200 hover:bg-gray-300 text-blue-700 px-4 py-2 rounded-xl font-medium transition border-2 border-gray-300';
     }
 }
-
 function mostrarDetallesEvaluacion(evaluacion) {
     const estadoInfo = getEstadoInfo(evaluacion.estado);
     const corteInfo = getCorteInfo(evaluacion.corte);
@@ -497,7 +575,7 @@ function mostrarDetallesEvaluacion(evaluacion) {
                         <p class="text-gray-600 mt-1">${nombre}</p>
                     </div>
                     <span class="px-3 py-1.5 rounded-full text-sm font-semibold ${corteInfo.colorClass}">
-                        Corte ${evaluacion.corte}
+                        Corte ${evaluacion.corte} • ${evaluacion.porcentaje}%
                     </span>
                 </div>
                 
@@ -544,51 +622,13 @@ function mostrarDetallesEvaluacion(evaluacion) {
         }
     });
 }
-
 // =========================================
-// 6. FUNCIONES DE GESTIÓN DE EVALUACIONES
+// 7. FUNCIONES DE GESTIÓN
 // =========================================
-
-async function cargarEvaluaciones() {
-    try {
-        if (typeof DATOS_INICIALES_DEL_SERVIDOR !== 'undefined' && DATOS_INICIALES_DEL_SERVIDOR.length > 0) {
-            // Normalizar las fechas ISO a solo fecha
-            todasLasEvaluaciones = DATOS_INICIALES_DEL_SERVIDOR.map(ev => ({
-                ...ev,
-                fecha: extraerFechaISO(ev.fecha) // Extraer solo la parte de fecha
-            }));
-        } else {
-            const response = await fetch('/api/agenda/listar');
-            if (!response.ok) throw new Error('Error al cargar evaluaciones');
-            const data = await response.json();
-            todasLasEvaluaciones = (data.evaluaciones || []).map(ev => ({
-                ...ev,
-                fecha: extraerFechaISO(ev.fecha)
-            }));
-        }
-
-        // Establecer fecha mínima en el input de fecha (hoy)
-        if (fechaEvaluacionInput) {
-            fechaEvaluacionInput.min = getLocalDateString(new Date());
-        }
-
-        renderizarCalendario();
-        renderizarLista();
-    } catch (error) {
-        console.error('Error al cargar evaluaciones:', error);
-        swalClaro.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'No se pudieron cargar las evaluaciones',
-            confirmButtonColor: '#3b82f6'
-        });
-    }
-}
-
 async function eliminarEvaluacion(id) {
     const confirm = await swalClaro.fire({
         title: '¿Estás seguro?',
-        text: 'Esta acción no se puede deshacer',
+        text: 'Esta evaluación será eliminada permanentemente',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#ef4444',
@@ -600,36 +640,49 @@ async function eliminarEvaluacion(id) {
     if (!confirm.isConfirmed) return;
 
     try {
-        const response = await fetch(`/api/agenda/eliminar/${id}`, {
-            method: 'DELETE'
+        const response = await fetch(`/api/agenda/delete/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
         });
 
-        if (!response.ok) throw new Error('Error al eliminar');
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Error al eliminar evaluación');
+        }
 
-        swalClaro.fire({
-            icon: 'success',
-            title: '¡Eliminada!',
-            text: 'La evaluación ha sido eliminada correctamente',
-            timer: 2000,
-            showConfirmButton: false
-        });
+        const result = await response.json();
+        
+        if (result.success) {
+            swalClaro.fire({
+                icon: 'success',
+                title: '¡Eliminada!',
+                text: 'La evaluación ha sido eliminada correctamente',
+                timer: 2000,
+                showConfirmButton: false
+            });
 
-        await cargarEvaluaciones();
+            // Recargar evaluaciones
+            setTimeout(() => {
+                cargarEvaluacionesDesdeAPI();
+            }, 500);
+        } else {
+            throw new Error(result.message || 'Error al eliminar');
+        }
     } catch (error) {
         console.error('Error al eliminar:', error);
         swalClaro.fire({
             icon: 'error',
             title: 'Error',
-            text: 'No se pudo eliminar la evaluación',
+            text: error.message || 'No se pudo eliminar la evaluación',
         });
     }
 }
-
 // =========================================
-// 7. EVENT LISTENERS MEJORADOS
+// 8. EVENT LISTENERS
 // =========================================
-
-// Contador de caracteres para la descripción de evaluación
 if (descripcionInput) {
     descripcionInput.addEventListener('input', (e) => {
         const contador = document.getElementById('contador-caracteres');
@@ -642,8 +695,6 @@ if (descripcionInput) {
         }
     });
 }
-
-// Formulario con validación mejorada
 if (formularioEvaluaciones) {
     formularioEvaluaciones.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -656,42 +707,69 @@ if (formularioEvaluaciones) {
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="animate-spin mr-2">⟳</i> Procesando...';
 
-            const formData = new FormData(formularioEvaluaciones);
+            // Obtener datos del formulario
+            const formData = {
+                asignatura_id: parseInt(asignaturaInput.value),
+                descripcion: descripcionInput.value,
+                corte: parseInt(corteSelect.value),
+                porcentaje: parseInt(porcentajeInput.value || 0),
+                fecha: fechaEvaluacionInput.value
+            };
 
-            // Asegurarse de que el campo se llama 'nombre' en lugar de 'descripcion'
-            // Si el backend espera 'nombre', lo agregamos desde el input de descripción
-            const nombreValue = document.getElementById('descripcion_evaluacion').value;
-            formData.append('nombre', nombreValue);
+            // Validación básica
+            if (!formData.asignatura_id || !formData.descripcion || !formData.corte || !formData.porcentaje || !formData.fecha) {
+                throw new Error('Todos los campos son obligatorios');
+            }
+
+            // Validar porcentaje
+            if (formData.porcentaje < 1 || formData.porcentaje > 100) {
+                throw new Error('El porcentaje debe estar entre 1 y 100%');
+            }
+
+            // Validar porcentaje según el corte
+            const corteConfig = configuracionPorcentajes[`corte${formData.corte}`];
+            if (formData.porcentaje > corteConfig.max) {
+                throw new Error(`El porcentaje máximo para ${corteConfig.nombre} es ${corteConfig.max}%`);
+            }
 
             const response = await fetch('/api/agenda/registrar', {
                 method: 'POST',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
             });
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.message || 'Error al registrar');
+                throw new Error(errorData.message || 'Error al registrar evaluación');
             }
 
-            swalClaro.fire({
-                icon: 'success',
-                title: '¡Registrada!',
-                text: 'La evaluación ha sido registrada exitosamente',
-                timer: 2000,
-                showConfirmButton: false,
-                iconColor: '#10b981'
-            });
+            const result = await response.json();
+            
+            if (result.success) {
+                swalClaro.fire({
+                    icon: 'success',
+                    title: '¡Registrada!',
+                    text: 'La evaluación ha sido registrada exitosamente',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    iconColor: '#10b981'
+                });
 
-            // Resetear formulario
-            formularioEvaluaciones.reset();
-            const contador = document.getElementById('contador-caracteres');
-            if (contador) {
-                contador.textContent = '0/30 caracteres';
-                contador.className = 'text-sm mt-2 text-blue-600';
+                // Resetear formulario
+                formularioEvaluaciones.reset();
+                const contador = document.getElementById('contador-caracteres');
+                if (contador) {
+                    contador.textContent = '0/30 caracteres';
+                    contador.className = 'text-sm mt-2 text-blue-600';
+                }
+
+                // Recargar evaluaciones desde la API
+                await cargarEvaluacionesDesdeAPI();
+            } else {
+                throw new Error(result.message || 'Error al registrar');
             }
-
-            // Recargar las evaluaciones
-            await cargarEvaluaciones();
 
         } catch (error) {
             console.error('Error al registrar:', error);
@@ -708,8 +786,6 @@ if (formularioEvaluaciones) {
         }
     });
 }
-
-// Navegación del calendario
 if (btnPrevMes) {
     btnPrevMes.addEventListener('click', () => {
         mesSeleccionado--;
@@ -745,14 +821,10 @@ if (btnHoy) {
     });
 }
 
-// Filtro de mes mejorado
 if (filtroMes) {
-    // Establecer mes actual por defecto
     filtroMes.value = mesSeleccionado;
-
     filtroMes.addEventListener('change', (e) => {
         if (e.target.value === 'todos') {
-            // No aplicar filtro en el calendario
             return;
         } else {
             mesSeleccionado = parseInt(e.target.value);
@@ -762,7 +834,6 @@ if (filtroMes) {
     });
 }
 
-// Paginación
 if (btnPrevPag) {
     btnPrevPag.addEventListener('click', () => {
         if (paginaActual > 1) {
@@ -782,7 +853,6 @@ if (btnNextPag) {
     });
 }
 
-// Eventos de teclado para navegación
 document.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowLeft' && e.ctrlKey) {
         e.preventDefault();
@@ -794,28 +864,47 @@ document.addEventListener('keydown', (e) => {
 });
 
 // =========================================
-// 8. INICIALIZACIÓN
+// 9. INICIALIZACIÓN
 // =========================================
-
 document.addEventListener('DOMContentLoaded', () => {
-    // Inicializar fecha actual en input
+    console.log('DOM cargado, inicializando agenda...');
+    
+    // Primero, usar datos inyectados del servidor (si existen)
+    inicializarDatos();
+    
+    // Luego, intentar cargar datos frescos desde la API
+    setTimeout(() => {
+        cargarEvaluacionesDesdeAPI();
+    }, 1000); // Esperar 1 segundo para asegurar que el DOM esté listo
+    
+    // Configurar fecha actual en input
     if (fechaEvaluacionInput) {
         fechaEvaluacionInput.value = getLocalDateString(new Date());
         fechaEvaluacionInput.min = getLocalDateString(new Date());
     }
-
-    // Cargar evaluaciones
-    cargarEvaluaciones();
-
-    // Actualizar cada minuto para cambios en tiempo real
-    setInterval(() => {
-        const ahora = new Date();
-        if (ahora.getSeconds() === 0) {
-            // Verificar si hay cambios cada minuto
-            cargarEvaluaciones();
-        }
-    }, 60000);
+    
+    // Configurar porcentaje según el corte seleccionado
+    if (corteSelect) {
+        corteSelect.addEventListener('change', (e) => {
+            const corte = parseInt(e.target.value);
+            const configCorte = configuracionPorcentajes[`corte${corte}`];
+            
+            if (porcentajeInput && configCorte) {
+                porcentajeInput.max = configCorte.max;
+                porcentajeInput.placeholder = `Máximo ${configCorte.max}%`;
+                
+                // Mostrar advertencia si el valor actual excede el máximo
+                if (parseInt(porcentajeInput.value) > configCorte.max) {
+                    porcentajeInput.value = configCorte.max;
+                    swalClaro.fire({
+                        icon: 'warning',
+                        title: 'Porcentaje ajustado',
+                        text: `El porcentaje ha sido ajustado al máximo permitido para ${configCorte.nombre}: ${configCorte.max}%`,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+            }
+        });
+    }
 });
-
-// Inicializar botón de exportación
-document.addEventListener('DOMContentLoaded', agregarBotonExportacion);
