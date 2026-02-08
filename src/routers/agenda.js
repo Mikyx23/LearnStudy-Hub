@@ -107,18 +107,47 @@ routerAgenda.post('/registrar', async (req, res) => {
     }
 });
 
-// Ruta para actualizar estado
+// Ruta para actualizar estado de evaluación con más opciones
 routerAgenda.put('/estado/:id', async (req, res) => {
     try{
         const { id } = req.params;
-        const { estado } = req.body;
+        const { estado, estado_actual } = req.body;
+
+        console.log(`Actualizando estado de evaluación ${id} de ${estado_actual} a: ${estado}`);
+
+        // Obtener la evaluación actual de la base de datos para verificar su estado real
+        // (Necesitarás una función para obtener una evaluación por ID)
+        
+        // Validar transiciones no permitidas
+        if (estado_actual === 'CALIFICADA') {
+            return res.status(400).json({
+                success: false,
+                message: 'No se puede cambiar el estado de una evaluación calificada.'
+            });
+        }
+        
+        if (estado_actual === 'ENTREGADA' && estado === 'PENDIENTE') {
+            return res.status(400).json({
+                success: false,
+                message: 'Una evaluación entregada no puede volver a estado pendiente.'
+            });
+        }
+
+        const estadosPermitidos = ['PENDIENTE', 'ENTREGADA', 'CALIFICADA'];
+        if (!estadosPermitidos.includes(estado)) {
+            return res.status(400).json({
+                success: false,
+                message: `Estado no válido. Debe ser uno de: ${estadosPermitidos.join(', ')}`
+            });
+        }
 
         const result = await ActualizarEstadoEvaluacionController(id, estado);
 
         if(result.sucess){
             res.status(200).json({
                 success: true,
-                message: 'Estado actualizado correctamente'
+                message: `Estado actualizado a ${estado}`,
+                estado: estado
             });
         } else {
             res.status(400).json({
@@ -135,7 +164,27 @@ routerAgenda.put('/estado/:id', async (req, res) => {
         });
     }
 });
+// Ruta para obtener los estados disponibles
+routerAgenda.get('/estados', async (req, res) => {
+    try {
+        res.status(200).json({
+            success: true,
+            estados: [
+                { id: 'PENDIENTE', nombre: 'Pendiente', color: 'blue', icono: 'clock' },
+                { id: 'ENTREGADA', nombre: 'Entregada', color: 'emerald', icono: 'check-circle' },
+                { id: 'CALIFICADA', nombre: 'Calificada', color: 'purple', icono: 'star' }
+            ]
+        });
+    } catch (error) {
+        console.error('Error en GET /estados:', error);
+        res.status(500).json({ 
+            success: false,
+            message: 'Error interno del servidor'
+        });
+    }
+});
 
+// ... resto del código ...
 // Ruta para eliminar evaluación
 routerAgenda.delete('/delete/:id', async (req, res) => {
     try{
