@@ -10,39 +10,78 @@ const evaluationsContainer = document.getElementById('evaluations-container');
 const gradeInputModal = document.getElementById('grade-input-modal');
 const gradeForm = document.getElementById('grade-form');
 const cancelGradeBtn = document.getElementById('cancel-grade-btn');
-const semesterSelect = document.getElementById('semester-select');
+const semesterSelectHistory = document.getElementById('semester-select-history');
+const subjectSelectHistory = document.getElementById('subject-select-history');
+const historyForm = document.getElementById('history-form');
+const historyTableBody = document.getElementById('history-table-body');
 
-// Colores para los cursos
+// Colores para los cursos (degradados modernos)
 const courseColors = [
-    '#4361ee', '#7209b7', '#f72585', '#4cc9f0', 
-    '#3a0ca3', '#4895ef', '#560bad', '#b5179e'
+    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+    'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+    'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+    'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+    'linear-gradient(135deg, #30cfd0 0%, #330867 100%)',
+    'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+    'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)'
 ];
+
+// Tab Switching Logic
+function switchTab(tabId) {
+    // Hide all contents
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    // Remove active styles from tabs
+    document.querySelectorAll('nav button').forEach(btn => {
+        btn.classList.remove('border-primary', 'text-primary', 'dark:border-white', 'dark:text-white');
+        btn.classList.add('border-transparent', 'text-text-sub');
+    });
+    // Show selected content
+    document.getElementById('view-' + tabId).classList.add('active');
+    // Add active styles to clicked tab
+    const activeTab = document.getElementById('tab-' + tabId);
+    activeTab.classList.remove('border-transparent', 'text-text-sub');
+    activeTab.classList.add('border-primary', 'text-primary', 'dark:border-white', 'dark:text-white');
+}
 
 // Cargar cursos en la página
 function loadCourses() {
     coursesContainer.innerHTML = '';
     
+    if (studentCourses.length === 0) {
+        return;
+    }
+    
     studentCourses.forEach((course, index) => {
         const colorIndex = index % courseColors.length;
         const courseCard = document.createElement('div');
-        courseCard.className = 'course-card';
+        courseCard.className = 'group relative overflow-hidden rounded-xl bg-white dark:bg-surface-dark border border-border-color dark:border-gray-700 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer';
         courseCard.dataset.id = course.id_curso;
         
         courseCard.innerHTML = `
-            <div class="course-header" style="background: ${courseColors[colorIndex]}">
-                <div class="course-code">${course.codigo_asignatura}</div>
-                <h3 class="course-name">${course.nombre_romano}</h3>
-                <span class="course-credits">${course.uc_asignatura} UC</span>
-            </div>
-            <div class="course-footer">
-                <div>
-                    <div class="course-grade ${course.promedio === null ? 'pending' : ''}">
-                        ${course.promedio !== null ? (Number(course.promedio) || 0).toFixed(1) : 'Sin calificaciones'}
+            <div class="p-6" style="background: ${courseColors[colorIndex]}">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex-1">
+                        <div class="text-white/80 text-xs font-semibold uppercase tracking-wider mb-1">${course.codigo_asignatura}</div>
+                        <h3 class="text-white text-lg font-bold leading-tight mb-2">${course.nombre_romano}</h3>
                     </div>
                 </div>
-                <button class="view-details" data-id="${course.id_curso}">
-                    <i class="fas fa-chart-line"></i> Ver Evaluaciones
-                </button>
+            </div>
+            <div class="p-6 bg-white dark:bg-surface-dark">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-xs text-text-sub font-medium mb-1">Promedio</div>
+                        <div class="text-3xl font-bold ${course.promedio === null || course.promedio === 0 ? 'text-gray-400' : 'text-primary dark:text-white'}">
+                            ${course.promedio !== null && course.promedio !== 0 ? Number(course.promedio).toFixed(1) : '--'}
+                        </div>
+                    </div>
+                    <button class="view-details flex items-center gap-2 px-4 py-2 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-semibold transition-colors" data-id="${course.id_curso}">
+                        <span class="material-symbols-outlined text-lg">visibility</span>
+                        <span>Ver Detalles</span>
+                    </button>
+                </div>
             </div>
         `;
         
@@ -59,12 +98,50 @@ function loadCourses() {
     });
     
     // Añadir event listeners a las tarjetas de curso
-    document.querySelectorAll('.course-card').forEach(card => {
-        card.addEventListener('click', function() {
-            const courseId = parseInt(this.dataset.id);
-            openCourseModal(courseId);
+    document.querySelectorAll('.course-card, [data-id]').forEach(card => {
+        if (!card.classList.contains('view-details')) {
+            card.addEventListener('click', function() {
+                const courseId = parseInt(this.dataset.id);
+                if (courseId) {
+                    openCourseModal(courseId);
+                }
+            });
+        }
+    });
+
+    // Actualizar estadísticas
+    updateStatistics();
+}
+
+// Actualizar estadísticas en la parte superior
+function updateStatistics() {
+    // Calcular promedio acumulado
+    let totalWeightedGrade = 0;
+    let totalWeight = 0;
+    
+    studentCourses.forEach(course => {
+        if (course.promedio !== null && course.promedio !== 0) {
+            totalWeightedGrade += course.promedio;
+            totalWeight++;
+        }
+    });
+    
+    const promedioAcumulado = totalWeight > 0 ? (totalWeightedGrade / totalWeight).toFixed(1) : '--';
+    document.getElementById('promedio-acumulado').textContent = promedioAcumulado;
+    
+    // Materias activas
+    document.getElementById('materias-activas').textContent = studentCourses.length;
+    
+    // Evaluaciones pendientes
+    let pendingEvaluations = 0;
+    Object.values(courseEvaluations).forEach(evaluations => {
+        evaluations.forEach(evaluation => {
+            if (evaluation.calificacion === null) {
+                pendingEvaluations++;
+            }
         });
     });
+    document.getElementById('evaluaciones-pendientes').textContent = pendingEvaluations;
 }
 
 // Abrir modal con las evaluaciones del curso
@@ -77,15 +154,28 @@ function openCourseModal(courseId) {
     // Actualizar información del curso en el modal
     document.getElementById('modal-course-name').textContent = course.nombre_romano;
     document.getElementById('modal-course-code').textContent = course.codigo_asignatura;
-    document.getElementById('modal-course-credits').textContent = course.uc_asignatura;
-    document.getElementById('modal-course-grade').textContent = course.promedio !== null ? course.promedio.toFixed(1) : 'N/A';
+    document.getElementById('modal-course-grade').textContent = course.promedio !== null && course.promedio !== 0 ? course.promedio.toFixed(1) : 'N/A';
     
     // Cargar evaluaciones del curso
     loadCourseEvaluations(courseId);
     
-    // Mostrar modal
-    courseModal.classList.add('active');
+    // Mostrar modal con animación
+    courseModal.classList.remove('invisible', 'opacity-0');
+    courseModal.classList.add('opacity-100');
+    setTimeout(() => {
+        courseModal.querySelector('.bg-surface-light').classList.remove('translate-y-8');
+    }, 10);
     document.body.style.overflow = 'hidden';
+}
+
+// Cerrar modal de curso
+function closeCourseModal() {
+    courseModal.querySelector('.bg-surface-light').classList.add('translate-y-8');
+    setTimeout(() => {
+        courseModal.classList.add('invisible', 'opacity-0');
+        courseModal.classList.remove('opacity-100');
+        document.body.style.overflow = 'auto';
+    }, 300);
 }
 
 // Cargar evaluaciones del curso en el modal
@@ -105,18 +195,25 @@ function loadCourseEvaluations(courseId) {
     
     // Si no hay evaluaciones
     if (Object.keys(evaluationsByCorte).length === 0) {
-        evaluationsContainer.innerHTML = '<div class="no-evaluations">No hay evaluaciones registradas para este curso.</div>';
+        evaluationsContainer.innerHTML = `
+            <div class="text-center py-12 text-text-sub">
+                <span class="material-symbols-outlined text-6xl mb-4 opacity-30">assignment</span>
+                <p class="text-lg">No hay evaluaciones registradas para este curso.</p>
+            </div>
+        `;
         return;
     }
     
     // Crear sección para cada corte
     Object.keys(evaluationsByCorte).sort().forEach(corte => {
         const corteContainer = document.createElement('div');
-        corteContainer.className = 'corte-container';
+        corteContainer.className = 'mb-8';
         
         corteContainer.innerHTML = `
-            <h3 class="corte-title">Corte ${corte}</h3>
-            <div class="evaluations-list" id="corte-${corte}"></div>
+            <h3 class="text-lg font-bold text-secondary dark:text-emerald-400 mb-4 pb-2 border-b-2 border-secondary/30">
+                Corte ${corte}
+            </h3>
+            <div class="space-y-3" id="corte-${corte}"></div>
         `;
         
         evaluationsContainer.appendChild(corteContainer);
@@ -126,25 +223,33 @@ function loadCourseEvaluations(courseId) {
         // Añadir cada evaluación del corte
         evaluationsByCorte[corte].forEach(evaluation => {
             const evaluationItem = document.createElement('div');
-            evaluationItem.className = 'evaluation-item';
+            evaluationItem.className = 'bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors';
             evaluationItem.dataset.id = evaluation.id_evaluacion;
             
             const hasGrade = evaluation.calificacion !== null;
             
             evaluationItem.innerHTML = `
-                <div class="evaluation-info">
-                    <div class="evaluation-name">${evaluation.descripcion}</div>
-                    <div class="evaluation-percentage">${evaluation.porcentaje}%</div>
+                <div class="flex-1">
+                    <div class="font-semibold text-text-main dark:text-white mb-1">${evaluation.descripcion}</div>
+                    <div class="text-sm text-primary dark:text-blue-400 font-bold">${evaluation.porcentaje}% del total</div>
                 </div>
-                <div class="evaluation-grade ${hasGrade ? '' : 'pending'}">
-                    ${hasGrade ? evaluation.calificacion.toFixed(1) : 'Sin calificar'}
+                <div class="flex items-center gap-3">
+                    <div class="text-right">
+                        <div class="text-2xl font-bold ${hasGrade ? 'text-secondary' : 'text-gray-400'}">
+                            ${hasGrade ? evaluation.calificacion.toFixed(1) : '--'}
+                        </div>
+                        <div class="text-xs text-text-sub">
+                            ${hasGrade ? 'Calificado' : 'Sin calificar'}
+                        </div>
+                    </div>
+                    ${!hasGrade ? 
+                        `<button class="add-grade-btn flex items-center gap-1 px-3 py-2 rounded-lg bg-secondary hover:bg-secondary-hover text-white text-sm font-semibold transition-colors" data-id="${evaluation.id_evaluacion}">
+                            <span class="material-symbols-outlined text-lg">add</span>
+                            <span>Agregar</span>
+                        </button>` 
+                        : ''
+                    }
                 </div>
-                ${!hasGrade ? 
-                    `<button class="add-grade-btn" data-id="${evaluation.id_evaluacion}">
-                        <i class="fas fa-plus"></i> Agregar
-                    </button>` 
-                    : ''
-                }
             `;
             
             corteList.appendChild(evaluationItem);
@@ -178,20 +283,16 @@ function openGradeInputModal(evaluationId) {
     document.getElementById('grade-evaluation-name').textContent = `Calificar: ${evaluationName}`;
     document.getElementById('grade-input').value = '';
     
-    gradeInputModal.classList.add('active');
+    gradeInputModal.classList.remove('hidden');
 }
 
 // Cerrar modal de curso
-closeModalBtn.addEventListener('click', () => {
-    courseModal.classList.remove('active');
-    document.body.style.overflow = 'auto';
-});
+closeModalBtn.addEventListener('click', closeCourseModal);
 
 // Cerrar modal al hacer clic fuera de él
 courseModal.addEventListener('click', (e) => {
     if (e.target === courseModal) {
-        courseModal.classList.remove('active');
-        document.body.style.overflow = 'auto';
+        closeCourseModal();
     }
 });
 
@@ -202,20 +303,25 @@ gradeForm.addEventListener('submit', async (e) => {
     const gradeInput = document.getElementById('grade-input');
     const grade = parseFloat(gradeInput.value);
     
-    // 1. Validaciones básicas
+    // Validaciones básicas
     if (isNaN(grade) || grade < 0 || grade > 20) {
-        alert('Por favor ingrese una calificación válida entre 0 y 20.');
+        Swal.fire({
+            icon: "warning",
+            title: "Calificación inválida",
+            text: "Por favor ingrese una calificación válida entre 0 y 20.",
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "Entendido"
+        });
         return;
     }
     
-    // 2. Preparar datos combinando el formulario con nuestras variables globales
+    // Preparar datos
     const datos = new FormData(e.target);
     const datosJSON = Object.fromEntries(datos.entries());
     
-    // Agregamos manualmente los IDs que el servidor necesita
     datosJSON.id_curso = currentCourseId;
     datosJSON.id_evaluacion = currentEvaluationId;
-    datosJSON.calificacion = grade; // Aseguramos que el nombre coincida con tu backend
+    datosJSON.calificacion = grade;
 
     try {
         const respuesta = await fetch(`/api/calificaciones/registrar`, {
@@ -231,19 +337,47 @@ gradeForm.addEventListener('submit', async (e) => {
         if (!respuesta.ok) {
             Swal.fire({
                 icon: "error",
-                title: "Error al registrar la calificacion",
-                text: "No pudimos registrar la califcacion en la base de datos. Por favor, inténtalo de nuevo en unos momentos.",
+                title: "Error al registrar la calificación",
+                text: "No pudimos registrar la calificación en la base de datos. Por favor, inténtalo de nuevo en unos momentos.",
                 confirmButtonColor: "#3085d6",
                 confirmButtonText: "Entendido"
             });
             return;
         }
 
-        // 9. Redirección opcional (si tu backend la pide)
+        // Cerrar modal de calificación
+        gradeInputModal.classList.add('hidden');
+
+        // Actualizar datos locales
+        for (const courseId in courseEvaluations) {
+            const evaluation = courseEvaluations[courseId].find(e => e.id_evaluacion === currentEvaluationId);
+            if (evaluation) {
+                evaluation.calificacion = grade;
+                break;
+            }
+        }
+
+        // Recalcular promedio del curso
+        recalculateCourseAverage(currentCourseId);
+        
+        // Actualizar vista
+        loadCourseEvaluations(currentCourseId);
+        loadCourses();
+
+        // Mostrar notificación de éxito
+        Swal.fire({
+            icon: "success",
+            title: "¡Calificación registrada!",
+            text: "La calificación se ha guardado correctamente.",
+            timer: 2000,
+            showConfirmButton: false
+        });
+
+        // Redirección opcional
         if (datosRespuesta.redirectUrl) {
             setTimeout(() => {
                 window.location.href = datosRespuesta.redirectUrl;
-            }, 1500);
+            }, 2000);
         }
 
     } catch (error) {
@@ -259,13 +393,13 @@ gradeForm.addEventListener('submit', async (e) => {
 
 // Cancelar agregar calificación
 cancelGradeBtn.addEventListener('click', () => {
-    gradeInputModal.classList.remove('active');
+    gradeInputModal.classList.add('hidden');
 });
 
 // Cerrar modal de calificación al hacer clic fuera de él
 gradeInputModal.addEventListener('click', (e) => {
     if (e.target === gradeInputModal) {
-        gradeInputModal.classList.remove('active');
+        gradeInputModal.classList.add('hidden');
     }
 });
 
@@ -293,99 +427,168 @@ function recalculateCourseAverage(courseId) {
     } else if (courseIndex !== -1) {
         studentCourses[courseIndex].promedio = null;
     }
-}
 
-// Actualizar la tarjeta del curso en la página principal
-function updateCourseCard(courseId) {
-    const course = studentCourses.find(c => c.id_curso === courseId);
-    if (!course) return;
-    
-    const courseCard = document.querySelector(`.course-card[data-id="${courseId}"]`);
-    if (!courseCard) return;
-    
-    const gradeElement = courseCard.querySelector('.course-grade');
-    gradeElement.textContent = course.promedio !== null ? course.promedio.toFixed(1) : 'Sin calificaciones';
-    
-    if (course.promedio !== null) {
-        gradeElement.classList.remove('pending');
-    } else {
-        gradeElement.classList.add('pending');
+    // Actualizar el promedio en el modal
+    const course = studentCourses[courseIndex];
+    if (course) {
+        document.getElementById('modal-course-grade').textContent = 
+            course.promedio !== null && course.promedio !== 0 ? course.promedio.toFixed(1) : 'N/A';
     }
 }
 
-// Mostrar notificación
-function showNotification(message, type) {
-    // Crear elemento de notificación
-    const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
-    notification.textContent = message;
+// ============================================
+// FUNCIONALIDAD DEL HISTORIAL ACADÉMICO
+// ============================================
+
+// Cargar semestres únicos
+// 1. Cargar los 10 semestres fijos
+function loadSemesters() {
+    if (!semesterSelectHistory) return;
     
-    // Estilos para la notificación
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${type === 'success' ? '#4caf50' : '#f44336'};
-        color: white;
-        padding: 15px 25px;
-        border-radius: 8px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        z-index: 2000;
-        font-weight: 600;
-        animation: slideIn 0.3s ease;
-    `;
-    
-    // Añadir keyframe para la animación
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-    `;
-    document.head.appendChild(style);
-    
-    document.body.appendChild(notification);
-    
-    // Eliminar notificación después de 3 segundos
-    setTimeout(() => {
-        notification.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => {
-            document.body.removeChild(notification);
-        }, 300);
-    }, 3000);
+    semesterSelectHistory.innerHTML = '<option value="">Seleccionar semestre</option>';
+    for (let i = 1; i <= 10; i++) {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = `Semestre ${i}`;
+        semesterSelectHistory.appendChild(option);
+    }
 }
 
-// Cambiar lapso académico
-// semesterSelect.addEventListener('change', function() {
-//     showNotification(`Lapso académico cambiado a: ${this.options[this.selectedIndex].text}`, 'success');
+// Cargar materias según el semestre seleccionado
+semesterSelectHistory.addEventListener('change', function() {
+    const selectedSem = parseInt(this.value);
+    subjectSelectHistory.innerHTML = '<option value="">Seleccionar materia</option>';
     
-//     // En una implementación real, aquí se cargarían los cursos del lapso seleccionado
-//     // Por ahora solo simulamos cambiando algunos cursos
-//     setTimeout(() => {
-//         // Simular cambio de datos
-//         const updatedCourses = [...studentCourses];
-//         // Cambiar algunos promedios para simular datos diferentes
-//         updatedCourses.forEach(course => {
-//             if (course.id_curso % 2 === 0) {
-//                 course.promedio = course.promedio !== null ? 
-//                     Math.min(20, course.promedio + (Math.random() * 2 - 1)) : 
-//                     null;
-//             }
-//         });
+    if (!selectedSem) {
+        subjectSelectHistory.disabled = true;
+        return;
+    }
+
+    // Filtramos del arreglo que vino de la base de datos
+    const materiasDelSemestre = pensumData.filter(m => m.semestre === selectedSem);
+
+    if (materiasDelSemestre.length > 0) {
+        subjectSelectHistory.disabled = false;
+        materiasDelSemestre.forEach(m => {
+            const option = document.createElement('option');
+            option.value = m.id_materia; // ID único de la base de datos
+            option.textContent = `${m.codigo} - ${m.nombre}`;
+            // Guardamos el nombre en un data-attribute para facilitar el renderizado local
+            option.dataset.nombre = m.nombre; 
+            option.dataset.codigo = m.codigo;
+            subjectSelectHistory.appendChild(option);
+        });
+    } else {
+        subjectSelectHistory.disabled = true;
+    }
+});
+
+// Cargar historial académico en la tabla
+function loadAcademicHistory() {
+    historyTableBody.innerHTML = '';
+    
+    // Verificar si hay datos en academicHistory
+    if (!academicHistory || academicHistory.length === 0) {
+        historyTableBody.innerHTML = `
+            <tr>
+                <td colspan="5" class="px-6 py-12 text-center">
+                    <div class="flex flex-col items-center gap-3">
+                        <span class="material-symbols-outlined text-6xl text-gray-300 dark:text-gray-600">history_edu</span>
+                        <p class="text-text-sub">No hay materias registradas en el historial académico.</p>
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    // Renderizar cada registro del historial
+    academicHistory.forEach((record, index) => {
+        const row = document.createElement('tr');
+        row.className = `hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors ${index % 2 === 0 ? '' : 'bg-gray-50/30 dark:bg-gray-800/10'}`;
         
-//         // Recargar cursos
-//         loadCourses();
-//     }, 500);
-// });
+        const isApproved = record.estado === 'Aprobada';
+        
+        row.innerHTML = `
+            <td class="px-6 py-4 font-medium text-text-sub">${record.periodo}</td>
+            <td class="px-6 py-4 text-text-sub">${record.codigo}</td>
+            <td class="px-6 py-4 font-bold text-text-main dark:text-white">${record.materia}</td>
+            <td class="px-6 py-4 text-center font-bold ${isApproved ? 'text-secondary' : 'text-red-600'}">${record.nota}</td>
+            <td class="px-6 py-4 text-right">
+                <span class="inline-flex items-center gap-1 rounded-full ${isApproved ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800'} px-2.5 py-0.5 text-xs font-bold border">
+                    ${record.estado}
+                </span>
+            </td>
+        `;
+        
+        historyTableBody.appendChild(row);
+    });
+}
+
+// Manejar envío del formulario de historial
+// 3. Función para GUARDAR en el historial (Servidor)
+historyForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const selectedOption = subjectSelectHistory.options[subjectSelectHistory.selectedIndex];
+    
+    const formData = {
+        id_materia: subjectSelectHistory.value,
+        periodo: document.getElementById('period-history')?.value || "2024-1",
+        nota: parseFloat(document.getElementById('grade-history').value),
+        estado: document.querySelector('input[name="status"]:checked').value
+    };
+
+    // Validación
+    if (!formData.id_materia || isNaN(formData.nota)) {
+        Swal.fire("Atención", "Completa todos los campos obligatorios", "warning");
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/calificaciones/historial-guardar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+            Swal.fire({ icon: "success", title: "¡Guardado!", timer: 1500, showConfirmButton: false });
+
+            // Actualizar tabla localmente para no recargar
+            academicHistory.unshift({
+                periodo: formData.periodo,
+                codigo: selectedOption.dataset.codigo,
+                materia: selectedOption.dataset.nombre,
+                nota: formData.nota,
+                estado: formData.estado
+            });
+
+            loadAcademicHistory(); // Volver a renderizar la tabla
+            historyForm.reset();
+            subjectSelectHistory.disabled = true;
+        } else {
+            throw new Error("Error en el servidor");
+        }
+    } catch (error) {
+        Swal.fire("Error", "No se pudo conectar con el servidor", "error");
+    }
+});
 
 // Inicializar la página
 loadCourses();
-    
-    // Simular datos cargados
-    setTimeout(() => {
-        // Añadir efecto de carga inicial
-        document.querySelectorAll('.course-card').forEach((card, index) => {
-            card.style.animationDelay = `${index * 0.1}s`;
-        });
-    }, 100);
+loadSemesters();
+loadAcademicHistory();
+
+// Animación de entrada para las tarjetas
+setTimeout(() => {
+    document.querySelectorAll('[data-id]').forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            card.style.transition = 'all 0.3s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 50);
+    });
+}, 100);

@@ -5,6 +5,10 @@ SET calificacion = ?,
 WHERE id_evaluacion = ? AND id_curso = ?;
 `;
 
+export const INSERT_ACADEMIC_HISTORY = `INSERT INTO tbl_historial_academico (id_usuario, id_asignatura_carrera, nota_definitiva, estado_aprobacion) VALUES (?, ?, ?, ?);`;
+
+export const GET_ACADEMIC_LAPSOS = `SELECT * FROM tbl_lapsos_academicos ORDER BY año DESC, periodo DESC;`;
+
 export const GET_COURSES_QUALIFICATIONS = `
 WITH AsignaturasProcesadas AS (
     SELECT 
@@ -135,4 +139,71 @@ INNER JOIN tbl_agenda_evaluaciones ae
 WHERE ca.id_usuario = ? 
     AND ca.id_lapso = ?
 ORDER BY ca.id_curso, ae.corte, ae.fecha_entrega;
+`;
+
+export const GET_ACADEMIC_HISTORY = `
+WITH AsignaturasProcesadas AS (
+    SELECT 
+        ac.id_asignatura_carrera,
+        ac.codigo_asignatura,
+        ac.id_carrera,
+        CASE 
+            WHEN a.nombre_asignatura = 'PROYECTO DE SERVICIO COMUNITARIO' THEN a.nombre_asignatura
+            WHEN COUNT(*) OVER (PARTITION BY a.nombre_asignatura, ac.id_carrera) > 1 THEN 
+                CONCAT(a.nombre_asignatura, ' ', 
+                    CASE ROW_NUMBER() OVER (PARTITION BY a.nombre_asignatura, ac.id_carrera ORDER BY ac.semestre)
+                        WHEN 1 THEN 'I' WHEN 2 THEN 'II' WHEN 3 THEN 'III' WHEN 4 THEN 'IV'
+                        WHEN 5 THEN 'V' WHEN 6 THEN 'VI' WHEN 7 THEN 'VII' WHEN 8 THEN 'VIII'
+                        WHEN 9 THEN 'IX' WHEN 10 THEN 'X' ELSE '' 
+                    END)
+            ELSE a.nombre_asignatura 
+        END AS nombre_romano
+    FROM tbl_asignaturas_carreras ac
+    INNER JOIN tbl_asignaturas a ON ac.id_asignatura = a.id_asignatura
+)
+SELECT 
+    CONCAT(la.año, '-', LPAD(la.periodo, 2, '0')) AS periodo,
+    ap.codigo_asignatura AS codigo,
+    ap.nombre_romano AS materia,
+    h.nota_definitiva AS nota,
+    h.estado_aprobacion AS estado
+FROM tbl_historial_academico h
+INNER JOIN tbl_lapsos_academicos la ON h.id_lapso = la.id_lapso
+INNER JOIN AsignaturasProcesadas ap ON h.id_asignatura_carrera = ap.id_asignatura_carrera
+-- Join con inscripciones para asegurar que filtramos por la carrera correcta del usuario
+INNER JOIN tbl_inscripciones_carreras ic ON h.id_usuario = ic.id_usuario AND ap.id_carrera = ic.id_carrera
+WHERE h.id_usuario = ?
+ORDER BY la.año DESC, la.periodo DESC, ap.nombre_romano ASC;
+`;
+
+export const GET_MALLA_QUALIFICATIONS = `
+SELECT 
+    t.id_asignatura_carrera AS id_materia,
+    CASE 
+        WHEN t.nombre_base = 'PROYECTO DE SERVICIO COMUNITARIO' THEN t.nombre_base
+        WHEN t.total_repeticiones > 1 THEN 
+            CONCAT(t.nombre_base, ' ', 
+                CASE t.secuencia
+                    WHEN 1 THEN 'I' WHEN 2 THEN 'II' WHEN 3 THEN 'III' 
+                    WHEN 4 THEN 'IV' WHEN 5 THEN 'V' WHEN 6 THEN 'VI' 
+                    WHEN 7 THEN 'VII' WHEN 8 THEN 'VIII' WHEN 9 THEN 'IX' 
+                    WHEN 10 THEN 'X' ELSE '' 
+                END)
+        ELSE t.nombre_base 
+    END AS nombre,
+    t.semestre,
+    t.codigo
+FROM (
+    SELECT 
+        ac.id_asignatura_carrera,
+        ac.codigo_asignatura AS codigo,
+        a.nombre_asignatura AS nombre_base,
+        ac.semestre,
+        ROW_NUMBER() OVER (PARTITION BY a.nombre_asignatura, ac.id_carrera ORDER BY ac.semestre) AS secuencia,
+        COUNT(*) OVER (PARTITION BY a.nombre_asignatura, ac.id_carrera) AS total_repeticiones
+    FROM tbl_asignaturas_carreras ac
+    INNER JOIN tbl_asignaturas a ON ac.id_asignatura = a.id_asignatura
+    WHERE ac.id_carrera = ?
+) t
+ORDER BY t.semestre, nombre;
 `;
