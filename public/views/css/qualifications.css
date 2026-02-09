@@ -1,471 +1,199 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-:root {
-    --primary: #4361ee;
-    --primary-dark: #3a56d4;
-    --secondary: #7209b7;
-    --success: #4cc9f0;
-    --warning: #f72585;
-    --light: #f8f9fa;
-    --gray: #6c757d;
-    --gray-light: #e9ecef;
-    --border-radius: 12px;
-    --shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    --transition: all 0.3s ease;
-}
+/* Complemento al CSS de Tailwind para la página de calificaciones */
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-body {
-    /* background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); */
-    /* El background se maneja en layout.css */
-    min-height: 100vh;
-    color: var(--dark);
-
-}
-/* Patrón de logos interactivos */
-body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('/images/Logo_sin_fondo.png');
-    background-repeat: repeat;
-    background-size: 500px;
-    opacity: 0.05;
-    z-index: -1;
-    pointer-events: none;
-    animation: floatingPattern 20s ease-in-out infinite;
-}
-
-@keyframes floatingPattern {
-
-    0%,
-    100% {
-        transform: translate(0, 0) scale(1);
+/* Animaciones personalizadas */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
     }
-
-    50% {
-        transform: translate(15px, 10px) scale(1.02);
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
-/* Grid de Cursos */
-.courses-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 25px;
-    margin: 40px auto;
-    max-width: 1200px;
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
 
-.course-card {
-    background: white;
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    box-shadow: var(--shadow);
-    transition: var(--transition);
-    cursor: pointer;
-    position: relative;
-    height: 100%;
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
 }
 
+/* Estilos para el modal */
+#course-modal.opacity-100 {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+#course-modal .bg-surface-light,
+#course-modal .bg-surface-dark {
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Transiciones suaves para tabs */
+.tab-content {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Estilos para tarjetas de curso con hover mejorado */
 .course-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
 }
 
-.course-header {
-    padding: 25px 20px 20px;
-    color: white;
-    position: relative;
+/* Scrollbar personalizado para el modal */
+#course-modal .overflow-y-auto::-webkit-scrollbar {
+    width: 8px;
 }
 
-.course-code {
-    font-size: 0.9rem;
-    opacity: 0.9;
-    margin-bottom: 5px;
-}
-
-.course-name {
-    font-size: 1.4rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-    line-height: 1.3;
-}
-
-.course-credits {
-    display: inline-block;
-    background: rgba(255, 255, 255, 0.2);
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-
-.course-footer {
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.course-grade {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: var(--primary);
-}
-
-.course-grade.pending {
-    color: var(--gray);
-    font-size: 1.2rem;
-}
-
-.view-details {
-    background: var(--primary);
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-/* Modales */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    opacity: 0;
-    visibility: hidden;
-    transition: var(--transition);
-    padding: 20px;
-}
-
-.modal-overlay.active {
-    opacity: 1;
-    visibility: visible;
-}
-
-.modal {
-    background: white;
-    border-radius: var(--border-radius);
-    width: 100%;
-    max-width: 900px;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-    transform: translateY(30px);
-    transition: var(--transition);
-}
-
-.modal-overlay.active .modal {
-    transform: translateY(0);
-}
-
-.modal-header {
-    padding: 25px 30px 20px;
-    border-bottom: 1px solid var(--gray-light);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: sticky;
-    top: 0;
-    background: white;
-    z-index: 10;
-}
-
-.modal-title {
-    font-size: 1.8rem;
-    color: var(--primary);
-}
-
-.close-modal {
-    background: none;
-    border: none;
-    font-size: 1.8rem;
-    color: var(--gray);
-    cursor: pointer;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: var(--transition);
-}
-
-.modal-body {
-    padding: 30px;
-}
-
-.course-summary {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 30px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--gray-light);
-}
-
-.summary-item {
-    text-align: center;
-}
-
-.summary-value {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: var(--primary);
-}
-
-.summary-label {
-    color: var(--gray);
-    font-size: 0.9rem;
-    margin-top: 5px;
-}
-
-/* Secciones de Corte y Evaluaciones */
-.corte-container {
-    margin-bottom: 40px;
-}
-
-.corte-title {
-    font-size: 1.4rem;
-    color: var(--secondary);
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid var(--secondary);
-}
-
-.evaluations-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.evaluation-item {
-    background: var(--light);
+#course-modal .overflow-y-auto::-webkit-scrollbar-track {
+    background: #f1f1f1;
     border-radius: 10px;
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: var(--transition);
 }
 
-.evaluation-info {
-    flex: 1;
+#course-modal .overflow-y-auto::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
 }
 
-.evaluation-name {
-    font-weight: 600;
-    margin-bottom: 5px;
-    font-size: 1.1rem;
+#course-modal .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 
-.evaluation-percentage {
-    color: var(--primary);
-    font-weight: 700;
+/* Dark mode scrollbar */
+.dark #course-modal .overflow-y-auto::-webkit-scrollbar-track {
+    background: #1e293b;
 }
 
-.evaluation-grade {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primary);
-    min-width: 80px;
-    text-align: center;
+.dark #course-modal .overflow-y-auto::-webkit-scrollbar-thumb {
+    background: #475569;
 }
 
-.evaluation-grade.pending {
-    color: var(--gray);
-    font-size: 1.1rem;
+.dark #course-modal .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
 }
 
-.add-grade-btn {
-    background: var(--success);
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    gap: 8px;
+/* Animación para los íconos de Material Symbols */
+.material-symbols-outlined {
+    transition: transform 0.2s ease;
 }
 
-.no-evaluations {
-    text-align: center;
-    color: var(--gray);
-    padding: 30px;
-    font-style: italic;
+button:hover .material-symbols-outlined {
+    transform: scale(1.1);
 }
 
-/* Modal de Entrada de Notas */
-.grade-input-modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    align-items: center;
-    justify-content: center;
-    z-index: 1100;
-    padding: 20px;
+/* Estilos para inputs en focus */
+input:focus,
+select:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(30, 41, 59, 0.1);
 }
 
-.grade-input-modal.active {
-    display: flex;
+.dark input:focus,
+.dark select:focus {
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
 }
 
-.grade-input-content {
-    background: white;
-    border-radius: var(--border-radius);
-    padding: 30px;
-    max-width: 500px;
-    width: 100%;
+/* Transiciones para botones */
+button {
+    transition: all 0.2s ease;
 }
 
-.grade-input-title {
-    font-size: 1.5rem;
-    color: var(--primary);
-    margin-bottom: 20px;
+button:active {
+    transform: scale(0.98);
 }
 
-.grade-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+/* Estilos para las filas de la tabla con animación */
+tbody tr {
+    transition: background-color 0.2s ease;
 }
 
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+/* Estilos para los badges de estado */
+.badge {
+    animation: fadeIn 0.3s ease-in-out;
 }
 
-.form-group label {
-    font-weight: 600;
+/* Mejora visual para los inputs de tipo number */
+input[type="number"] {
+    -moz-appearance: textfield;
 }
 
-.form-group input {
-    padding: 12px 15px;
-    border-radius: 8px;
-    border: 2px solid var(--gray-light);
-    font-size: 1rem;
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
-.form-actions {
-    display: flex;
-    gap: 15px;
+/* Animación de carga para las tarjetas */
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
 }
 
-.btn {
-    padding: 12px 20px;
-    border-radius: 8px;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-    flex: 1;
+.loading-skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite;
 }
 
-.btn-primary {
-    background: var(--primary);
-    color: white;
-}
-
-.btn-secondary {
-    background: var(--gray-light);
-    color: var(--dark);
-}
-
-.no-courses-card {
-    max-width: 500px;
-    margin: 50px auto;
-    padding: 50px 40px;
-    background: white;
-    border-radius: 24px;
-    text-align: center;
-    box-shadow: var(--card-shadow);
-}
-
-.card-icon {
-    width: 80px;
-    height: 80px;
-    background: #f0f7ff;
-    color: #3b82f6;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 20px;
-    font-size: 2.5rem;
-}
-
-/* Seleccionamos el SVG que Lucide generó dentro de ese contenedor */
-.card-icon svg {
-    width: 60px; 
-    height: 60px;
-    stroke-width: 1.5; /* Grosor de la línea, puedes ajustarlo */
-    color: #3b82f6;    /* Color azul (cámbialo a tu gusto) */
-}
-
-.card-title {
-    color: #1f2937;
-    font-size: 1.5rem;
-    margin-bottom: 15px;
-    font-weight: 700;
-}
-
-.card-text {
-    color: #6b7280;
-    line-height: 1.6;
-    margin-bottom: 25px;
-    font-size: 1.1rem;
-}
-
-.card-text strong {
-    color: #374151;
-    display: block;
-    margin-top: 10px;
-}
-
-.card-footer-line {
-    width: 60px;
-    height: 4px;
-    background: #3b82f6;
-    margin: 0 auto;
-    border-radius: 2px;
-}
-
+/* Responsive adjustments */
 @media (max-width: 768px) {
-    .courses-container {
-        grid-template-columns: 1fr;
+    .course-card {
+        margin-bottom: 1rem;
     }
     
-    .course-summary {
-        flex-wrap: wrap;
-        gap: 20px;
-        justify-content: center;
+    #course-modal .modal {
+        margin: 1rem;
     }
+    
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Estilos para mensajes de "sin datos" */
+.no-data-message {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Mejora de accesibilidad */
+button:focus-visible,
+a:focus-visible {
+    outline: 2px solid #4361ee;
+    outline-offset: 2px;
+}
+
+/* Transición suave para el modo oscuro */
+* {
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Evitar transiciones en elementos específicos */
+input,
+select,
+textarea {
+    transition: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }

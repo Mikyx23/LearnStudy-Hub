@@ -1,4 +1,4 @@
-import {Agenda} from '../models/agenda-model.js'
+import {Agenda} from '../models/agenda/agenda-model.js'
 
 export const CrearEvaluacionController = async (id_curso, descripcion, corte, porcentaje, fecha_entrega) => {
     return Agenda.CrearEvaluacion(id_curso, descripcion, corte, porcentaje, fecha_entrega);

@@ -1,5 +1,5 @@
-import {pool} from './conexion.js';
-import { GET_USER_DATA, GET_ACADEMIC_DATA, GET_TODAY_CLASSES, GET_PHRASE } from './queries.js';
+import {pool} from '../conexion.js';
+import { GET_USER_DATA, GET_ACADEMIC_DATA, GET_TODAY_CLASSES, GET_PHRASE } from './dashboard-queries.js';
 
 export class Dashboard {
     static ObtenerDatosUsuario = async (id_usuario, id_lapso) => {

@@ -20,7 +20,7 @@
             <% menuItems.forEach(item => { %>
                 <a href="<%= item.href %>" class="nav-item-app <%= (locals.path && path.startsWith(item.href)) ? 'active' : '' %>">
                     <i data-lucide="<%= item.icon %>" class="menu-icon"></i>
-                    <span class="nav-text text-black"><%= item.name %></span>
+                    <span class="nav-text"><%= item.name %></span>
                 </a>
             <% }); %>
         </nav>

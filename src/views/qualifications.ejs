@@ -1,93 +1,286 @@
 <!DOCTYPE html>
-<html lang="es">
+<html class="light" lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calificaciones - LearnStudy-Hub</title>
     <link rel="icon" type="image/png" href="/images/logo_sin_fondo.png">
     <link rel="stylesheet" href="/views/css/layout.css"> 
-    <link rel="stylesheet" href="/views/css/qualifications.css">
+    <link rel="stylesheet" href="/css/tailwind.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1e293b",
+                        "primary-hover": "#0f172a",
+                        "secondary": "#059669",
+                        "secondary-hover": "#047857",
+                        "background-light": "#f1f5f9",
+                        "background-dark": "#0f172a",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1e293b",
+                        "text-main": "#0f172a",
+                        "text-sub": "#64748b",
+                        "border-color": "#e2e8f0"
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+    <style>
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
 </head>
 <body>
     <%- include('partials/_sidebar') %>
     <%- include('partials/_header') %>
-    <div class="container">
-        <% if(mensaje){ %>
-                <div id="no-courses-msg" class="no-courses-card">
-                    <div class="card-icon">
-                        <i data-lucide="graduation-cap"></i>
+    <div class="container" >
+        <main class="mx-auto w-full max-w-7xl p-6 lg:p-8 flex flex-col gap-8">
+            <!-- Sección de Estadísticas -->
+            <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="relative overflow-hidden rounded-2xl bg-surface-light dark:bg-surface-dark p-6 shadow-sm border border-border-color dark:border-gray-700 group">
+                    <div class="absolute -right-6 -top-6 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <span class="material-symbols-outlined text-9xl text-primary dark:text-white">analytics</span>
                     </div>
-                    <h2 class="card-title">Sin cursos inscritos o evaluaciones</h2>
-                    <p class="card-text">
-                        No se encontraron registros para este período. 
-                        <strong>Debe inscribir cursos o registrar evaluaciones en este lapso académico para cargar calificaciones.</strong>
-                    </p>
-                    <div class="card-footer-line"></div>
+                    <p class="text-text-sub text-xs font-bold uppercase tracking-wider mb-1">Promedio Acumulado</p>
+                    <div class="flex items-baseline gap-2">
+                        <h3 class="text-4xl font-bold text-primary dark:text-white" id="promedio-acumulado">--</h3>
+                        <span class="text-lg text-text-sub font-medium">/ 20</span>
+                    </div>
+                    <div class="mt-3 flex items-center gap-1 text-sm text-secondary font-medium bg-emerald-50 dark:bg-emerald-900/20 w-fit px-2 py-1 rounded-md">
+                        <span class="material-symbols-outlined text-sm">trending_up</span>
+                        <span>En progreso</span>
+                    </div>
                 </div>
-            <% } %>
-        <div class="courses-container" id="courses-container">
-            <!-- Los cursos se cargarán dinámicamente aquí -->
-        </div>  
+                <div class="relative overflow-hidden rounded-2xl bg-surface-light dark:bg-surface-dark p-6 shadow-sm border border-border-color dark:border-gray-700 group">
+                    <div class="absolute -right-6 -top-6 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <span class="material-symbols-outlined text-9xl text-secondary">verified</span>
+                    </div>
+                    <p class="text-text-sub text-xs font-bold uppercase tracking-wider mb-1">Materias Activas</p>
+                    <div class="flex items-baseline gap-2">
+                        <h3 class="text-4xl font-bold text-primary dark:text-white" id="materias-activas">0</h3>
+                        <span class="text-lg text-text-sub font-medium">cursos</span>
+                    </div>
+                    <div class="mt-3 flex items-center gap-2 text-sm text-text-sub">
+                        <span class="inline-block w-2 h-2 rounded-full bg-blue-500"></span>
+                        <span>Semestre actual</span>
+                    </div>
+                </div>
+                <div class="relative overflow-hidden rounded-2xl bg-primary text-white p-6 shadow-lg shadow-primary/20">
+                    <div class="absolute right-0 bottom-0 opacity-10">
+                        <span class="material-symbols-outlined text-[150px] leading-none -mb-8 -mr-8">donut_small</span>
+                    </div>
+                    <div class="relative z-10 flex flex-col h-full justify-between">
+                        <div>
+                            <p class="text-blue-200 text-xs font-bold uppercase tracking-wider mb-1">Evaluaciones Pendientes</p>
+                            <div class="flex items-center gap-4">
+                                <h3 class="text-4xl font-bold" id="evaluaciones-pendientes">0</h3>
+                            </div>
+                        </div>
+                        <p class="text-sm text-blue-100/80 mt-2">Por calificar este período</p>
+                    </div>
+                </div>
+            </section>
 
-        <!-- Modal para mostrar evaluaciones del curso -->
-        <div class="modal-overlay" id="course-modal">
-            <div class="modal">
-                <div class="modal-header">
-                    <h2 class="modal-title" id="modal-course-name">Nombre del Curso</h2>
-                    <button class="close-modal" id="close-modal">
-                        <i class="fas fa-times"></i>
+            <!-- Tabs -->
+            <div class="flex flex-col gap-6">
+                <nav class="flex w-full border-b border-border-color dark:border-gray-700" role="tablist">
+                    <button class="flex items-center gap-2 px-8 py-4 text-sm font-bold border-b-2 border-primary text-primary dark:text-white dark:border-white transition-all hover:bg-gray-50 dark:hover:bg-gray-800/50 outline-none focus:bg-gray-50" id="tab-semester" onclick="switchTab('semester')">
+                        <span class="material-symbols-outlined">grid_view</span>
+                        Semestre Actual
                     </button>
-                </div>
-                <div class="modal-body">
-                    <div class="course-summary">
-                        <div class="summary-item">
-                            <div class="summary-value" id="modal-course-code">MAT-101</div>
-                            <div class="summary-label">Código</div>
-                        </div>
-                        <div class="summary-item">
-                            <div class="summary-value" id="modal-course-credits">4</div>
-                            <div class="summary-label">Créditos</div>
-                        </div>
-                        <div class="summary-item">
-                            <div class="summary-value" id="modal-course-grade">17.5</div>
-                            <div class="summary-label">Promedio Actual</div>
+                    <button class="flex items-center gap-2 px-8 py-4 text-sm font-medium text-text-sub border-b-2 border-transparent hover:text-primary dark:hover:text-gray-300 transition-all hover:bg-gray-50 dark:hover:bg-gray-800/50 outline-none focus:bg-gray-50" id="tab-history" onclick="switchTab('history')">
+                        <span class="material-symbols-outlined">history_edu</span>
+                        Historial Académico
+                    </button>
+                </nav>
+
+                <!-- Tab 1: Semestre Actual -->
+                <div class="tab-content active" id="view-semester">
+                    <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
+                        <h3 class="text-xl font-bold text-text-main dark:text-white">Materias en Curso</h3>
+                        <div class="flex gap-3">
+                            <button class="flex items-center gap-2 rounded-lg border border-border-color dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-text-sub hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                <span class="material-symbols-outlined text-lg">download</span> Exportar
+                            </button>
                         </div>
                     </div>
 
-                    <div id="evaluations-container">
-                        <!-- Las evaluaciones se cargarán dinámicamente aquí -->
+                    <!-- Grid de Cursos -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="courses-container">
+                        <!-- Los cursos se cargarán dinámicamente aquí -->
+                    </div>
+                </div>
+
+                <!-- Tab 2: Historial Académico -->
+                <div class="tab-content" id="view-history">
+                    <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+                        <!-- Formulario de Registro -->
+                        <div class="xl:col-span-4">
+                            <div class="rounded-xl bg-surface-light dark:bg-surface-dark border border-border-color dark:border-gray-700 shadow-sm p-6 sticky top-6">
+                                <h3 class="text-lg font-bold text-text-main dark:text-white mb-4 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-secondary">add_circle</span>
+                                    Registrar Nueva Materia
+                                </h3>
+                                <form class="space-y-4" id="history-form">
+                                    <div class="space-y-2">
+                                        <label class="text-sm font-semibold text-text-main dark:text-gray-300">Semestre</label>
+                                        <select class="w-full rounded-lg border-border-color dark:border-gray-600 bg-white dark:bg-gray-800 py-2 px-4 text-sm focus:border-primary focus:ring-1 focus:ring-primary" id="semester-select-history">
+                                            <option value="">Seleccionar semestre</option>
+                                            <!-- Se llenará dinámicamente -->
+                                        </select>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-sm font-semibold text-text-main dark:text-gray-300">Materia</label>
+                                        <select class="w-full rounded-lg border-border-color dark:border-gray-600 bg-white dark:bg-gray-800 py-2 px-4 text-sm focus:border-primary focus:ring-1 focus:ring-primary" id="subject-select-history">
+                                            <option value="">Seleccionar materia</option>
+                                            <!-- Se llenará dinámicamente según el semestre -->
+                                        </select>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-sm font-semibold text-text-main dark:text-gray-300">Nota Final</label>
+                                        <input class="w-full rounded-lg border-border-color dark:border-gray-600 bg-white dark:bg-gray-800 py-2 px-4 text-sm focus:border-primary focus:ring-1 focus:ring-primary shadow-sm font-bold text-lg" id="grade-history" placeholder="0.0" step="0.1" type="number" min="0" max="20"/>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-sm font-semibold text-text-main dark:text-gray-300">Estado</label>
+                                        <div class="flex gap-4">
+                                            <label class="flex items-center gap-2 cursor-pointer p-3 rounded border border-border-color dark:border-gray-700 flex-1 hover:bg-gray-50 dark:hover:bg-gray-800">
+                                                <input checked class="text-secondary focus:ring-secondary" name="status" type="radio" value="APROBADA"/>
+                                                <span class="text-sm font-medium">Aprobada</span>
+                                            </label>
+                                            <label class="flex items-center gap-2 cursor-pointer p-3 rounded border border-border-color dark:border-gray-700 flex-1 hover:bg-gray-50 dark:hover:bg-gray-800">
+                                                <input class="text-red-600 focus:ring-red-600" name="status" type="radio" value="REPROBADA"/>
+                                                <span class="text-sm font-medium">Reprobada</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <button class="mt-2 w-full rounded-lg bg-secondary py-3 text-sm font-bold text-white shadow-md shadow-secondary/20 hover:bg-secondary-hover transition-colors flex items-center justify-center gap-2" type="submit">
+                                        <span class="material-symbols-outlined text-lg">add_circle</span>
+                                        Registrar Materia
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Tabla de Registro Académico -->
+                        <div class="xl:col-span-8">
+                            <div class="rounded-xl bg-surface-light dark:bg-surface-dark border border-border-color dark:border-gray-700 shadow-sm overflow-hidden">
+                                <div class="p-5 border-b border-border-color dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/20">
+                                    <h3 class="text-lg font-bold text-text-main dark:text-white">Registro Académico</h3>
+                                    <button class="text-text-sub hover:text-primary transition-colors flex items-center gap-1 text-sm font-medium">
+                                        <span class="material-symbols-outlined text-lg">download</span> Exportar
+                                    </button>
+                                </div>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left border-collapse">
+                                        <thead class="bg-gray-50 dark:bg-gray-800/50 text-xs uppercase text-text-sub font-semibold tracking-wider border-b border-border-color dark:border-gray-700">
+                                            <tr>
+                                                <th class="px-6 py-4">Periodo</th>
+                                                <th class="px-6 py-4">Código</th>
+                                                <th class="px-6 py-4">Materia</th>
+                                                <th class="px-6 py-4 text-center">Nota</th>
+                                                <th class="px-6 py-4 text-right">Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-border-color dark:divide-gray-700 text-sm" id="history-table-body">
+                                            <!-- Se llenará dinámicamente -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
+    </div>
+    <!-- Modal para mostrar evaluaciones del curso -->
+    <div class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 opacity-0 invisible transition-all duration-300" id="course-modal">
+        <div class="bg-surface-light dark:bg-surface-dark rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl transform translate-y-8 transition-all duration-300">
+            <div class="sticky top-0 bg-surface-light dark:bg-surface-dark border-b border-border-color dark:border-gray-700 p-6 flex justify-between items-center z-10">
+                <h2 class="text-2xl font-bold text-primary dark:text-white" id="modal-course-name">Nombre del Curso</h2>
+                <button class="w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center transition-colors" id="close-modal">
+                    <span class="material-symbols-outlined text-gray-500">close</span>
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-6 mb-8 pb-6 border-b border-border-color dark:border-gray-700">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-primary dark:text-white" id="modal-course-code">MAT-101</div>
+                        <div class="text-sm text-text-sub mt-1">Código</div>
+                    </div>
+                    <div class="text-center md:col-span-2">
+                        <div class="text-3xl font-bold text-secondary" id="modal-course-grade">17.5</div>
+                        <div class="text-sm text-text-sub mt-1">Promedio Actual</div>
+                    </div>
+                </div>
 
-        <!-- Modal para agregar calificación -->
-        <div class="grade-input-modal" id="grade-input-modal">
-            <div class="grade-input-content">
-                <h3 class="grade-input-title" id="grade-evaluation-name">Agregar Calificación</h3>
-                <form class="grade-form" id="grade-form">
-                    <div class="form-group">
-                        <label for="grade-input">Calificación (0-20 puntos)</label>
-                        <input type="number" id="grade-input" min="0" max="20" step="0.01" required>
-                    </div>
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-secondary" id="cancel-grade-btn">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Guardar Calificación</button>
-                    </div>
-                </form>
+                <div id="evaluations-container">
+                    <!-- Las evaluaciones se cargarán dinámicamente aquí -->
+                </div>
             </div>
         </div>
     </div>
+
+
+
+    <!-- Modal para agregar calificación -->
+    <div class="fixed inset-0 bg-black/70 flex items-center justify-center z-[60] p-4 hidden" id="grade-input-modal">
+        <div class="bg-surface-light dark:bg-surface-dark rounded-2xl w-full max-w-md p-6 shadow-2xl">
+            <h3 class="text-xl font-bold text-primary dark:text-white mb-6" id="grade-evaluation-name">Agregar Calificación</h3>
+            <form class="space-y-6" id="grade-form">
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold text-text-main dark:text-gray-300">Calificación (0-20 puntos)</label>
+                    <input type="number" id="grade-input" min="0" max="20" step="0.01" required 
+                        class="w-full rounded-lg border-border-color dark:border-gray-600 bg-white dark:bg-gray-800 py-3 px-4 text-lg font-bold focus:border-primary focus:ring-2 focus:ring-primary"/>
+                </div>
+                <div class="flex gap-3">
+                    <button type="button" class="flex-1 px-4 py-3 rounded-lg border border-border-color dark:border-gray-600 text-sm font-semibold text-text-main dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors" id="cancel-grade-btn">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="flex-1 px-4 py-3 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary-hover transition-colors shadow-md">
+                        Guardar Calificación
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <%- include('partials/_footer') %>
+    
     <script>
         // Datos de ejemplo basados en la estructura de base de datos
-        // 1. Cargamos y limpiamos studentCourses (convertimos promedio a número)
         const studentCourses = (<%- JSON.stringify(cursos) %>).map(course => ({
             ...course,
-            promedio: Number(course.promedio) || 0 // Lo convertimos aquí una sola vez
+            promedio: Number(course.promedio) || 0
         }));
 
-        // 2. Cargamos evaluaciones y las agrupamos limpiando la calificación
         const evaluacionesRaw = <%- JSON.stringify(evaluaciones) %>;
 
         const courseEvaluations = evaluacionesRaw.reduce((acc, row) => {
@@ -98,14 +291,17 @@
                 descripcion: row.descripcion,
                 porcentaje: Number(row.porcentaje) || 0,
                 corte: row.corte,
-                // Limpiamos la calificación aquí también
                 calificacion: row.calificacion !== null ? Number(row.calificacion) : null
             });
             return acc;
         }, {});
+
+        const pensumData = <%- JSON.stringify(pensum) %>;
+        let academicHistory = <%- JSON.stringify(historial) %>;
+
+        const periodosData = <%- JSON.stringify(lapsos || []) %>;
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="/views/javascript/qualifications.js" ></script>
+    <script src="/views/javascript/qualifications.js"></script>
 </body>
 </html>

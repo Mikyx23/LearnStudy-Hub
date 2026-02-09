@@ -1,4 +1,4 @@
-import {Curso} from "../models/courses-model.js";
+import {Curso} from "../models/courses/courses-model.js";
 
 export const InsertarCursoController = async (id_usuario,id_asignatura_carrera,id_lapso) => {
     return await Curso.InsertarCurso(id_usuario,id_asignatura_carrera,id_lapso);

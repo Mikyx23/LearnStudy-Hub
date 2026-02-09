@@ -1,4 +1,4 @@
-import {pool} from './conexion.js';
+import {pool} from '../conexion.js';
 
 export const ObtenerCarreras = async () => {
     try {

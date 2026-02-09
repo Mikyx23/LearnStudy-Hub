@@ -1,4 +1,4 @@
-import {Horario} from '../models/horario-model.js';
+import {Horario} from '../models/horario/horario-model.js';
 
 export const CrearHorarioController = async (datos) => {
     const horario = datos.map(h => [

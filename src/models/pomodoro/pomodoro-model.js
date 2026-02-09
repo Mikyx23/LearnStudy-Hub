@@ -1,11 +1,11 @@
-import {pool} from './conexion.js';
+import {pool} from '../conexion.js';
 import { 
     GET_POMODORO_DATA, 
     INSERT_POMODORO_SESSION, 
     GET_SESSIONS_DATA,
     DELETE_POMODORO_SESSION,
     DELETE_POMODORO_HISTORY
-} from './queries.js';
+} from './pomodoro-queries.js';
 
 export class Pomodoro {
     static CrearSesionPomodoro = async (id_evaluacion, descripcion_sesion, hora_inicio, hora_final, ciclos) => {

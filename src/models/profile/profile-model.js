@@ -1,5 +1,5 @@
-import {pool} from './conexion.js';
-import { GET_USER_PROFILE, UPDATE_PROFILE_PHOTO } from './queries.js';
+import {pool} from '../conexion.js';
+import { GET_USER_PROFILE, UPDATE_PROFILE_PHOTO } from './profile-queries.js';
 
 export class Perfil {
     static ObtenerPerfilUsuario = async (id_usuario,id_carrera,id_lapso) => {
